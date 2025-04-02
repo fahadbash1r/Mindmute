@@ -19,10 +19,6 @@ exports.handler = async function(event, context) {
     throw new Error('OPENAI_API_KEY must start with "sk-"');
   }
   
-  if (apiKey.includes('_') || apiKey.includes('-')) {
-    throw new Error('OPENAI_API_KEY should not contain underscores or hyphens');
-  }
-  
   // Handle OPTIONS request for CORS
   if (event.httpMethod === 'OPTIONS') {
     return {
