@@ -6,20 +6,24 @@ function App() {
   const [output, setOutput] = useState("")
 
   const handleClick = async () => {
-    const res = await fetch("/.netlify/functions/gpt", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ input }),
-    })
+    try {
+      const res = await fetch("/.netlify/functions/gpt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ input }),
+      })
 
-    const data = await res.json()
-    setOutput(data.clarity || "Something went wrong.")
+      const data = await res.json()
+      setOutput(data.clarity || "Something went wrong.")
+    } catch (err) {
+      setOutput("Error reaching the serverless function.")
+    }
   }
 
   return (
-    <div>
+    <div style={{ textAlign: "center", padding: "2rem", color: "#fff" }}>
       <h1>🧠 MindMute</h1>
       <p>Turn overthinking into clear next steps.</p>
 
@@ -28,10 +32,27 @@ function App() {
         placeholder="Type your thought spiral..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        style={{
+          padding: "0.5rem",
+          fontSize: "1rem",
+          width: "300px",
+          marginRight: "1rem",
+        }}
       />
-      <button onClick={handleClick}>Clear My Mind</button>
+      <button
+        onClick={handleClick}
+        style={{
+          padding: "0.5rem 1rem",
+          backgroundColor: "#000",
+          color: "#fff",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        Clear My Mind
+      </button>
 
-      <div>
+      <div style={{ marginTop: "2rem" }}>
         <h2>Clarity:</h2>
         <p>{output}</p>
       </div>
@@ -40,3 +61,4 @@ function App() {
 }
 
 export default App
+
