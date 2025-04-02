@@ -9,17 +9,28 @@ exports.handler = async function(event, context) {
   console.log('OPENAI_API_KEY length:', process.env.OPENAI_API_KEY?.length);
   console.log('OPENAI_API_KEY starts with sk-:', process.env.OPENAI_API_KEY?.startsWith('sk-'));
   console.log('OPENAI_API_KEY first 10 chars:', process.env.OPENAI_API_KEY?.substring(0, 10));
+  console.log('OPENAI_API_KEY last 10 chars:', process.env.OPENAI_API_KEY?.substring(process.env.OPENAI_API_KEY?.length - 10));
+  console.log('OPENAI_API_KEY contains special chars:', {
+    hasUnderscore: process.env.OPENAI_API_KEY?.includes('_'),
+    hasHyphen: process.env.OPENAI_API_KEY?.includes('-'),
+    hasSpace: process.env.OPENAI_API_KEY?.includes(' '),
+    hasNewline: process.env.OPENAI_API_KEY?.includes('\n')
+  });
   console.log('All environment variables:', Object.keys(process.env));
   
   // Validate API key format and test with OpenAI API
   // First check if key exists and has correct format
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY?.trim(); // Trim any whitespace
   if (!apiKey) {
     throw new Error('OPENAI_API_KEY environment variable is not set');
   }
   
   if (!apiKey.startsWith('sk-')) {
     throw new Error('OPENAI_API_KEY must start with "sk-"');
+  }
+
+  if (apiKey.startsWith('sk-proj-')) {
+    throw new Error('This appears to be a project-specific key (starts with sk-proj-). Please use a regular OpenAI API key that starts with sk-. You can get one from https://platform.openai.com/account/api-keys');
   }
   
   // Handle OPTIONS request for CORS
@@ -53,6 +64,7 @@ exports.handler = async function(event, context) {
 
     // Test the API key with a simple request first
     try {
+      console.log('Testing API key with OpenAI models endpoint...');
       const testResponse = await axios.get('https://api.openai.com/v1/models', {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
