@@ -4,21 +4,48 @@ import './App.css'
 function App() {
   const [input, setInput] = useState("")
   const [output, setOutput] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleClick = async () => {
+    if (!input.trim()) {
+      setOutput("Please enter some text first.");
+      return;
+    }
+
+    setIsLoading(true)
+    setOutput("")
+    
     try {
+      console.log("Sending request to function...")
       const res = await fetch("/.netlify/functions/gpt", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
-        body: JSON.stringify({ input }),
+        body: JSON.stringify({ input: input.trim() }),
       })
 
+      console.log("Response status:", res.status)
+      console.log("Response headers:", Object.fromEntries(res.headers.entries()))
+      
       const data = await res.json()
-      setOutput(data.clarity || "Something went wrong.")
+      console.log("Response data:", data)
+      
+      if (!res.ok) {
+        throw new Error(data.error || `HTTP error! status: ${res.status}`)
+      }
+      
+      if (!data.success) {
+        throw new Error(data.error || "Something went wrong")
+      }
+      
+      setOutput(data.clarity || "No response received")
     } catch (err) {
-      setOutput("Error reaching the serverless function.")
+      console.error("Error details:", err)
+      setOutput(`Error: ${err.message}`)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -41,15 +68,17 @@ function App() {
       />
       <button
         onClick={handleClick}
+        disabled={isLoading || !input.trim()}
         style={{
           padding: "0.5rem 1rem",
           backgroundColor: "#000",
           color: "#fff",
           border: "none",
-          cursor: "pointer",
+          cursor: isLoading || !input.trim() ? "not-allowed" : "pointer",
+          opacity: isLoading || !input.trim() ? 0.7 : 1,
         }}
       >
-        Clear My Mind
+        {isLoading ? "Processing..." : "Clear My Mind"}
       </button>
 
       <div style={{ marginTop: "2rem" }}>
