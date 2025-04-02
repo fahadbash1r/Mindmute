@@ -6,6 +6,8 @@ exports.handler = async function(event, context) {
   
   // Debug: Log environment variable (will be masked in logs)
   console.log('OPENAI_API_KEY exists:', !!process.env.OPENAI_API_KEY);
+  console.log('OPENAI_API_KEY length:', process.env.OPENAI_API_KEY?.length);
+  console.log('OPENAI_API_KEY starts with sk-:', process.env.OPENAI_API_KEY?.startsWith('sk-'));
   
   // Handle OPTIONS request for CORS
   if (event.httpMethod === 'OPTIONS') {
@@ -74,7 +76,13 @@ exports.handler = async function(event, context) {
     console.error('Error details:', {
       message: error.message,
       response: error.response?.data,
-      status: error.response?.status
+      status: error.response?.status,
+      headers: error.response?.headers,
+      config: {
+        url: error.config?.url,
+        method: error.config?.method,
+        headers: error.config?.headers
+      }
     });
     
     return {
