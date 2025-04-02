@@ -9,6 +9,9 @@ exports.handler = async function(event, context) {
   console.log('OPENAI_API_KEY length:', process.env.OPENAI_API_KEY?.length);
   console.log('OPENAI_API_KEY starts with sk-:', process.env.OPENAI_API_KEY?.startsWith('sk-'));
   
+  // Note: OpenAI API key should be set in Netlify environment variables
+  // Format: sk-... (not sk-proj-...)
+  
   // Handle OPTIONS request for CORS
   if (event.httpMethod === 'OPTIONS') {
     return {
