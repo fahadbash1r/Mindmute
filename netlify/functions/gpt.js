@@ -11,7 +11,8 @@ exports.handler = async function(event, context) {
   console.log('OPENAI_API_KEY first 10 chars:', process.env.OPENAI_API_KEY?.substring(0, 10));
   console.log('All environment variables:', Object.keys(process.env));
   
-  // Validate API key format
+  // Validate API key format and test with OpenAI API
+  // First check if key exists and has correct format
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error('OPENAI_API_KEY environment variable is not set');
