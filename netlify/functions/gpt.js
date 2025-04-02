@@ -4,6 +4,9 @@ exports.handler = async function(event, context) {
   // Log the entire event object for debugging
   console.log('Function invoked with event:', JSON.stringify(event, null, 2));
   
+  // Debug: Log environment variable (will be masked in logs)
+  console.log('OPENAI_API_KEY exists:', !!process.env.OPENAI_API_KEY);
+  
   // Handle OPTIONS request for CORS
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -33,14 +36,18 @@ exports.handler = async function(event, context) {
       throw new Error('No input provided');
     }
 
+    // Debug: Log the request configuration (without the API key)
+    const requestConfig = {
+      model: "text-davinci-003",
+      prompt: body.input,
+      max_tokens: 100,
+    };
+    console.log('Request configuration:', requestConfig);
+
     // Make the OpenAI API request
     const response = await axios.post(
       'https://api.openai.com/v1/completions',
-      {
-        model: "text-davinci-003",
-        prompt: body.input,
-        max_tokens: 100,
-      },
+      requestConfig,
       {
         headers: {
           'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
@@ -64,6 +71,11 @@ exports.handler = async function(event, context) {
     };
   } catch (error) {
     console.error('Function error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
     
     return {
       statusCode: 500,
