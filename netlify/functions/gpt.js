@@ -9,8 +9,19 @@ exports.handler = async function(event, context) {
   console.log('OPENAI_API_KEY length:', process.env.OPENAI_API_KEY?.length);
   console.log('OPENAI_API_KEY starts with sk-:', process.env.OPENAI_API_KEY?.startsWith('sk-'));
   
-  // Note: OpenAI API key should be set in Netlify environment variables
-  // Format: sk-... (not sk-proj-...)
+  // Validate API key format
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY environment variable is not set');
+  }
+  
+  if (!apiKey.startsWith('sk-')) {
+    throw new Error('OPENAI_API_KEY must start with "sk-"');
+  }
+  
+  if (apiKey.includes('_') || apiKey.includes('-')) {
+    throw new Error('OPENAI_API_KEY should not contain underscores or hyphens');
+  }
   
   // Handle OPTIONS request for CORS
   if (event.httpMethod === 'OPTIONS') {
