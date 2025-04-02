@@ -50,6 +50,19 @@ exports.handler = async function(event, context) {
       throw new Error('No input provided');
     }
 
+    // Test the API key with a simple request first
+    try {
+      const testResponse = await axios.get('https://api.openai.com/v1/models', {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+        }
+      });
+      console.log('API key test successful:', testResponse.data);
+    } catch (testError) {
+      console.error('API key test failed:', testError.response?.data || testError.message);
+      throw new Error('API key validation failed: ' + (testError.response?.data?.error?.message || testError.message));
+    }
+
     // Debug: Log the request configuration (without the API key)
     const requestConfig = {
       model: "text-davinci-003",
@@ -64,7 +77,7 @@ exports.handler = async function(event, context) {
       requestConfig,
       {
         headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         }
       }
