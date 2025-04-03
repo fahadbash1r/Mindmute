@@ -1,10 +1,44 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isClearMode, setIsClearMode] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(25 * 60) // 25 minutes in seconds
+  const [isBreathing, setIsBreathing] = useState(false)
+
+  // Pomodoro timer effect
+  useEffect(() => {
+    let timer;
+    if (isClearMode && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setIsClearMode(false);
+      setTimeLeft(25 * 60);
+    }
+    return () => clearInterval(timer);
+  }, [isClearMode, timeLeft]);
+
+  // Breathing animation effect
+  useEffect(() => {
+    let breathingTimer;
+    if (isClearMode) {
+      breathingTimer = setInterval(() => {
+        setIsBreathing(prev => !prev);
+      }, 4000); // 4 seconds inhale, 4 seconds exhale
+    }
+    return () => clearInterval(breathingTimer);
+  }, [isClearMode]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -77,46 +111,69 @@ function App() {
   }
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isClearMode ? 'clear-mode' : ''}`}>
       <div className="header">
         <h1>🧠 MindMute</h1>
         <p>Turn overthinking into clear next steps.</p>
       </div>
 
-      <div className="chat-container">
-        <div className="messages">
-          {messages.map((message, index) => (
-            <div key={index} className={`message ${message.role}`}>
-              {renderMessage(message)}
-            </div>
-          ))}
-          {isLoading && (
-            <div className="message assistant">
-              <div className="loading">
-                <div className="dot"></div>
-                <div className="dot"></div>
-                <div className="dot"></div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <form onSubmit={handleSubmit} className="input-form">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Share your thought spiral..."
-            rows={4}
-            disabled={isLoading}
-          />
-          <button
-            type="submit"
-            disabled={isLoading || !input.trim()}
+      {isClearMode ? (
+        <div className="clear-mode-container">
+          <div className={`breathing-circle ${isBreathing ? 'inhale' : 'exhale'}`}>
+            <div className="timer">{formatTime(timeLeft)}</div>
+          </div>
+          <button 
+            className="exit-clear-mode"
+            onClick={() => setIsClearMode(false)}
           >
-            {isLoading ? "Processing..." : "Clear My Mind"}
+            Exit Clear Mode
           </button>
-        </form>
-      </div>
+        </div>
+      ) : (
+        <div className="chat-container">
+          <div className="messages">
+            {messages.map((message, index) => (
+              <div key={index} className={`message ${message.role}`}>
+                {renderMessage(message)}
+              </div>
+            ))}
+            {isLoading && (
+              <div className="message assistant">
+                <div className="loading">
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <form onSubmit={handleSubmit} className="input-form">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Share your thought spiral..."
+              rows={4}
+              disabled={isLoading}
+            />
+            <div className="button-group">
+              <button
+                type="submit"
+                disabled={isLoading || !input.trim()}
+              >
+                {isLoading ? "Processing..." : "Clear My Mind"}
+              </button>
+              <button
+                type="button"
+                className="clear-mode-button"
+                onClick={() => setIsClearMode(true)}
+              >
+                Enter Clear Mode
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   )
 }

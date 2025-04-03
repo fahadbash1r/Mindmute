@@ -48,6 +48,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: background-color 0.3s ease;
 }
 
 .header {
@@ -194,4 +195,70 @@ button:disabled {
 @keyframes bounce {
   0%, 80%, 100% { transform: scale(0); }
   40% { transform: scale(1); }
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.clear-mode-button {
+  background: #2a2a2a;
+  border: 1px solid #646cff;
+}
+
+.clear-mode-button:hover:not(:disabled) {
+  background: #3a3a3a;
+}
+
+.clear-mode {
+  background: #1a1a1a;
+}
+
+.clear-mode-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.breathing-circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: #646cff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 4s ease-in-out;
+}
+
+.breathing-circle.inhale {
+  transform: scale(1.2);
+  background: #535bf2;
+}
+
+.breathing-circle.exhale {
+  transform: scale(1);
+  background: #646cff;
+}
+
+.timer {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.exit-clear-mode {
+  background: #2a2a2a;
+  border: 1px solid #646cff;
+  padding: 0.8rem 2rem;
+}
+
+.exit-clear-mode:hover {
+  background: #3a3a3a;
 }
