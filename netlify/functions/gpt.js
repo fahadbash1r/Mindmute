@@ -77,14 +77,24 @@ exports.handler = async function(event, context) {
 
     // Debug: Log the request configuration (without the API key)
     const requestConfig = {
-      model: "gpt-3.5-turbo",
+      model: 'gpt-3.5-turbo',
       messages: [
         {
-          role: "user",
+          role: 'system',
+          content: `You're an AI trained in cognitive behavioral coaching. When a user shares a mental spiral or indecision, respond with:
+1. A summary of what they're really saying
+2. A reframed version that offers clarity or a new perspective
+3. A pros/cons list if it's a decision
+4. One simple next step they can take today
+
+Keep the tone friendly and non-judgmental. Format your response with clear sections using markdown headers (##) for each part.`
+        },
+        {
+          role: 'user',
           content: body.input
         }
       ],
-      max_tokens: 100,
+      max_tokens: 500
     };
     console.log('Request configuration:', requestConfig);
 
