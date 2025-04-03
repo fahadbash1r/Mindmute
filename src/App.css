@@ -88,8 +88,8 @@ main {
 }
 
 .theme-toggle {
-  background: none;
-  border: none;
+  background: var(--box-bg);
+  border: 1px solid var(--box-border);
   color: inherit;
   font-size: 1.5rem;
   cursor: pointer;
@@ -97,6 +97,12 @@ main {
   display: flex;
   align-items: center;
   margin-top: -0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--input-bg);
 }
 
 .light .theme-toggle {
@@ -221,6 +227,16 @@ main {
   margin-bottom: 0.75rem;
   line-height: 1.4;
   font-size: 0.95rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.response-box ol li:before {
+  content: "•";
+  position: absolute;
+  left: 0.5rem;
+  color: #8b5cf6;
+  font-size: 1.2rem;
 }
 
 .pie-chart-section {

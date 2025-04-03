@@ -5,9 +5,9 @@ function PriorityBars({ data }) {
   // Helper function to get motivational message
   const getMotivation = (task) => {
     const motivations = {
-      'Practice self-compassion': 'Being kind to yourself creates space for growth and resilience',
-      'Reflect on accomplishments': 'Every small win builds the foundation for bigger achievements',
-      'Set realistic goals': 'Breaking down big goals into manageable steps leads to sustainable progress'
+      'Practice self-compassion': 'Remember, treating yourself with kindness is the foundation of personal growth. You deserve the same compassion you give to others.',
+      'Reflect on accomplishments': 'Each step forward, no matter how small, is progress. Your journey is unique, and every achievement counts.',
+      'Set realistic goals': 'The path to success is built one step at a time. Breaking down big dreams into manageable goals makes the impossible possible.'
     }
     return motivations[task] || 'Take it one step at a time'
   }
@@ -383,7 +383,7 @@ function App() {
             messages.map((thought, index) => (
               <div key={index} className="old-thought">
                 <h3>{thought.question}</h3>
-                <p>{thought.summary}</p>
+                <p>{thought.reframe}</p>
               </div>
             ))
           ) : (
