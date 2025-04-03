@@ -3,17 +3,19 @@ import './App.css'
 
 function App() {
   const [input, setInput] = useState("")
-  const [output, setOutput] = useState("")
+  const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleClick = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     if (!input.trim()) {
-      setOutput("Please enter some text first.");
       return;
     }
 
+    // Add user message to chat
+    setMessages(prev => [...prev, { role: 'user', content: input.trim() }])
     setIsLoading(true)
-    setOutput("")
+    setInput("")
     
     try {
       console.log("Sending request to function...")
@@ -27,10 +29,7 @@ function App() {
       })
 
       console.log("Response status:", res.status)
-      console.log("Response headers:", Object.fromEntries(res.headers.entries()))
-      
       const data = await res.json()
-      console.log("Response data:", data)
       
       if (!res.ok) {
         throw new Error(data.error || `HTTP error! status: ${res.status}`)
@@ -40,50 +39,83 @@ function App() {
         throw new Error(data.error || "Something went wrong")
       }
       
-      setOutput(data.clarity || "No response received")
+      // Add AI response to chat
+      setMessages(prev => [...prev, { role: 'assistant', content: data.clarity }])
     } catch (err) {
       console.error("Error details:", err)
-      setOutput(`Error: ${err.message}`)
+      setMessages(prev => [...prev, { role: 'error', content: `Error: ${err.message}` }])
     } finally {
       setIsLoading(false)
     }
   }
 
+  const renderMessage = (message) => {
+    if (message.role === 'error') {
+      return <div className="error-message">{message.content}</div>
+    }
+
+    if (message.role === 'user') {
+      return <div className="user-message">{message.content}</div>
+    }
+
+    // Split the assistant's message into sections based on markdown headers
+    const sections = message.content.split(/(?=## )/g)
+    return (
+      <div className="assistant-message">
+        {sections.map((section, index) => {
+          const title = section.match(/## (.*?)\n/)?.[1]
+          const content = section.replace(/## .*?\n/, '').trim()
+          return (
+            <div key={index} className="message-section">
+              <h3>{title}</h3>
+              <div className="section-content">{content}</div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
-    <div style={{ textAlign: "center", padding: "2rem", color: "#fff" }}>
-      <h1>🧠 MindMute</h1>
-      <p>Turn overthinking into clear next steps.</p>
+    <div className="app-container">
+      <div className="header">
+        <h1>🧠 MindMute</h1>
+        <p>Turn overthinking into clear next steps.</p>
+      </div>
 
-      <input
-        type="text"
-        placeholder="Type your thought spiral..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        style={{
-          padding: "0.5rem",
-          fontSize: "1rem",
-          width: "300px",
-          marginRight: "1rem",
-        }}
-      />
-      <button
-        onClick={handleClick}
-        disabled={isLoading || !input.trim()}
-        style={{
-          padding: "0.5rem 1rem",
-          backgroundColor: "#000",
-          color: "#fff",
-          border: "none",
-          cursor: isLoading || !input.trim() ? "not-allowed" : "pointer",
-          opacity: isLoading || !input.trim() ? 0.7 : 1,
-        }}
-      >
-        {isLoading ? "Processing..." : "Clear My Mind"}
-      </button>
+      <div className="chat-container">
+        <div className="messages">
+          {messages.map((message, index) => (
+            <div key={index} className={`message ${message.role}`}>
+              {renderMessage(message)}
+            </div>
+          ))}
+          {isLoading && (
+            <div className="message assistant">
+              <div className="loading">
+                <div className="dot"></div>
+                <div className="dot"></div>
+                <div className="dot"></div>
+              </div>
+            </div>
+          )}
+        </div>
 
-      <div style={{ marginTop: "2rem" }}>
-        <h2>Clarity:</h2>
-        <p>{output}</p>
+        <form onSubmit={handleSubmit} className="input-form">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Share your thought spiral..."
+            rows={4}
+            disabled={isLoading}
+          />
+          <button
+            type="submit"
+            disabled={isLoading || !input.trim()}
+          >
+            {isLoading ? "Processing..." : "Clear My Mind"}
+          </button>
+        </form>
       </div>
     </div>
   )
