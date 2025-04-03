@@ -137,6 +137,7 @@ main {
   border-radius: 12px;
   background: var(--box-bg);
   border: 1px solid var(--box-border);
+  position: relative;
 }
 
 .emotion-slider {
@@ -210,10 +211,16 @@ main {
 }
 
 .response-box ol {
-  list-style-type: decimal;
-  padding-left: 1.5rem;
+  list-style-type: none;
+  padding-left: 0;
   margin: 0;
   text-align: left;
+}
+
+.response-box ol li {
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+  font-size: 0.95rem;
 }
 
 .pie-chart-section {
@@ -262,7 +269,8 @@ main {
   background: #8b5cf6;
   color: white;
   border: none;
-  padding: 0.75rem 2rem;
+  padding: 0.75rem 2.5rem;
+  margin: 0 1rem;
   border-radius: 20px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -555,6 +563,28 @@ main {
   justify-content: space-between;
   margin-bottom: 0.5rem;
   color: var(--text-primary);
+}
+
+.emotion-label {
+  position: absolute;
+  top: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--box-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  border: 1px solid var(--box-border);
+  white-space: nowrap;
+}
+
+.priority-motivation {
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 @media (max-width: 1200px) {

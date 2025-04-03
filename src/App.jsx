@@ -2,6 +2,16 @@ import { useState } from 'react'
 import './App.css'
 
 function PriorityBars({ data }) {
+  // Helper function to get motivational message
+  const getMotivation = (task) => {
+    const motivations = {
+      'Practice self-compassion': 'Being kind to yourself creates space for growth and resilience',
+      'Reflect on accomplishments': 'Every small win builds the foundation for bigger achievements',
+      'Set realistic goals': 'Breaking down big goals into manageable steps leads to sustainable progress'
+    }
+    return motivations[task] || 'Take it one step at a time'
+  }
+
   if (!data || data.length === 0) {
     return (
       <div className="priorities-section">
@@ -30,9 +40,10 @@ function PriorityBars({ data }) {
                   width: `${item.percentage}%`,
                   '--bar-color': item.color
                 }}
-              >
-                {item.label}
-              </div>
+              />
+            </div>
+            <div className="priority-motivation">
+              {getMotivation(item.label)}
             </div>
           </div>
         ))}
@@ -43,15 +54,28 @@ function PriorityBars({ data }) {
 
 function EmotionSlider() {
   const [emotion, setEmotion] = useState(50)
+  const [moodLabel, setMoodLabel] = useState('Moderately Happy')
   
   const handleChange = (e) => {
     const value = parseInt(e.target.value)
     setEmotion(value)
+    
+    // Update mood label based on value
+    if (value <= 25) {
+      setMoodLabel('Taking a moment to acknowledge feelings')
+    } else if (value <= 50) {
+      setMoodLabel('Finding balance in the journey')
+    } else if (value <= 75) {
+      setMoodLabel('Building positive momentum')
+    } else {
+      setMoodLabel('Embracing joy and optimism')
+    }
   }
   
   return (
     <div className="emotion-section">
       <h3>How are you feeling?</h3>
+      <div className="emotion-label">{moodLabel}</div>
       <div className="emotion-slider">
         <span>😔</span>
         <div className="slider-track">
