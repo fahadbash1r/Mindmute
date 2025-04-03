@@ -2,6 +2,17 @@ import { useState } from 'react'
 import './App.css'
 
 function PieChart({ data }) {
+  if (!data || data.length === 0) {
+    return (
+      <div className="pie-chart-container">
+        <h3>What to prioritise first...</h3>
+        <div className="pie-chart-empty">
+          Share your thoughts to see a breakdown
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <div className="pie-chart-container">
       <h3>What to prioritise first...</h3>
@@ -40,12 +51,18 @@ function ThoughtCabinet({ oldThoughts }) {
   return (
     <div className="thought-cabinet">
       <h2>Thought Cabinet</h2>
-      {oldThoughts.map((thought, index) => (
-        <div key={index} className="old-thought">
-          <h3>{thought.question}</h3>
-          <p>{thought.summary}</p>
+      {oldThoughts && oldThoughts.length > 0 ? (
+        oldThoughts.map((thought, index) => (
+          <div key={index} className="old-thought">
+            <h3>{thought.question}</h3>
+            <p>{thought.summary}</p>
+          </div>
+        ))
+      ) : (
+        <div className="empty-state">
+          No previous thoughts yet. Share your first thought to get started!
         </div>
-      ))}
+      )}
       <div className="mindful-quote">
         <h3>Mindful Quote of the Day</h3>
         <p>"Your thoughts shape your reality, choose them wisely."</p>
@@ -59,19 +76,23 @@ function ResponseBox({ summary, reframe, todoList }) {
     <div className="response-box">
       <div className="response-section summary">
         <h3>Summary</h3>
-        <p>{summary}</p>
+        <p>{summary || "Share your thoughts to see a summary"}</p>
       </div>
       <div className="response-section reframe">
         <h3>Reframe</h3>
-        <p>{reframe}</p>
+        <p>{reframe || "Your reframed perspective will appear here"}</p>
       </div>
       <div className="response-section todo">
         <h3>To Do List</h3>
-        <ul>
-          {todoList.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+        {todoList && todoList.length > 0 ? (
+          <ul>
+            {todoList.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>Action items will appear here after sharing your thoughts</p>
+        )}
       </div>
     </div>
   )
@@ -81,23 +102,7 @@ function App() {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-
-  const pieData = [
-    { percentage: 62.5, color: '#8B5CF6', label: 'Item 1', start: 0 },
-    { percentage: 25, color: '#7C3AED', label: 'Item 2', start: 62.5 },
-    { percentage: 12.5, color: '#6D28D9', label: 'Item 3', start: 87.5 }
-  ]
-
-  const oldThoughts = [
-    {
-      question: "Previous thought...",
-      summary: "Summary of the whole box from the last question asked"
-    },
-    {
-      question: "Another thought...",
-      summary: "Summary of another previous interaction"
-    }
-  ]
+  const [pieData, setPieData] = useState([])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -128,6 +133,11 @@ function App() {
     }
   }
 
+  const handleClear = () => {
+    setInput("")
+    setPieData([])
+  }
+
   return (
     <div className="app-container">
       <header>
@@ -152,33 +162,38 @@ function App() {
         <div className="center-section">
           <EmotionSlider />
           <div className="question-box">
-            <input
-              type="text"
+            <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Share your thought..."
               className="question-input"
+              rows={4}
             />
           </div>
           <ResponseBox 
-            summary="Your summary will appear here"
-            reframe="Reframing will appear here"
-            todoList={["Your to-do items will appear here"]}
+            summary=""
+            reframe=""
+            todoList={[]}
           />
           <div className="action-buttons">
             <button 
               className="share-btn"
               onClick={handleSubmit}
-              disabled={isLoading}
+              disabled={isLoading || !input.trim()}
             >
-              share thoughts
+              Share Thoughts
             </button>
-            <button className="clear-btn">Clear mind...</button>
+            <button 
+              className="clear-btn"
+              onClick={handleClear}
+            >
+              Clear Mind
+            </button>
           </div>
         </div>
 
         <div className="right-section">
-          <ThoughtCabinet oldThoughts={oldThoughts} />
+          <ThoughtCabinet oldThoughts={messages} />
         </div>
       </main>
     </div>
