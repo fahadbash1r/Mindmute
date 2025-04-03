@@ -42,13 +42,12 @@
 }
 
 .app-container {
-  max-width: 800px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  transition: background-color 0.3s ease;
 }
 
 .header {
@@ -66,6 +65,35 @@
   color: #888;
 }
 
+.main-content {
+  display: flex;
+  gap: 2rem;
+  flex: 1;
+}
+
+.left-spiral,
+.right-spiral {
+  width: 300px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.spiral-tracker {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spiral-canvas {
+  max-width: 100%;
+  height: auto;
+}
+
 .chat-container {
   flex: 1;
   display: flex;
@@ -73,6 +101,7 @@
   background: #1a1a1a;
   border-radius: 12px;
   overflow: hidden;
+  min-width: 0;
 }
 
 .messages {
@@ -162,6 +191,7 @@ button {
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 
 button:hover:not(:disabled) {
@@ -197,68 +227,19 @@ button:disabled {
   40% { transform: scale(1); }
 }
 
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
+@media (max-width: 1200px) {
+  .main-content {
+    flex-direction: column;
+  }
 
-.clear-mode-button {
-  background: #2a2a2a;
-  border: 1px solid #646cff;
-}
+  .left-spiral,
+  .right-spiral {
+    width: 100%;
+    height: 200px;
+  }
 
-.clear-mode-button:hover:not(:disabled) {
-  background: #3a3a3a;
-}
-
-.clear-mode {
-  background: #1a1a1a;
-}
-
-.clear-mode-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem;
-}
-
-.breathing-circle {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: #646cff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 4s ease-in-out;
-}
-
-.breathing-circle.inhale {
-  transform: scale(1.2);
-  background: #535bf2;
-}
-
-.breathing-circle.exhale {
-  transform: scale(1);
-  background: #646cff;
-}
-
-.timer {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: white;
-}
-
-.exit-clear-mode {
-  background: #2a2a2a;
-  border: 1px solid #646cff;
-  padding: 0.8rem 2rem;
-}
-
-.exit-clear-mode:hover {
-  background: #3a3a3a;
+  .spiral-canvas {
+    width: 100%;
+    height: 200px;
+  }
 }
