@@ -39,10 +39,15 @@ function PieChart({ data }) {
 
 function EmotionSlider() {
   return (
-    <div className="emotion-slider">
-      <span role="img" aria-label="sad">😢</span>
-      <input type="range" min="1" max="100" defaultValue="50" />
-      <span role="img" aria-label="happy">😊</span>
+    <div className="emotion-section">
+      <h3>How are you feeling?</h3>
+      <div className="emotion-slider">
+        <span>😔</span>
+        <div className="slider-track">
+          <div className="slider-thumb" style={{ left: '50%' }} />
+        </div>
+        <span>😊</span>
+      </div>
     </div>
   )
 }
@@ -71,18 +76,20 @@ function ThoughtCabinet({ oldThoughts }) {
   )
 }
 
-function ResponseBox({ summary, reframe, todoList }) {
+function ResponseSection({ summary, reframe, todoList, isVisible }) {
+  if (!isVisible) return null;
+  
   return (
-    <div className="response-box">
-      <div className="response-section summary">
+    <div className="response-section">
+      <div className="response-box">
         <h3>Summary</h3>
-        <p>{summary || "Share your thoughts to see a summary"}</p>
+        <p>{summary || "Processing your thoughts..."}</p>
       </div>
-      <div className="response-section reframe">
+      <div className="response-box">
         <h3>Reframe</h3>
-        <p>{reframe || "Your reframed perspective will appear here"}</p>
+        <p>{reframe || "Creating a new perspective..."}</p>
       </div>
-      <div className="response-section todo">
+      <div className="response-box">
         <h3>To Do List</h3>
         {todoList && todoList.length > 0 ? (
           <ul>
@@ -91,9 +98,32 @@ function ResponseBox({ summary, reframe, todoList }) {
             ))}
           </ul>
         ) : (
-          <p>Action items will appear here after sharing your thoughts</p>
+          <p>Generating action items...</p>
         )}
       </div>
+    </div>
+  )
+}
+
+function PieChartSection({ data, isVisible }) {
+  if (!isVisible) return null;
+
+  return (
+    <div className="pie-chart-section visible">
+      <h3>What to prioritise first...</h3>
+      {data && data.length > 0 ? (
+        <div className="pie-chart">
+          {data.map((item, index) => (
+            <div key={index} className="pie-segment">
+              {item.label} ({item.percentage}%)
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="pie-chart-empty">
+          Analyzing your priorities...
+        </div>
+      )}
     </div>
   )
 }
@@ -103,12 +133,14 @@ function App() {
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [pieData, setPieData] = useState([])
+  const [showResults, setShowResults] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!input.trim()) return
     
     setIsLoading(true)
+    setShowResults(true)
     try {
       const res = await fetch("/.netlify/functions/gpt", {
         method: "POST",
@@ -125,9 +157,11 @@ function App() {
         question: input,
         response: data.clarity
       }])
+      // TODO: Update pieData based on API response
       setInput("")
     } catch (err) {
       console.error("Error:", err)
+      setShowResults(false)
     } finally {
       setIsLoading(false)
     }
@@ -135,6 +169,7 @@ function App() {
 
   const handleClear = () => {
     setInput("")
+    setShowResults(false)
     setPieData([])
   }
 
@@ -155,25 +190,15 @@ function App() {
       </header>
 
       <main>
-        <div className="left-section">
-          <PieChart data={pieData} />
-        </div>
-
-        <div className="center-section">
-          <EmotionSlider />
-          <div className="question-box">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Share your thought..."
-              className="question-input"
-              rows={4}
-            />
-          </div>
-          <ResponseBox 
-            summary=""
-            reframe=""
-            todoList={[]}
+        <EmotionSlider />
+        
+        <div className="thought-input-section">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Share your thought..."
+            className="question-input"
+            rows={4}
           />
           <div className="action-buttons">
             <button 
@@ -192,8 +217,36 @@ function App() {
           </div>
         </div>
 
-        <div className="right-section">
-          <ThoughtCabinet oldThoughts={messages} />
+        <ResponseSection 
+          summary=""
+          reframe=""
+          todoList={[]}
+          isVisible={showResults}
+        />
+
+        <PieChartSection 
+          data={pieData}
+          isVisible={showResults}
+        />
+
+        <div className="thought-cabinet">
+          <h2>Thought Cabinet</h2>
+          {messages && messages.length > 0 ? (
+            messages.map((thought, index) => (
+              <div key={index} className="old-thought">
+                <h3>{thought.question}</h3>
+                <p>{thought.response}</p>
+              </div>
+            ))
+          ) : (
+            <div className="empty-state">
+              No previous thoughts yet. Share your first thought to get started!
+            </div>
+          )}
+          <div className="mindful-quote">
+            <h3>Mindful Quote of the Day</h3>
+            <p>"Your thoughts shape your reality, choose them wisely."</p>
+          </div>
         </div>
       </main>
     </div>
