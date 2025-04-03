@@ -4,12 +4,28 @@ import './App.css'
 function PriorityBars({ data }) {
   // Helper function to get motivational message
   const getMotivation = (task) => {
-    const motivations = {
-      'Practice self-compassion': 'Remember, treating yourself with kindness is the foundation of personal growth. You deserve the same compassion you give to others.',
-      'Reflect on accomplishments': 'Each step forward, no matter how small, is progress. Your journey is unique, and every achievement counts.',
-      'Set realistic goals': 'The path to success is built one step at a time. Breaking down big dreams into manageable goals makes the impossible possible.'
-    }
-    return motivations[task] || 'Take it one step at a time'
+    // Create a map of task keywords to motivational messages
+    const motivationMap = {
+      'review': "Taking time to review shows wisdom. Your adaptability is your strength!",
+      'adapt': "Change brings opportunity. You're already on the path to improvement!",
+      'feedback': "Seeking guidance is a sign of strength. The right answers will come!",
+      'advice': "Reaching out shows courage. You're taking positive steps forward!",
+      'break': "Rest is essential for clarity. You'll return stronger and more focused!",
+      'recharge': "Taking care of yourself is productive. Your energy will be renewed!",
+      'reflect': "Looking back helps us move forward. You're gaining valuable insights!",
+      'self': "Being kind to yourself is powerful. You're building inner strength!",
+      'goals': "Small steps lead to big changes. You're creating a better path!",
+      'practice': "Practice builds confidence. You're developing stronger habits!"
+    };
+
+    // Find matching keywords in the task
+    const taskLower = task.toLowerCase();
+    const matchingMessage = Object.entries(motivationMap).find(([key]) => 
+      taskLower.includes(key)
+    );
+
+    // Return the matching message or a default encouraging message
+    return matchingMessage ? matchingMessage[1] : "You've got this! Every step counts toward your goal!";
   }
 
   if (!data || data.length === 0) {
