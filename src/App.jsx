@@ -1,137 +1,186 @@
 import { useState } from 'react'
 import './App.css'
-import SpiralTracker from './components/SpiralTracker'
+
+function PieChart({ data }) {
+  return (
+    <div className="pie-chart-container">
+      <h3>What to prioritise first...</h3>
+      <div className="pie-chart">
+        {data.map((item, index) => (
+          <div 
+            key={index}
+            className="pie-segment"
+            style={{
+              '--percentage': item.percentage,
+              '--color': item.color,
+              '--start': item.start
+            }}
+          >
+            <div className="pie-label">
+              {item.label} ({item.percentage}%)
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function EmotionSlider() {
+  return (
+    <div className="emotion-slider">
+      <span role="img" aria-label="sad">😢</span>
+      <input type="range" min="1" max="100" defaultValue="50" />
+      <span role="img" aria-label="happy">😊</span>
+    </div>
+  )
+}
+
+function ThoughtCabinet({ oldThoughts }) {
+  return (
+    <div className="thought-cabinet">
+      <h2>Thought Cabinet</h2>
+      {oldThoughts.map((thought, index) => (
+        <div key={index} className="old-thought">
+          <h3>{thought.question}</h3>
+          <p>{thought.summary}</p>
+        </div>
+      ))}
+      <div className="mindful-quote">
+        <h3>Mindful Quote of the Day</h3>
+        <p>"Your thoughts shape your reality, choose them wisely."</p>
+      </div>
+    </div>
+  )
+}
+
+function ResponseBox({ summary, reframe, todoList }) {
+  return (
+    <div className="response-box">
+      <div className="response-section summary">
+        <h3>Summary</h3>
+        <p>{summary}</p>
+      </div>
+      <div className="response-section reframe">
+        <h3>Reframe</h3>
+        <p>{reframe}</p>
+      </div>
+      <div className="response-section todo">
+        <h3>To Do List</h3>
+        <ul>
+          {todoList.map((item, index) => (
+            <li key={index}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}
 
 function App() {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [thoughts, setThoughts] = useState([])
+
+  const pieData = [
+    { percentage: 62.5, color: '#8B5CF6', label: 'Item 1', start: 0 },
+    { percentage: 25, color: '#7C3AED', label: 'Item 2', start: 62.5 },
+    { percentage: 12.5, color: '#6D28D9', label: 'Item 3', start: 87.5 }
+  ]
+
+  const oldThoughts = [
+    {
+      question: "Previous thought...",
+      summary: "Summary of the whole box from the last question asked"
+    },
+    {
+      question: "Another thought...",
+      summary: "Summary of another previous interaction"
+    }
+  ]
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!input.trim()) {
-      return;
-    }
-
-    // Add thought to spiral
-    setThoughts(prev => [...prev, input.trim()])
-
-    // Add user message to chat
-    setMessages(prev => [...prev, { role: 'user', content: input.trim() }])
-    setIsLoading(true)
-    setInput("")
+    if (!input.trim()) return
     
+    setIsLoading(true)
     try {
-      console.log("Sending request to function...")
       const res = await fetch("/.netlify/functions/gpt", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json",
         },
         body: JSON.stringify({ input: input.trim() }),
       })
-
-      console.log("Response status:", res.status)
+      
       const data = await res.json()
+      if (!res.ok) throw new Error(data.error || `HTTP error! status: ${res.status}`)
       
-      if (!res.ok) {
-        throw new Error(data.error || `HTTP error! status: ${res.status}`)
-      }
-      
-      if (!data.success) {
-        throw new Error(data.error || "Something went wrong")
-      }
-      
-      // Add AI response to chat
-      setMessages(prev => [...prev, { role: 'assistant', content: data.clarity }])
+      setMessages(prev => [...prev, {
+        question: input,
+        response: data.clarity
+      }])
+      setInput("")
     } catch (err) {
-      console.error("Error details:", err)
-      setMessages(prev => [...prev, { role: 'error', content: `Error: ${err.message}` }])
+      console.error("Error:", err)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const renderMessage = (message) => {
-    if (message.role === 'error') {
-      return <div className="error-message">{message.content}</div>
-    }
-
-    if (message.role === 'user') {
-      return <div className="user-message">{message.content}</div>
-    }
-
-    // Split the assistant's message into sections based on markdown headers
-    const sections = message.content.split(/(?=## )/g)
-    return (
-      <div className="assistant-message">
-        {sections.map((section, index) => {
-          const title = section.match(/## (.*?)\n/)?.[1]
-          const content = section.replace(/## .*?\n/, '').trim()
-          return (
-            <div key={index} className="message-section">
-              <h3>{title}</h3>
-              <div className="section-content">{content}</div>
-            </div>
-          )
-        })}
-      </div>
-    )
-  }
-
   return (
     <div className="app-container">
-      <div className="header">
-        <h1>🧠 MindMute</h1>
-        <p>Turn overthinking into clear next steps.</p>
-      </div>
+      <header>
+        <div className="token-info">
+          <button className="upgrade-btn">upgrade</button>
+          <p>1 Free Token A Day to ask and express thoughts</p>
+        </div>
+        <div className="logo">
+          <h1>🧠 MINDMUTE</h1>
+          <p>turn overthinking into clear next steps</p>
+        </div>
+        <div className="auth-buttons">
+          <button className="sign-up-btn">sign up</button>
+        </div>
+      </header>
 
-      <div className="main-content">
-        <div className="left-spiral">
-          <SpiralTracker thoughts={thoughts.slice(0, Math.ceil(thoughts.length / 2))} />
+      <main>
+        <div className="left-section">
+          <PieChart data={pieData} />
         </div>
 
-        <div className="chat-container">
-          <div className="messages">
-            {messages.map((message, index) => (
-              <div key={index} className={`message ${message.role}`}>
-                {renderMessage(message)}
-              </div>
-            ))}
-            {isLoading && (
-              <div className="message assistant">
-                <div className="loading">
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <form onSubmit={handleSubmit} className="input-form">
-            <textarea
+        <div className="center-section">
+          <EmotionSlider />
+          <div className="question-box">
+            <input
+              type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Share your thought spiral..."
-              rows={4}
-              disabled={isLoading}
+              placeholder="Share your thought..."
+              className="question-input"
             />
-            <button
-              type="submit"
-              disabled={isLoading || !input.trim()}
+          </div>
+          <ResponseBox 
+            summary="Your summary will appear here"
+            reframe="Reframing will appear here"
+            todoList={["Your to-do items will appear here"]}
+          />
+          <div className="action-buttons">
+            <button 
+              className="share-btn"
+              onClick={handleSubmit}
+              disabled={isLoading}
             >
-              {isLoading ? "Processing..." : "Clear My Mind"}
+              share thoughts
             </button>
-          </form>
+            <button className="clear-btn">Clear mind...</button>
+          </div>
         </div>
 
-        <div className="right-spiral">
-          <SpiralTracker thoughts={thoughts.slice(Math.ceil(thoughts.length / 2))} />
+        <div className="right-section">
+          <ThoughtCabinet oldThoughts={oldThoughts} />
         </div>
-      </div>
+      </main>
     </div>
   )
 }
