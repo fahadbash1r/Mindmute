@@ -129,27 +129,57 @@ function PieChartSection({ data, isVisible }) {
       {data && data.length > 0 ? (
         <div className="pie-chart">
           {data.map((item, index) => {
-            const rotation = item.start;
-            const degrees = (item.percentage / 100) * 360;
+            const startAngle = (item.start * Math.PI * 2) / 360;
+            const endAngle = ((item.start + item.percentage / 100 * 360) * Math.PI * 2) / 360;
+            
+            // Calculate SVG path for pie segment
+            const x1 = 150 + Math.cos(startAngle) * 150;
+            const y1 = 150 + Math.sin(startAngle) * 150;
+            const x2 = 150 + Math.cos(endAngle) * 150;
+            const y2 = 150 + Math.sin(endAngle) * 150;
+            
+            const largeArc = item.percentage > 50 ? 1 : 0;
+            
+            const path = `
+              M 150 150
+              L ${x1} ${y1}
+              A 150 150 0 ${largeArc} 1 ${x2} ${y2}
+              Z
+            `;
             
             return (
-              <div 
+              <svg
                 key={index}
-                className="pie-segment"
+                viewBox="0 0 300 300"
                 style={{
-                  background: item.color,
-                  transform: `rotate(${rotation}deg)`,
-                  clipPath: `polygon(50% 50%, 50% 0%, ${degrees <= 180 ? 
-                    `${50 + 50 * Math.sin(Math.PI * degrees / 180)}% ${50 - 50 * Math.cos(Math.PI * degrees / 180)}%` : 
-                    '100% 0%, 100% 100%, 0% 100%, 0% 0%'
-                  })`
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
                 }}
               >
-                <div className="pie-label">
-                  {item.label}<br />
-                  {Math.round(item.percentage)}%
-                </div>
-              </div>
+                <path
+                  d={path}
+                  fill={item.color}
+                  stroke="var(--box-border)"
+                  strokeWidth="1"
+                />
+                <g transform={`rotate(${item.start + item.percentage/2})`}>
+                  <foreignObject
+                    x="50%"
+                    y="50%"
+                    width="120"
+                    height="60"
+                    style={{
+                      transform: 'translate(-60px, -30px)',
+                    }}
+                  >
+                    <div className="pie-label">
+                      {item.label}<br />
+                      {Math.round(item.percentage)}%
+                    </div>
+                  </foreignObject>
+                </g>
+              </svg>
             );
           })}
         </div>
