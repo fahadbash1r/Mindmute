@@ -1,40 +1,44 @@
 import { useState } from 'react'
 import './App.css'
 
-function PieChart({ data }) {
+function PriorityBars({ data }) {
   if (!data || data.length === 0) {
     return (
-      <div className="pie-chart-container">
+      <div className="priorities-section">
         <h3>What to prioritise first...</h3>
         <div className="pie-chart-empty">
-          Share your thoughts to see a breakdown
+          Share your thoughts to see priorities
         </div>
       </div>
-    )
+    );
   }
-  
+
   return (
-    <div className="pie-chart-container">
+    <div className="priorities-section">
       <h3>What to prioritise first...</h3>
-      <div className="pie-chart">
+      <div className="priority-bars">
         {data.map((item, index) => (
-          <div 
-            key={index}
-            className="pie-segment"
-            style={{
-              '--percentage': item.percentage,
-              '--color': item.color,
-              '--start': item.start
-            }}
-          >
-            <div className="pie-label">
-              {item.label} ({item.percentage}%)
+          <div key={index}>
+            <div className="priority-label">
+              <span>{item.label}</span>
+              <span>{Math.round(item.percentage)}%</span>
+            </div>
+            <div className="priority-bar">
+              <div 
+                className="priority-bar-fill" 
+                style={{
+                  width: `${item.percentage}%`,
+                  '--bar-color': item.color
+                }}
+              >
+                {item.label}
+              </div>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function EmotionSlider() {
@@ -59,7 +63,13 @@ function EmotionSlider() {
             onChange={handleChange}
             className="slider-input"
           />
-          <div className="slider-thumb" style={{ left: `${emotion}%` }} />
+          <div 
+            className="slider-thumb" 
+            style={{ 
+              left: `${emotion}%`,
+              cursor: 'pointer'
+            }} 
+          />
         </div>
         <span>😊</span>
       </div>
@@ -306,7 +316,7 @@ function App() {
       <main>
         <EmotionSlider />
         
-        <div className="thought-input-section box">
+        <div className="thought-input-section">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -338,12 +348,12 @@ function App() {
           isVisible={showResults}
         />
 
-        <PieChartSection 
+        <PriorityBars 
           data={pieData}
           isVisible={showResults && pieData.length > 0}
         />
 
-        <div className="thought-cabinet box">
+        <div className="thought-cabinet">
           <h2>Thought Cabinet</h2>
           {messages && messages.length > 0 ? (
             messages.map((thought, index) => (
