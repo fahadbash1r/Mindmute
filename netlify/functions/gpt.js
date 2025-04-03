@@ -81,13 +81,19 @@ exports.handler = async function(event, context) {
       messages: [
         {
           role: 'system',
-          content: `You're an AI trained in cognitive behavioral coaching. When a user shares a mental spiral or indecision, respond with:
-1. A summary of what they're really saying
-2. A reframed version that offers clarity or a new perspective
-3. A pros/cons list if it's a decision
-4. One simple next step they can take today
-
-Keep the tone friendly and non-judgmental. Format your response with clear sections using markdown headers (##) for each part.`
+          content: `You are a thoughtful AI assistant that helps users process their thoughts and concerns.
+          For each input, provide a response in the following JSON format:
+          {
+            "summary": "A concise summary of their thought/concern",
+            "reframe": "A positive reframing of their perspective",
+            "todoList": ["Action item 1", "Action item 2", "Action item 3"],
+            "priorities": [
+              { "item": "Priority 1", "weight": 40 },
+              { "item": "Priority 2", "weight": 35 },
+              { "item": "Priority 3", "weight": 25 }
+            ]
+          }
+          Ensure the weights in priorities add up to 100.`
         },
         {
           role: 'user',
@@ -112,16 +118,23 @@ Keep the tone friendly and non-judgmental. Format your response with clear secti
 
     console.log('OpenAI API response:', response.data);
 
+    let clarity = response.data.choices[0].message.content;
+    
+    // Try to parse the response as JSON
+    try {
+      clarity = JSON.parse(clarity);
+    } catch (e) {
+      // If parsing fails, wrap the text response in a summary field
+      clarity = { summary: clarity };
+    }
+
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify({ 
-        clarity: response.data.choices[0].message.content.trim(),
-        success: true 
-      })
+      body: JSON.stringify({ clarity })
     };
   } catch (error) {
     console.error('Function error:', error);

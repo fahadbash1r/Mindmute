@@ -38,13 +38,23 @@ function PieChart({ data }) {
 }
 
 function EmotionSlider() {
+  const [emotion, setEmotion] = useState(50)
+  
   return (
     <div className="emotion-section">
       <h3>How are you feeling?</h3>
       <div className="emotion-slider">
         <span>😔</span>
         <div className="slider-track">
-          <div className="slider-thumb" style={{ left: '50%' }} />
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={emotion}
+            onChange={(e) => setEmotion(e.target.value)}
+            className="slider-input"
+          />
+          <div className="slider-thumb" style={{ left: `${emotion}%` }} />
         </div>
         <span>😊</span>
       </div>
@@ -134,6 +144,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [pieData, setPieData] = useState([])
   const [showResults, setShowResults] = useState(false)
+  const [currentResponse, setCurrentResponse] = useState({
+    summary: "",
+    reframe: "",
+    todoList: [],
+    priorities: []
+  })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -153,11 +169,41 @@ function App() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || `HTTP error! status: ${res.status}`)
       
+      // Parse the response and update the UI
+      const response = data.clarity
+      setCurrentResponse({
+        summary: response.summary || response,
+        reframe: response.reframe || "Here's a new perspective on your thoughts...",
+        todoList: response.todoList || [],
+        priorities: response.priorities || []
+      })
+
+      // Update pie chart data if priorities are provided
+      if (response.priorities && response.priorities.length > 0) {
+        const total = response.priorities.reduce((acc, curr) => acc + curr.weight, 0)
+        let startPercentage = 0
+        
+        const chartData = response.priorities.map(priority => {
+          const percentage = (priority.weight / total) * 100
+          const data = {
+            label: priority.item,
+            percentage,
+            color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+            start: startPercentage
+          }
+          startPercentage += percentage
+          return data
+        })
+        setPieData(chartData)
+      }
+
       setMessages(prev => [...prev, {
         question: input,
-        response: data.clarity
+        summary: response.summary || response,
+        reframe: response.reframe || "Here's a new perspective on your thoughts...",
+        todoList: response.todoList || []
       }])
-      // TODO: Update pieData based on API response
+      
       setInput("")
     } catch (err) {
       console.error("Error:", err)
@@ -171,6 +217,12 @@ function App() {
     setInput("")
     setShowResults(false)
     setPieData([])
+    setCurrentResponse({
+      summary: "",
+      reframe: "",
+      todoList: [],
+      priorities: []
+    })
   }
 
   return (
@@ -206,7 +258,7 @@ function App() {
               onClick={handleSubmit}
               disabled={isLoading || !input.trim()}
             >
-              Share Thoughts
+              {isLoading ? "Processing..." : "Share Thoughts"}
             </button>
             <button 
               className="clear-btn"
@@ -218,15 +270,15 @@ function App() {
         </div>
 
         <ResponseSection 
-          summary=""
-          reframe=""
-          todoList={[]}
+          summary={currentResponse.summary}
+          reframe={currentResponse.reframe}
+          todoList={currentResponse.todoList}
           isVisible={showResults}
         />
 
         <PieChartSection 
           data={pieData}
-          isVisible={showResults}
+          isVisible={showResults && pieData.length > 0}
         />
 
         <div className="thought-cabinet">
@@ -235,7 +287,7 @@ function App() {
             messages.map((thought, index) => (
               <div key={index} className="old-thought">
                 <h3>{thought.question}</h3>
-                <p>{thought.response}</p>
+                <p>{thought.summary}</p>
               </div>
             ))
           ) : (
