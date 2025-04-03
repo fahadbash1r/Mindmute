@@ -40,6 +40,11 @@ function PieChart({ data }) {
 function EmotionSlider() {
   const [emotion, setEmotion] = useState(50)
   
+  const handleChange = (e) => {
+    const value = parseInt(e.target.value)
+    setEmotion(value)
+  }
+  
   return (
     <div className="emotion-section">
       <h3>How are you feeling?</h3>
@@ -51,7 +56,7 @@ function EmotionSlider() {
             min="0"
             max="100"
             value={emotion}
-            onChange={(e) => setEmotion(e.target.value)}
+            onChange={handleChange}
             className="slider-input"
           />
           <div className="slider-thumb" style={{ left: `${emotion}%` }} />
@@ -102,11 +107,11 @@ function ResponseSection({ summary, reframe, todoList, isVisible }) {
       <div className="response-box">
         <h3>To Do List</h3>
         {todoList && todoList.length > 0 ? (
-          <ul>
+          <ol>
             {todoList.map((item, index) => (
               <li key={index}>{item}</li>
             ))}
-          </ul>
+          </ol>
         ) : (
           <p>Generating action items...</p>
         )}
@@ -119,15 +124,34 @@ function PieChartSection({ data, isVisible }) {
   if (!isVisible) return null;
 
   return (
-    <div className="pie-chart-section visible">
+    <div className="pie-chart-section">
       <h3>What to prioritise first...</h3>
       {data && data.length > 0 ? (
         <div className="pie-chart">
-          {data.map((item, index) => (
-            <div key={index} className="pie-segment">
-              {item.label} ({item.percentage}%)
-            </div>
-          ))}
+          {data.map((item, index) => {
+            const rotation = item.start;
+            const degrees = (item.percentage / 100) * 360;
+            
+            return (
+              <div 
+                key={index}
+                className="pie-segment"
+                style={{
+                  background: item.color,
+                  transform: `rotate(${rotation}deg)`,
+                  clipPath: `polygon(50% 50%, 50% 0%, ${degrees <= 180 ? 
+                    `${50 + 50 * Math.sin(Math.PI * degrees / 180)}% ${50 - 50 * Math.cos(Math.PI * degrees / 180)}%` : 
+                    '100% 0%, 100% 100%, 0% 100%, 0% 0%'
+                  })`
+                }}
+              >
+                <div className="pie-label">
+                  {item.label}<br />
+                  {Math.round(item.percentage)}%
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="pie-chart-empty">
@@ -144,12 +168,17 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [pieData, setPieData] = useState([])
   const [showResults, setShowResults] = useState(false)
+  const [theme, setTheme] = useState('dark')
   const [currentResponse, setCurrentResponse] = useState({
     summary: "",
     reframe: "",
     todoList: [],
     priorities: []
   })
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -181,7 +210,7 @@ function App() {
       // Update pie chart data if priorities are provided
       if (response.priorities && response.priorities.length > 0) {
         const total = response.priorities.reduce((acc, curr) => acc + curr.weight, 0)
-        let startPercentage = 0
+        let startAngle = 0
         
         const chartData = response.priorities.map(priority => {
           const percentage = (priority.weight / total) * 100
@@ -189,9 +218,9 @@ function App() {
             label: priority.item,
             percentage,
             color: `hsl(${Math.random() * 360}, 70%, 50%)`,
-            start: startPercentage
+            start: startAngle
           }
-          startPercentage += percentage
+          startAngle += (percentage / 100) * 360
           return data
         })
         setPieData(chartData)
@@ -226,7 +255,7 @@ function App() {
   }
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${theme}`}>
       <header>
         <div className="token-info">
           <button className="upgrade-btn">upgrade</button>
@@ -237,6 +266,9 @@ function App() {
           <p>turn overthinking into clear next steps</p>
         </div>
         <div className="auth-buttons">
+          <button className="theme-toggle" onClick={toggleTheme}>
+            {theme === 'dark' ? '🌞' : '🌙'}
+          </button>
           <button className="sign-up-btn">sign up</button>
         </div>
       </header>
@@ -244,7 +276,7 @@ function App() {
       <main>
         <EmotionSlider />
         
-        <div className="thought-input-section">
+        <div className="thought-input-section box">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -281,7 +313,7 @@ function App() {
           isVisible={showResults && pieData.length > 0}
         />
 
-        <div className="thought-cabinet">
+        <div className="thought-cabinet box">
           <h2>Thought Cabinet</h2>
           {messages && messages.length > 0 ? (
             messages.map((thought, index) => (
