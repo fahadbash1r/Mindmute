@@ -74,15 +74,20 @@ exports.handler = async function(event, context) {
 
     // Debug: Log the request configuration (without the API key)
     const requestConfig = {
-      model: "text-davinci-003",
-      prompt: body.input,
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "user",
+          content: body.input
+        }
+      ],
       max_tokens: 100,
     };
     console.log('Request configuration:', requestConfig);
 
     // Make the OpenAI API request
     const response = await axios.post(
-      'https://api.openai.com/v1/completions',
+      'https://api.openai.com/v1/chat/completions',
       requestConfig,
       {
         headers: {
@@ -101,7 +106,7 @@ exports.handler = async function(event, context) {
         'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({ 
-        clarity: response.data.choices[0].text.trim(),
+        clarity: response.data.choices[0].message.content.trim(),
         success: true 
       })
     };
