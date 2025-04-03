@@ -25,6 +25,9 @@ exports.handler = async function(event, context) {
     throw new Error('OPENAI_API_KEY environment variable is not set');
   }
   
+  // Log the first 10 characters of the API key for debugging
+  console.log('API Key prefix:', apiKey.substring(0, 10));
+  console.log('API Key length:', apiKey.length);
   if (!apiKey.startsWith('sk-')) {
     throw new Error('OPENAI_API_KEY must start with "sk-"');
   }
