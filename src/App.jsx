@@ -256,6 +256,20 @@ function App() {
     priorities: []
   })
 
+  // Predefined distinct colors for priority bars
+  const priorityColors = [
+    '#8b5cf6', // Purple
+    '#06b6d4', // Cyan
+    '#10b981', // Emerald
+    '#f59e0b', // Amber
+    '#ef4444', // Red
+    '#ec4899', // Pink
+    '#6366f1', // Indigo
+    '#84cc16', // Lime
+    '#14b8a6', // Teal
+    '#f97316'  // Orange
+  ]
+
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark')
   }
@@ -292,12 +306,12 @@ function App() {
         const total = response.priorities.reduce((acc, curr) => acc + curr.weight, 0)
         let startAngle = 0
         
-        const chartData = response.priorities.map(priority => {
+        const chartData = response.priorities.map((priority, index) => {
           const percentage = (priority.weight / total) * 100
           const data = {
             label: priority.item,
             percentage,
-            color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+            color: priorityColors[index % priorityColors.length], // Use predefined colors cyclically
             start: startAngle
           }
           startAngle += (percentage / 100) * 360
