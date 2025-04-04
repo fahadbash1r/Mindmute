@@ -596,22 +596,6 @@ main {
 @media (max-width: 768px) {
   header {
     padding: 1rem;
-    position: relative;
-  }
-
-  .menu-button {
-    display: block;
-    background: none;
-    border: none;
-    color: inherit;
-    font-size: 1.75rem;
-    padding: 0.5rem;
-    cursor: pointer;
-    z-index: 1001;
-  }
-
-  .logo {
-    margin: 0 auto;
   }
 
   .logo h1 {
@@ -620,6 +604,29 @@ main {
 
   .logo p {
     font-size: 0.9rem;
+  }
+
+  .upgrade-btn, .sign-up-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .emotion-section {
+    padding: 2rem 1rem;
+    margin: 1rem 0;
+  }
+
+  .emotion-label {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .emotion-slider {
+    padding: 1.5rem 0;
+  }
+
+  .emotion-slider span {
+    font-size: 1.5rem;
   }
 
   .token-info, .auth-buttons {
@@ -652,38 +659,6 @@ main {
 
   main {
     padding: 1rem;
-  }
-
-  .emotion-section {
-    padding: 3rem 1rem 1.5rem;
-    margin: 2rem 0;
-  }
-
-  .emotion-section h2 {
-    margin: 0 0 1.5rem;
-    text-align: center;
-  }
-
-  .emotion-label {
-    top: 1rem;
-    font-size: 1.1rem;
-    padding: 0.5rem 1rem;
-    background: var(--box-bg);
-    z-index: 20;
-  }
-
-  .thought-input {
-    width: 100%;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-  }
-
-  .share-btn, .clear-btn {
-    width: 100%;
   }
 
   .response-section {
@@ -743,4 +718,9 @@ main {
   .box, .emotion-section, .thought-input-section, .priorities-section, .thought-cabinet {
     padding: 2rem;
   }
+}
+
+/* Remove all sidebar-related styles */
+.menu-button, .sidebar-menu, .sidebar-overlay {
+  display: none !important;
 }

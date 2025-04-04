@@ -90,30 +90,27 @@ function EmotionSlider() {
   
   return (
     <div className="emotion-section">
-      <h2>How are you feeling?</h2>
+      <div className="emotion-label">{moodLabel}</div>
       <div className="emotion-slider">
-        <div className="emotion-label">{moodLabel}</div>
-        <div className="slider-container">
-          <span role="img" aria-label="sad">😔</span>
-          <div className="slider-track">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={emotion}
-              onChange={handleChange}
-              className="slider-input"
-            />
-            <div 
-              className="slider-thumb" 
-              style={{ 
-                left: `${emotion}%`,
-                cursor: 'pointer'
-              }} 
-            />
-          </div>
-          <span role="img" aria-label="happy">😊</span>
+        <span role="img" aria-label="sad">😔</span>
+        <div className="slider-track">
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={emotion}
+            onChange={handleChange}
+            className="slider-input"
+          />
+          <div 
+            className="slider-thumb" 
+            style={{ 
+              left: `${emotion}%`,
+              cursor: 'pointer'
+            }} 
+          />
         </div>
+        <span role="img" aria-label="happy">😊</span>
       </div>
     </div>
   )
@@ -245,18 +242,8 @@ function PieChartSection({ data, isVisible }) {
 }
 
 function Header({ theme, toggleTheme }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <header>
-      <button className="menu-button" onClick={toggleSidebar}>
-        <span className="material-icons">menu</span>
-      </button>
-      
       <div className="token-info">
         <button className="upgrade-btn">upgrade</button>
       </div>
@@ -271,36 +258,10 @@ function Header({ theme, toggleTheme }) {
 
       <div className="auth-buttons">
         <button className="mode-switcher" onClick={toggleTheme}>
-          <span className="material-icons">
-            {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-          </span>
+          {theme === 'dark' ? '🌞' : '🌙'}
         </button>
         <button className="sign-up-btn">sign up</button>
       </div>
-
-      {/* Sidebar Menu */}
-      <div className={`sidebar-menu ${isSidebarOpen ? 'show' : ''}`}>
-        <div className="sidebar-header">
-          <button className="menu-button" onClick={toggleSidebar}>
-            <span className="material-icons">close</span>
-          </button>
-        </div>
-        <div className="auth-buttons">
-          <button className="upgrade-btn">upgrade</button>
-          <button className="sign-up-btn">sign up</button>
-          <button className="mode-switcher" onClick={toggleTheme}>
-            <span className="material-icons">
-              {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {/* Overlay */}
-      <div 
-        className={`sidebar-overlay ${isSidebarOpen ? 'show' : ''}`}
-        onClick={toggleSidebar}
-      />
     </header>
   );
 }
