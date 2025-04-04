@@ -281,19 +281,23 @@ function ThoughtInput({ onSubmit }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: thought }),
+        body: JSON.stringify({ input: thought.trim() }),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Network response was not ok');
       }
 
       const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
       onSubmit(data);
       setThought('');
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to process your thought. Please try again.');
+      alert(error.message || 'Failed to process your thought. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -310,6 +314,7 @@ function ThoughtInput({ onSubmit }) {
         onChange={(e) => setThought(e.target.value)}
         placeholder="Share your thought..."
         className="thought-input"
+        style={{ maxHeight: '200px' }}
       />
       <div className="button-group">
         <button 

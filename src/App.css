@@ -362,6 +362,7 @@ main {
 .thought-input {
   width: 100%;
   min-height: 120px;
+  max-height: 200px;
   padding: 1rem;
   background: var(--box-bg);
   border: 2px solid #8b5cf6;
@@ -371,6 +372,7 @@ main {
   resize: vertical;
   margin-bottom: 1rem;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .button-group {
@@ -668,6 +670,17 @@ main {
 
   .thought-input {
     min-height: 100px;
+    max-height: 150px;
+    font-size: 0.95rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .thought-input-section {
+    width: calc(100% - 1rem);
+    margin: 1rem 0.5rem;
+    padding: 0.75rem;
+    box-sizing: border-box;
   }
 
   .button-group {
