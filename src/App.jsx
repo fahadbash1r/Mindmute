@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 
 function PriorityBars({ data }) {
@@ -142,32 +142,66 @@ function ThoughtCabinet({ oldThoughts }) {
 }
 
 function ResponseSection({ summary, reframe, todoList, isVisible }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const responseRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (responseRef.current) {
+        const scrollPosition = responseRef.current.scrollLeft;
+        const width = responseRef.current.offsetWidth;
+        const newIndex = Math.round(scrollPosition / width);
+        setActiveIndex(newIndex);
+      }
+    };
+
+    const element = responseRef.current;
+    if (element) {
+      element.addEventListener('scroll', handleScroll);
+      return () => element.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
   if (!isVisible) return null;
   
+  const responses = [
+    { title: 'Summary', content: summary || "Processing your thoughts..." },
+    { title: 'Reframe', content: reframe || "Creating a new perspective..." },
+    { title: 'To Do List', content: todoList && todoList.length > 0 ? (
+      <ol>
+        {todoList.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ol>
+    ) : "Generating action items..." }
+  ];
+
   return (
-    <div className="response-section">
-      <div className="response-box">
-        <h3>Summary</h3>
-        <p>{summary || "Processing your thoughts..."}</p>
+    <>
+      <div className="response-section" ref={responseRef}>
+        {responses.map((response, index) => (
+          <div key={index} className="response-box">
+            <h3>{response.title}</h3>
+            {typeof response.content === 'string' ? (
+              <p>{response.content}</p>
+            ) : (
+              response.content
+            )}
+          </div>
+        ))}
+        <div className="swipe-arrow left">←</div>
+        <div className="swipe-arrow right">→</div>
       </div>
-      <div className="response-box">
-        <h3>Reframe</h3>
-        <p>{reframe || "Creating a new perspective..."}</p>
+      <div className="swipe-indicator">
+        {responses.map((_, index) => (
+          <div 
+            key={index} 
+            className={`swipe-dot ${index === activeIndex ? 'active' : ''}`}
+          />
+        ))}
       </div>
-      <div className="response-box">
-        <h3>To Do List</h3>
-        {todoList && todoList.length > 0 ? (
-          <ol>
-            {todoList.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ol>
-        ) : (
-          <p>Generating action items...</p>
-        )}
-      </div>
-    </div>
-  )
+    </>
+  );
 }
 
 function PieChartSection({ data, isVisible }) {
