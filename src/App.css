@@ -60,12 +60,13 @@
 
 header {
   width: 100%;
-  padding: 2rem 6rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 2rem;
-  border-bottom: 1px solid #8b5cf6;
   background: var(--bg);
 }
 
@@ -107,9 +108,7 @@ header {
 
 .auth-buttons {
   justify-self: end;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+  padding-right: 2rem;
 }
 
 .upgrade-btn, .sign-up-btn {
@@ -175,11 +174,11 @@ main {
 .emotion-section {
   position: relative;
   background: var(--box-bg);
-  border: 2px solid #8b5cf6;
   border-radius: 20px;
   padding: 2rem;
-  margin: 2rem 0;
+  margin: 2rem auto;
   width: 100%;
+  max-width: 1200px;
 }
 
 .emotion-label {
@@ -341,10 +340,11 @@ main {
 
 .thought-input-section {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
   border-radius: 12px;
   background: var(--box-bg);
-  border: 2px solid #8b5cf6;
 }
 
 .question-input {
@@ -388,6 +388,8 @@ main {
 
 .thought-cabinet {
   width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
   background: var(--box-bg);
   border: 2px solid #8b5cf6;
   border-radius: 12px;
@@ -548,6 +550,8 @@ main {
 /* Responsive Design */
 .priorities-section {
   width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
   padding: 2rem;
   background: var(--box-bg);
   border: 2px solid #8b5cf6;
@@ -602,7 +606,7 @@ main {
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   header {
-    padding: 1rem 2rem;
+    padding: 1rem;
     grid-template-columns: auto 1fr auto;
     gap: 1rem;
   }
@@ -612,21 +616,23 @@ main {
   }
 
   .auth-buttons {
+    padding-right: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    justify-self: end;
   }
 
   .upgrade-btn {
     background: #8b5cf6;
     color: white;
+    padding: 0.5rem 1rem;
   }
 
   .sign-up-btn {
     background: transparent;
     color: var(--text-primary);
     border: 2px solid #8b5cf6;
+    padding: 0.5rem 1rem;
   }
 
   .token-info {
@@ -634,6 +640,7 @@ main {
   }
 
   .emotion-section {
+    margin: 2rem 1rem;
     padding: 3rem 1rem 1.5rem;
   }
 
@@ -644,6 +651,17 @@ main {
     text-align: center;
     width: auto;
     max-width: 90%;
+  }
+
+  .thought-input-section {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+
+  .priorities-section,
+  .thought-cabinet {
+    margin: 2rem 1rem;
+    width: calc(100% - 2rem);
   }
 }
 

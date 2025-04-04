@@ -267,6 +267,29 @@ function Header({ theme, toggleTheme }) {
   );
 }
 
+function ThoughtInput() {
+  const [thought, setThought] = useState('')
+
+  const handleSubmit = () => {
+    // Handle thought submission
+  }
+
+  return (
+    <div className="thought-input-section">
+      <textarea
+        value={thought}
+        onChange={(e) => setThought(e.target.value)}
+        placeholder="Share your thought..."
+        className="thought-input"
+      />
+      <div className="button-group">
+        <button onClick={handleSubmit} className="share-btn">Share Thoughts</button>
+        <button className="clear-btn">Clear Mind</button>
+      </div>
+    </div>
+  )
+}
+
 function App() {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState([])
@@ -379,30 +402,7 @@ function App() {
       <main>
         <EmotionSlider />
         
-        <div className="thought-input-section">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Share your thought..."
-            className="question-input"
-            rows={4}
-          />
-          <div className="action-buttons">
-            <button 
-              className="share-btn"
-              onClick={handleSubmit}
-              disabled={isLoading || !input.trim()}
-            >
-              {isLoading ? "Processing..." : "Share Thoughts"}
-            </button>
-            <button 
-              className="clear-btn"
-              onClick={handleClear}
-            >
-              Clear Mind
-            </button>
-          </div>
-        </div>
+        <ThoughtInput />
 
         <ResponseSection 
           summary={currentResponse.summary}
