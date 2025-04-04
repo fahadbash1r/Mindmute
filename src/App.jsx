@@ -242,6 +242,37 @@ function PieChartSection({ data, isVisible }) {
   )
 }
 
+function Header({ theme, toggleTheme }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  return (
+    <header>
+      <button className="menu-button" onClick={toggleMenu}>
+        ☰
+      </button>
+      <div className={`dropdown-menu ${isMenuOpen ? 'show' : ''}`}>
+        <button onClick={toggleTheme}>
+          {theme === 'dark' ? '🌞 Light Mode' : '🌙 Dark Mode'}
+        </button>
+        <button>
+          ⭐️ Upgrade
+        </button>
+        <button>
+          👤 Sign Up
+        </button>
+      </div>
+      <div className="logo">
+        <h1>🧠 MINDMUTE</h1>
+        <p>turn overthinking into clear next steps</p>
+      </div>
+    </header>
+  )
+}
+
 function App() {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState([])
@@ -350,23 +381,7 @@ function App() {
 
   return (
     <div className={`app-container ${theme}`}>
-      <header>
-        <div className="token-info">
-          <button className="upgrade-btn">upgrade</button>
-          <p>1 Free Token A Day to ask and express thoughts</p>
-        </div>
-        <div className="logo">
-          <h1>🧠 MINDMUTE</h1>
-          <p>turn overthinking into clear next steps</p>
-        </div>
-        <div className="auth-buttons">
-          <button className="theme-toggle" onClick={toggleTheme}>
-            {theme === 'dark' ? '🌞' : '🌙'}
-          </button>
-          <button className="sign-up-btn">sign up</button>
-        </div>
-      </header>
-
+      <Header theme={theme} toggleTheme={toggleTheme} />
       <main>
         <EmotionSlider />
         
