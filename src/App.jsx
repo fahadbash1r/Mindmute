@@ -70,7 +70,7 @@ function PriorityBars({ data }) {
 
 function EmotionSlider() {
   const [emotion, setEmotion] = useState(50)
-  const [moodLabel, setMoodLabel] = useState('Moderately Happy')
+  const [moodLabel, setMoodLabel] = useState('Finding balance in the journey')
   
   const handleChange = (e) => {
     const value = parseInt(e.target.value)
@@ -90,28 +90,30 @@ function EmotionSlider() {
   
   return (
     <div className="emotion-section">
-      <h3>How are you feeling?</h3>
-      <div className="emotion-label">{moodLabel}</div>
+      <h2>How are you feeling?</h2>
       <div className="emotion-slider">
-        <span>😔</span>
-        <div className="slider-track">
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={emotion}
-            onChange={handleChange}
-            className="slider-input"
-          />
-          <div 
-            className="slider-thumb" 
-            style={{ 
-              left: `${emotion}%`,
-              cursor: 'pointer'
-            }} 
-          />
+        <div className="emotion-label">{moodLabel}</div>
+        <div className="slider-container">
+          <span role="img" aria-label="sad">😔</span>
+          <div className="slider-track">
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={emotion}
+              onChange={handleChange}
+              className="slider-input"
+            />
+            <div 
+              className="slider-thumb" 
+              style={{ 
+                left: `${emotion}%`,
+                cursor: 'pointer'
+              }} 
+            />
+          </div>
+          <span role="img" aria-label="happy">😊</span>
         </div>
-        <span>😊</span>
       </div>
     </div>
   )
@@ -243,34 +245,64 @@ function PieChartSection({ data, isVisible }) {
 }
 
 function Header({ theme, toggleTheme }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
     <header>
-      <button className="menu-button" onClick={toggleMenu}>
-        ☰
+      <button className="menu-button" onClick={toggleSidebar}>
+        <span className="material-icons">menu</span>
       </button>
-      <div className={`dropdown-menu ${isMenuOpen ? 'show' : ''}`}>
-        <button onClick={toggleTheme}>
-          {theme === 'dark' ? '🌞 Light Mode' : '🌙 Dark Mode'}
-        </button>
-        <button>
-          ⭐️ Upgrade
-        </button>
-        <button>
-          👤 Sign Up
-        </button>
+      
+      <div className="token-info">
+        <button className="upgrade-btn">upgrade</button>
       </div>
+
       <div className="logo">
-        <h1>🧠 MINDMUTE</h1>
+        <h1>
+          <span role="img" aria-label="brain">🧠</span>
+          MINDMUTE
+        </h1>
         <p>turn overthinking into clear next steps</p>
       </div>
+
+      <div className="auth-buttons">
+        <button className="mode-switcher" onClick={toggleTheme}>
+          <span className="material-icons">
+            {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+          </span>
+        </button>
+        <button className="sign-up-btn">sign up</button>
+      </div>
+
+      {/* Sidebar Menu */}
+      <div className={`sidebar-menu ${isSidebarOpen ? 'show' : ''}`}>
+        <div className="sidebar-header">
+          <button className="menu-button" onClick={toggleSidebar}>
+            <span className="material-icons">close</span>
+          </button>
+        </div>
+        <div className="auth-buttons">
+          <button className="upgrade-btn">upgrade</button>
+          <button className="sign-up-btn">sign up</button>
+          <button className="mode-switcher" onClick={toggleTheme}>
+            <span className="material-icons">
+              {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Overlay */}
+      <div 
+        className={`sidebar-overlay ${isSidebarOpen ? 'show' : ''}`}
+        onClick={toggleSidebar}
+      />
     </header>
-  )
+  );
 }
 
 function App() {
