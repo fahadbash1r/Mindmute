@@ -162,6 +162,19 @@ function ResponseSection({ summary, reframe, todoList, isVisible }) {
     }
   }, []);
 
+  const handleArrowClick = (direction) => {
+    if (responseRef.current) {
+      const width = responseRef.current.offsetWidth;
+      const newPosition = direction === 'left' 
+        ? responseRef.current.scrollLeft - width
+        : responseRef.current.scrollLeft + width;
+      responseRef.current.scrollTo({
+        left: newPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   if (!isVisible) return null;
   
   const responses = [
@@ -189,8 +202,12 @@ function ResponseSection({ summary, reframe, todoList, isVisible }) {
             )}
           </div>
         ))}
-        <div className="swipe-arrow left">←</div>
-        <div className="swipe-arrow right">→</div>
+        {activeIndex > 0 && (
+          <div className="swipe-arrow left" onClick={() => handleArrowClick('left')}>←</div>
+        )}
+        {activeIndex < responses.length - 1 && (
+          <div className="swipe-arrow right" onClick={() => handleArrowClick('right')}>→</div>
+        )}
       </div>
       <div className="swipe-indicator">
         {responses.map((_, index) => (
