@@ -90,7 +90,8 @@ function EmotionSlider() {
   
   return (
     <div className="emotion-section">
-      <div className="emotion-label">{moodLabel}</div>
+      <div className="emotion-label">How are you feeling?</div>
+      <div className="mood-label">{moodLabel}</div>
       <div className="emotion-slider">
         <span role="img" aria-label="sad">😔</span>
         <div className="slider-track">

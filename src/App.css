@@ -60,12 +60,12 @@
 
 header {
   width: 100%;
-  padding: 2rem 4rem;
+  padding: 2rem 6rem;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 2rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #8b5cf6;
   background: var(--bg);
 }
 
@@ -175,7 +175,7 @@ main {
 .emotion-section {
   position: relative;
   background: var(--box-bg);
-  border: 1px solid var(--box-border);
+  border: 2px solid #8b5cf6;
   border-radius: 20px;
   padding: 2rem;
   margin: 2rem 0;
@@ -192,9 +192,16 @@ main {
   border-radius: 20px;
   font-size: 0.95rem;
   color: var(--text-primary);
-  border: 1px solid var(--box-border);
+  border: 2px solid #8b5cf6;
   white-space: nowrap;
   z-index: 10;
+}
+
+.mood-label {
+  text-align: center;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
 }
 
 .emotion-slider {
@@ -250,7 +257,7 @@ main {
   background: var(--box-bg);
   padding: 2rem;
   border-radius: 12px;
-  border: 1px solid var(--box-border);
+  border: 2px solid #8b5cf6;
   min-height: 200px;
 }
 
@@ -337,7 +344,7 @@ main {
   padding: 2rem;
   border-radius: 12px;
   background: var(--box-bg);
-  border: 1px solid var(--box-border);
+  border: 2px solid #8b5cf6;
 }
 
 .question-input {
@@ -382,7 +389,7 @@ main {
 .thought-cabinet {
   width: 100%;
   background: var(--box-bg);
-  border: 1px solid var(--box-border);
+  border: 2px solid #8b5cf6;
   border-radius: 12px;
   padding: 2rem;
 }
@@ -543,7 +550,7 @@ main {
   width: 100%;
   padding: 2rem;
   background: var(--box-bg);
-  border: 1px solid var(--box-border);
+  border: 2px solid #8b5cf6;
   border-radius: 12px;
 }
 
@@ -595,81 +602,48 @@ main {
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   header {
-    padding: 1rem;
+    padding: 1rem 2rem;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
   }
 
-  .logo h1 {
-    font-size: 1.75rem;
+  .logo {
+    justify-self: start;
   }
 
-  .logo p {
-    font-size: 0.9rem;
+  .auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-self: end;
   }
 
-  .upgrade-btn, .sign-up-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
+  .upgrade-btn {
+    background: #8b5cf6;
+    color: white;
+  }
+
+  .sign-up-btn {
+    background: transparent;
+    color: var(--text-primary);
+    border: 2px solid #8b5cf6;
+  }
+
+  .token-info {
+    display: none;
   }
 
   .emotion-section {
-    padding: 2rem 1rem;
-    margin: 1rem 0;
+    padding: 3rem 1rem 1.5rem;
   }
 
   .emotion-label {
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
-  }
-
-  .emotion-slider {
-    padding: 1.5rem 0;
-  }
-
-  .emotion-slider span {
-    font-size: 1.5rem;
-  }
-
-  .token-info, .auth-buttons {
-    display: none;
-  }
-
-  .sidebar-menu {
-    display: block;
-  }
-
-  .sidebar-menu .auth-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .sidebar-menu .upgrade-btn,
-  .sidebar-menu .sign-up-btn {
-    width: 100%;
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-
-  .sidebar-menu .mode-switcher {
-    margin-top: 1rem;
-    width: 100%;
-    justify-content: center;
-  }
-
-  main {
-    padding: 1rem;
-  }
-
-  .response-section {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-  }
-
-  .response-box {
-    width: 100%;
+    white-space: normal;
+    text-align: center;
+    width: auto;
+    max-width: 90%;
   }
 }
 
