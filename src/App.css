@@ -728,17 +728,27 @@ main {
   }
 
   .swipe-arrow {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    color: #8b5cf6;
-    font-size: 1.5rem;
-    opacity: 0.7;
-    z-index: 10;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 0.5rem;
+    color: white;
+    font-size: 2rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(139, 92, 246, 0.8);
     border-radius: 50%;
+    z-index: 10;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .swipe-arrow:hover {
+    background: rgba(139, 92, 246, 1);
+    transform: translateY(-50%) scale(1.1);
   }
 
   .swipe-arrow.left {
@@ -747,6 +757,17 @@ main {
 
   .swipe-arrow.right {
     right: 0.5rem;
+  }
+
+  /* Add a subtle animation to draw attention to the arrows */
+  @keyframes pulse {
+    0% { opacity: 0.8; transform: translateY(-50%) scale(1); }
+    50% { opacity: 1; transform: translateY(-50%) scale(1.1); }
+    100% { opacity: 0.8; transform: translateY(-50%) scale(1); }
+  }
+
+  .swipe-arrow {
+    animation: pulse 2s infinite;
   }
 
   .swipe-indicator {

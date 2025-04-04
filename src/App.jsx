@@ -203,10 +203,10 @@ function ResponseSection({ summary, reframe, todoList, isVisible }) {
           </div>
         ))}
         {activeIndex > 0 && (
-          <div className="swipe-arrow left" onClick={() => handleArrowClick('left')}>←</div>
+          <div className="swipe-arrow left" onClick={() => handleArrowClick('left')}>⟵</div>
         )}
         {activeIndex < responses.length - 1 && (
-          <div className="swipe-arrow right" onClick={() => handleArrowClick('right')}>→</div>
+          <div className="swipe-arrow right" onClick={() => handleArrowClick('right')}>⟶</div>
         )}
       </div>
       <div className="swipe-indicator">
