@@ -178,7 +178,7 @@ main {
   padding: 2rem;
   margin: 2rem auto;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
 }
 
 .emotion-label {
@@ -189,7 +189,8 @@ main {
   background: var(--box-bg);
   padding: 0.5rem 1.5rem;
   border-radius: 20px;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: var(--text-primary);
   border: 2px solid #8b5cf6;
   white-space: nowrap;
@@ -234,7 +235,7 @@ main {
 .slider-thumb {
   width: 20px;
   height: 20px;
-  background: var(--box-bg);
+  background: white;
   border: 2px solid #8b5cf6;
   border-radius: 50%;
   position: absolute;
@@ -340,25 +341,54 @@ main {
 
 .thought-input-section {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 12px;
   background: var(--box-bg);
 }
 
-.question-input {
+.thought-input {
   width: 100%;
+  min-height: 120px;
   padding: 1rem;
-  background: var(--input-bg);
-  border: 1px solid var(--box-border);
+  background: var(--box-bg);
+  border: 2px solid #8b5cf6;
   border-radius: 8px;
   color: var(--text-primary);
   font-size: 1rem;
-  min-height: 120px;
   resize: vertical;
-  font-family: inherit;
   margin-bottom: 1rem;
+  font-family: inherit;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.share-btn, .clear-btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.share-btn {
+  background: #8b5cf6;
+  color: white;
+  flex: 2;
+}
+
+.clear-btn {
+  background: transparent;
+  color: var(--text-primary);
+  border: 2px solid #8b5cf6;
+  flex: 1;
 }
 
 .response-box ul {
@@ -388,7 +418,7 @@ main {
 
 .thought-cabinet {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 2rem auto;
   background: var(--box-bg);
   border: 2px solid #8b5cf6;
@@ -400,40 +430,6 @@ main {
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
-}
-
-.share-btn, .clear-btn {
-  flex: 1;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.2s;
-}
-
-.share-btn {
-  background: #8b5cf6;
-  color: white;
-}
-
-.share-btn:hover {
-  background: #7c3aed;
-}
-
-.share-btn:disabled {
-  background: #4c4c4c;
-  cursor: not-allowed;
-}
-
-.clear-btn {
-  background: var(--input-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--box-border);
-}
-
-.clear-btn:hover {
-  background: var(--box-border);
 }
 
 .empty-state {
@@ -550,7 +546,7 @@ main {
 /* Responsive Design */
 .priorities-section {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 2rem auto;
   padding: 2rem;
   background: var(--box-bg);
@@ -640,12 +636,13 @@ main {
   }
 
   .emotion-section {
-    margin: 2rem 1rem;
+    margin: 2rem 0.5rem;
     padding: 3rem 1rem 1.5rem;
+    width: calc(100% - 1rem);
   }
 
   .emotion-label {
-    font-size: 0.9rem;
+    font-size: 1rem;
     padding: 0.5rem 1rem;
     white-space: normal;
     text-align: center;
@@ -654,14 +651,30 @@ main {
   }
 
   .thought-input-section {
-    margin: 1rem;
-    width: calc(100% - 2rem);
+    margin: 1rem 0.5rem;
+    width: calc(100% - 1rem);
+    padding: 1rem;
+  }
+
+  .thought-input {
+    min-height: 100px;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .share-btn, .clear-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
   }
 
   .priorities-section,
   .thought-cabinet {
-    margin: 2rem 1rem;
-    width: calc(100% - 2rem);
+    margin: 2rem 0.5rem;
+    width: calc(100% - 1rem);
+    padding: 1.5rem;
   }
 }
 
