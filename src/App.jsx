@@ -191,6 +191,7 @@ function ResponseSection({ summary, reframe, todoList, isVisible }) {
 
   return (
     <>
+      <div className="swipe-instruction">← Swipe to see more →</div>
       <div className="response-section" ref={responseRef}>
         {responses.map((response, index) => (
           <div key={index} className="response-box">
