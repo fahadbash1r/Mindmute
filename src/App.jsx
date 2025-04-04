@@ -293,7 +293,23 @@ function ThoughtInput({ onSubmit }) {
       if (data.error) {
         throw new Error(data.error);
       }
-      onSubmit(data);
+
+      // Extract the clarity object from the response
+      const clarity = data.clarity || data;
+      
+      // Format the response data
+      const formattedData = {
+        summary: clarity.summary || clarity,
+        reframe: clarity.reframe || "Here's a new perspective on your thoughts...",
+        todoList: clarity.todoList || [],
+        priorities: clarity.priorities ? clarity.priorities.map((priority, index) => ({
+          label: priority.item,
+          percentage: priority.weight,
+          color: getColorForIndex(index)
+        })) : []
+      };
+
+      onSubmit(formattedData);
       setThought('');
     } catch (error) {
       console.error('Error:', error);
@@ -301,6 +317,23 @@ function ThoughtInput({ onSubmit }) {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  // Helper function to get colors for priorities
+  const getColorForIndex = (index) => {
+    const colors = [
+      '#8b5cf6', // Purple
+      '#06b6d4', // Cyan
+      '#10b981', // Emerald
+      '#f59e0b', // Amber
+      '#ef4444', // Red
+      '#ec4899', // Pink
+      '#6366f1', // Indigo
+      '#84cc16', // Lime
+      '#14b8a6', // Teal
+      '#f97316'  // Orange
+    ];
+    return colors[index % colors.length];
   }
 
   const handleClear = () => {
@@ -341,6 +374,7 @@ function App() {
   const [oldThoughts, setOldThoughts] = useState([])
 
   const handleThoughtSubmit = (data) => {
+    console.log('Received response:', data); // Add this for debugging
     setResponse(data);
     if (data.summary) {
       setOldThoughts(prev => [{
