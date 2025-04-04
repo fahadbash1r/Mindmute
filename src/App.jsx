@@ -267,11 +267,40 @@ function Header({ theme, toggleTheme }) {
   );
 }
 
-function ThoughtInput() {
+function ThoughtInput({ onSubmit }) {
   const [thought, setThought] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = () => {
-    // Handle thought submission
+  const handleSubmit = async () => {
+    if (!thought.trim()) return;
+    
+    setIsLoading(true)
+    try {
+      const response = await fetch('/.netlify/functions/gpt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: thought }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      onSubmit(data);
+      setThought('');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to process your thought. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const handleClear = () => {
+    setThought('');
   }
 
   return (
@@ -283,117 +312,41 @@ function ThoughtInput() {
         className="thought-input"
       />
       <div className="button-group">
-        <button onClick={handleSubmit} className="share-btn">Share Thoughts</button>
-        <button className="clear-btn">Clear Mind</button>
+        <button 
+          onClick={handleSubmit} 
+          className="share-btn"
+          disabled={isLoading || !thought.trim()}
+        >
+          {isLoading ? "Processing..." : "Share Thoughts"}
+        </button>
+        <button 
+          onClick={handleClear}
+          className="clear-btn"
+        >
+          Clear Mind
+        </button>
       </div>
     </div>
   )
 }
 
 function App() {
-  const [input, setInput] = useState("")
-  const [messages, setMessages] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [pieData, setPieData] = useState([])
-  const [showResults, setShowResults] = useState(false)
   const [theme, setTheme] = useState('dark')
-  const [currentResponse, setCurrentResponse] = useState({
-    summary: "",
-    reframe: "",
-    todoList: [],
-    priorities: []
-  })
+  const [response, setResponse] = useState(null)
+  const [oldThoughts, setOldThoughts] = useState([])
 
-  // Predefined distinct colors for priority bars
-  const priorityColors = [
-    '#8b5cf6', // Purple
-    '#06b6d4', // Cyan
-    '#10b981', // Emerald
-    '#f59e0b', // Amber
-    '#ef4444', // Red
-    '#ec4899', // Pink
-    '#6366f1', // Indigo
-    '#84cc16', // Lime
-    '#14b8a6', // Teal
-    '#f97316'  // Orange
-  ]
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!input.trim()) return
-    
-    setIsLoading(true)
-    setShowResults(true)
-    try {
-      const res = await fetch("/.netlify/functions/gpt", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ input: input.trim() }),
-      })
-      
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || `HTTP error! status: ${res.status}`)
-      
-      // Parse the response and update the UI
-      const response = data.clarity
-      setCurrentResponse({
-        summary: response.summary || response,
-        reframe: response.reframe || "Here's a new perspective on your thoughts...",
-        todoList: response.todoList || [],
-        priorities: response.priorities || []
-      })
-
-      // Update pie chart data if priorities are provided
-      if (response.priorities && response.priorities.length > 0) {
-        const total = response.priorities.reduce((acc, curr) => acc + curr.weight, 0)
-        let startAngle = 0
-        
-        const chartData = response.priorities.map((priority, index) => {
-          const percentage = (priority.weight / total) * 100
-          const data = {
-            label: priority.item,
-            percentage,
-            color: priorityColors[index % priorityColors.length], // Use predefined colors cyclically
-            start: startAngle
-          }
-          startAngle += (percentage / 100) * 360
-          return data
-        })
-        setPieData(chartData)
-      }
-
-      setMessages(prev => [...prev, {
-        question: input,
-        summary: response.summary || response,
-        reframe: response.reframe || "Here's a new perspective on your thoughts...",
-        todoList: response.todoList || []
-      }])
-      
-      setInput("")
-    } catch (err) {
-      console.error("Error:", err)
-      setShowResults(false)
-    } finally {
-      setIsLoading(false)
+  const handleThoughtSubmit = (data) => {
+    setResponse(data);
+    if (data.summary) {
+      setOldThoughts(prev => [{
+        question: data.summary,
+        summary: data.reframe
+      }, ...prev]);
     }
   }
 
-  const handleClear = () => {
-    setInput("")
-    setShowResults(false)
-    setPieData([])
-    setCurrentResponse({
-      summary: "",
-      reframe: "",
-      todoList: [],
-      priorities: []
-    })
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
   }
 
   return (
@@ -401,40 +354,15 @@ function App() {
       <Header theme={theme} toggleTheme={toggleTheme} />
       <main>
         <EmotionSlider />
-        
-        <ThoughtInput />
-
+        <ThoughtInput onSubmit={handleThoughtSubmit} />
         <ResponseSection 
-          summary={currentResponse.summary}
-          reframe={currentResponse.reframe}
-          todoList={currentResponse.todoList}
-          isVisible={showResults}
+          summary={response?.summary}
+          reframe={response?.reframe}
+          todoList={response?.todoList}
+          isVisible={!!response}
         />
-
-        <PriorityBars 
-          data={pieData}
-          isVisible={showResults && pieData.length > 0}
-        />
-
-        <div className="thought-cabinet">
-          <h2>Thought Cabinet</h2>
-          {messages && messages.length > 0 ? (
-            messages.map((thought, index) => (
-              <div key={index} className="old-thought">
-                <h3>{thought.question}</h3>
-                <p>{thought.reframe}</p>
-              </div>
-            ))
-          ) : (
-            <div className="empty-state">
-              No previous thoughts yet. Share your first thought to get started!
-            </div>
-          )}
-          <div className="mindful-quote">
-            <h3>Mindful Quote of the Day</h3>
-            <p>"Your thoughts shape your reality, choose them wisely."</p>
-          </div>
-        </div>
+        <PriorityBars data={response?.priorities} />
+        <ThoughtCabinet oldThoughts={oldThoughts} />
       </main>
     </div>
   )

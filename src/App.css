@@ -1,7 +1,16 @@
+/* Base styles for html and body */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 #root {
   width: 100%;
   min-height: 100vh;
   background: inherit;
+  overflow-x: hidden;
 }
 
 .logo {
@@ -46,6 +55,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .app-container.light {
@@ -599,56 +610,47 @@ main {
   line-height: 1.4;
 }
 
-/* Mobile-specific styles */
+/* Update mobile styles */
 @media (max-width: 768px) {
   .app-container {
-    padding: 0 0.5rem;
+    padding: 0;
     width: 100%;
     overflow-x: hidden;
   }
 
   header {
     padding: 1rem;
-    grid-template-columns: auto 1fr auto;
-    gap: 1rem;
     width: 100%;
-    max-width: calc(100% - 1rem);
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  .auth-buttons {
+    padding-right: 0.5rem;
+  }
+
+  .emotion-section,
+  .thought-input-section,
+  .priorities-section,
+  .thought-cabinet {
+    width: calc(100% - 1rem);
+    margin: 1rem 0.5rem;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  .emotion-slider {
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .logo {
     justify-self: start;
   }
 
-  .auth-buttons {
-    padding-right: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .upgrade-btn {
-    background: #8b5cf6;
-    color: white;
-    padding: 0.5rem 1rem;
-  }
-
-  .sign-up-btn {
-    background: transparent;
-    color: var(--text-primary);
-    border: 2px solid #8b5cf6;
-    padding: 0.5rem 1rem;
-  }
-
   .token-info {
     display: none;
-  }
-
-  .emotion-section {
-    margin: 2rem auto;
-    padding: 3rem 1rem 1.5rem;
-    width: 100%;
-    max-width: calc(100% - 1rem);
   }
 
   .emotion-label {
@@ -664,13 +666,6 @@ main {
     margin: 1.25rem 0 1rem;
   }
 
-  .thought-input-section {
-    margin: 1rem auto;
-    width: 100%;
-    max-width: calc(100% - 1rem);
-    padding: 1rem;
-  }
-
   .thought-input {
     min-height: 100px;
   }
@@ -684,14 +679,6 @@ main {
   .share-btn, .clear-btn {
     width: 100%;
     padding: 0.75rem 1rem;
-  }
-
-  .priorities-section,
-  .thought-cabinet {
-    margin: 2rem auto;
-    width: 100%;
-    max-width: calc(100% - 1rem);
-    padding: 1.5rem;
   }
 }
 
