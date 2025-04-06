@@ -314,6 +314,7 @@ function Header({ theme, toggleTheme }) {
           {theme === 'dark' ? '🌞' : '🌙'}
         </button>
         <button className="sign-up-btn">sign up</button>
+        <a href="#" className="login-btn">Login</a>
       </div>
     </header>
   );
