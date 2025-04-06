@@ -675,7 +675,7 @@ main {
 
   .emotion-section {
     position: relative;
-    padding-top: 3.5rem;
+    padding-top: 4rem;
   }
 
   .emotion-label {
@@ -684,7 +684,7 @@ main {
     white-space: nowrap;
     text-align: center;
     width: auto;
-    top: 0.5rem;
+    top: 0.75rem;
   }
 
   .mood-label {
@@ -693,11 +693,11 @@ main {
     text-align: center;
     font-size: 0.9rem;
     margin: 0;
-    top: 2.5rem;
+    top: 3rem;
   }
 
   .emotion-slider {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
   }
 
   .response-section {
