@@ -82,6 +82,29 @@ header {
   position: relative;
 }
 
+.logo-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  width: auto;
+}
+
+.logo img {
+  max-height: 60px;
+  width: auto;
+  display: block;
+}
+
 .auth-buttons {
   display: flex;
   flex-direction: column;
@@ -123,23 +146,6 @@ header {
   align-items: center;
   justify-content: center;
   margin-left: auto;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0 auto;
-  width: auto;
-}
-
-.logo img {
-  max-height: 60px;
-  width: auto;
-  display: block;
 }
 
 .light-mode {
@@ -641,7 +647,7 @@ main {
     position: relative;
   }
 
-  .logo {
+  .logo-container {
     position: static;
     transform: none;
     margin-left: -1rem;
@@ -800,7 +806,7 @@ main {
 /* Small mobile screens */
 @media (max-width: 480px) {
   .mode-switcher {
-    right: 1.25rem;
+    right: 1rem;
     padding: 0.5rem;
   }
 
@@ -817,7 +823,7 @@ main {
     gap: 3rem;
   }
 
-  .logo {
+  .logo-container {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
