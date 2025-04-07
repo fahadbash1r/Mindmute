@@ -313,6 +313,7 @@ function Header({ theme, toggleTheme }) {
             alt="Mindmute"
             width="600"
             height="160"
+            loading="eager"
           />
         )}
         {/* Show light logo (white text) in dark mode */}
@@ -322,6 +323,7 @@ function Header({ theme, toggleTheme }) {
             alt="Mindmute"
             width="600"
             height="160"
+            loading="eager"
           />
         )}
       </div>

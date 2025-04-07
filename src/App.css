@@ -93,6 +93,9 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .logo img {
@@ -165,7 +168,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  margin-left: auto;
 }
 
 .menu-button {
@@ -649,6 +652,8 @@ main {
   }
 
   .logo {
+    position: static;
+    transform: none;
     margin-left: -1rem;
   }
 
@@ -659,7 +664,6 @@ main {
   .mode-switcher {
     padding: 0.75rem;
     font-size: 1.2rem;
-    right: 1rem;
   }
 
   .upgrade-btn, .sign-up-btn {
@@ -797,17 +801,18 @@ main {
   }
 }
 
+/* Small mobile screens */
+@media (max-width: 480px) {
+  .mode-switcher {
+    padding-right: 1rem;
+  }
+}
+
 /* Desktop styles */
 @media (min-width: 769px) {
   header {
     padding: 1.5rem 3rem;
     gap: 3rem;
-  }
-
-  .logo {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .auth-buttons {
@@ -817,7 +822,6 @@ main {
   }
 
   .mode-switcher {
-    margin-left: auto;
     font-size: 1.5rem;
   }
 
