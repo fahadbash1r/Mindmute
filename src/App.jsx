@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import './App.css'
 import darkLogo from './assets/mindmute-dark.png'
 import lightLogo from './assets/mindmute-light.png'
+import { supabase } from './supabaseClient'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
@@ -351,13 +352,22 @@ function PieChartSection({ data, isVisible }) {
   )
 }
 
-function Header({ theme, toggleTheme }) {
+function Header({ theme, toggleTheme, user, onSignOut }) {
   return (
     <header>
       <div className="auth-buttons">
-        <button className="upgrade-btn">upgrade</button>
-        <button className="sign-up-btn">sign up</button>
-        <a href="#" className="login-btn">Login</a>
+        {user ? (
+          <>
+            <span className="user-email">{user.email}</span>
+            <button className="sign-up-btn" onClick={onSignOut}>Sign Out</button>
+          </>
+        ) : (
+          <>
+            <button className="upgrade-btn">upgrade</button>
+            <button className="sign-up-btn">sign up</button>
+            <a href="#" className="login-btn">Login</a>
+          </>
+        )}
       </div>
 
       <div className="logo-wrapper">
@@ -505,25 +515,74 @@ function App() {
   const [theme, setTheme] = useState('light')
   const [response, setResponse] = useState(null)
   const [oldThoughts, setOldThoughts] = useState([])
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    // Check active sessions and sets the user
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    // Listen for changes on auth state (sign in, sign out, etc.)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark')
   }
 
-  const handleThoughtSubmit = (data) => {
-    console.log('Received response:', data); // Add this for debugging
-    setResponse(data);
-    if (data.summary) {
-      setOldThoughts(prev => [{
-        question: data.summary,
-        summary: data.reframe
-      }, ...prev]);
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+    } catch (error) {
+      console.error('Error signing out:', error.message)
+    }
+  }
+
+  const handleThoughtSubmit = async (data) => {
+    console.log('Received response:', data)
+    setResponse(data)
+    
+    if (data.summary && user) {
+      try {
+        // Store thought in Supabase
+        const { error } = await supabase
+          .from('thoughts')
+          .insert([
+            {
+              user_id: user.id,
+              summary: data.summary,
+              reframe: data.reframe,
+              todo_list: data.todoList,
+              priorities: data.priorities
+            }
+          ])
+        
+        if (error) throw error
+
+        setOldThoughts(prev => [{
+          question: data.summary,
+          summary: data.reframe
+        }, ...prev])
+      } catch (error) {
+        console.error('Error saving thought:', error.message)
+      }
     }
   }
 
   return (
     <div className={`app-container ${theme}`}>
-      <Header theme={theme} toggleTheme={toggleTheme} />
+      <Header 
+        theme={theme} 
+        toggleTheme={toggleTheme}
+        user={user}
+        onSignOut={handleSignOut}
+      />
       <main>
         <EmotionSlider />
         <ThoughtInput onSubmit={handleThoughtSubmit} />
