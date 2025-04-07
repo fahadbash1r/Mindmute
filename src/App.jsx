@@ -521,16 +521,35 @@ function App() {
     // Test Supabase connection and table structure
     const testConnection = async () => {
       try {
-        // Try to select one row to check the structure
-        const { data, error } = await supabase
+        // Insert a test record
+        const { error: insertError } = await supabase
           .from('thoughts')
-          .select('id, summary, reframe, todo_list, priorities, created_at')
-          .limit(1)
-        
-        if (error) {
-          console.error('Supabase connection error:', error.message)
+          .insert([
+            {
+              summary: 'Test thought',
+              reframe: 'Test reframe',
+              todo_list: ['Test todo 1', 'Test todo 2'],
+              priorities: [
+                { title: 'Test priority 1', percentage: 60 },
+                { title: 'Test priority 2', percentage: 40 }
+              ]
+            }
+          ])
+
+        if (insertError) {
+          console.error('Error inserting test record:', insertError.message)
         } else {
-          console.log('Supabase connected successfully, table structure:', data)
+          // Try to select records to verify
+          const { data, error } = await supabase
+            .from('thoughts')
+            .select('*')
+            .limit(1)
+          
+          if (error) {
+            console.error('Supabase connection error:', error.message)
+          } else {
+            console.log('Supabase connected successfully, table structure:', data)
+          }
         }
       } catch (error) {
         console.error('Error testing Supabase connection:', error)
