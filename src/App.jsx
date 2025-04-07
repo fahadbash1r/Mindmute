@@ -305,8 +305,8 @@ function Header({ theme, toggleTheme }) {
         <a href="#" className="login-btn">Login</a>
       </div>
 
-      <div className="logo">
-        <h1>
+      <div className="logo-wrapper">
+        <div className="logo">
           {theme === 'light' ? (
             <img 
               src={darkLogo}
@@ -324,8 +324,8 @@ function Header({ theme, toggleTheme }) {
               loading="eager"
             />
           )}
-        </h1>
-        <p>Finding balance in the journey</p>
+          <p>Finding balance in the journey</p>
+        </div>
       </div>
 
       <button 
