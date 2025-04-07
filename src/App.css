@@ -648,9 +648,10 @@ main {
   }
 
   .logo-container {
-    position: static;
+    position: relative;
+    left: 0;
     transform: none;
-    margin-left: -2rem;
+    margin-left: 0.5rem;
   }
 
   .logo img {
@@ -659,12 +660,12 @@ main {
   }
 
   .mode-switcher {
-    position: fixed;
+    position: absolute;
+    top: 1rem;
     right: 1rem;
-    top: 1.25rem;
     transform: none;
-    padding: 0.5rem;
     z-index: 100;
+    padding: 0.5rem;
     font-size: 1rem;
   }
 
@@ -816,13 +817,12 @@ main {
 /* Small mobile screens */
 @media (max-width: 480px) {
   .mode-switcher {
-    right: 0.75rem;
-    top: 1.25rem;
+    right: 1rem;
     padding: 0.5rem;
   }
 
   .logo-container {
-    margin-left: -1.5rem;
+    margin-left: 0.75rem;
   }
 
   .logo img {
