@@ -362,21 +362,15 @@ function ThoughtInput({ onSubmit }) {
       }
 
       const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      // Extract the clarity object from the response
-      const clarity = data.clarity || data;
       
       // Format the response data
       const formattedData = {
-        summary: clarity.summary || clarity,
-        reframe: clarity.reframe || "Here's a new perspective on your thoughts...",
-        todoList: clarity.todoList || [],
-        priorities: clarity.priorities ? clarity.priorities.map((priority, index) => ({
-          label: priority.item,
-          percentage: priority.weight,
+        summary: data.summary || "Unable to generate summary",
+        reframe: data.reframe || "Unable to generate reframe",
+        todoList: data.nextSteps || [],
+        priorities: data.priorities ? data.priorities.map((priority, index) => ({
+          label: priority.title,
+          percentage: 100 / data.priorities.length, // Equal distribution if no weights
           color: getColorForIndex(index)
         })) : []
       };
@@ -385,6 +379,7 @@ function ThoughtInput({ onSubmit }) {
       setThought('');
     } catch (error) {
       console.error('Error:', error);
+      // Don't clear the thought input on error
       alert(error.message || 'Failed to process your thought. Please try again.');
     } finally {
       setIsLoading(false);
