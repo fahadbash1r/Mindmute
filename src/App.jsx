@@ -305,10 +305,9 @@ function Header({ theme, toggleTheme }) {
         <a href="#" className="login-btn">Login</a>
       </div>
 
-      <div className="logo-container">
-        <div className={`logo ${theme}`}>
-          {/* Show dark logo (black text) in light mode */}
-          {theme === 'light' && (
+      <div className="logo">
+        <h1>
+          {theme === 'light' ? (
             <img 
               src={darkLogo}
               alt="Mindmute"
@@ -316,9 +315,7 @@ function Header({ theme, toggleTheme }) {
               height="160"
               loading="eager"
             />
-          )}
-          {/* Show light logo (white text) in dark mode */}
-          {theme === 'dark' && (
+          ) : (
             <img 
               src={lightLogo}
               alt="Mindmute"
@@ -327,7 +324,8 @@ function Header({ theme, toggleTheme }) {
               loading="eager"
             />
           )}
-        </div>
+        </h1>
+        <p>Finding balance in the journey</p>
       </div>
 
       <button 
