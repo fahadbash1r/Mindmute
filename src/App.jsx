@@ -441,17 +441,13 @@ function ThoughtInput({ onSubmit }) {
 }
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, setTheme] = useState('dark')
   const [response, setResponse] = useState(null)
   const [oldThoughts, setOldThoughts] = useState([])
 
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add('dark');
-    } else {
-      document.body.classList.remove('dark');
-    }
-  }, [darkMode]);
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+  }
 
   const handleThoughtSubmit = (data) => {
     console.log('Received response:', data); // Add this for debugging
@@ -465,29 +461,8 @@ function App() {
   }
 
   return (
-    <div className="app">
-      <header className="header">
-        <div className="header-left">
-          <button className="btn">Upgrade</button>
-          <button className="btn">Sign Up</button>
-          <a href="/login" className="login">Login</a>
-        </div>
-
-        <div className="header-center">
-          <img src="/src/assets/mindmute-dark.png" alt="Mindmute Logo" className="logo light-mode" />
-          <img src="/src/assets/mindmute-light.png" alt="Mindmute Logo" className="logo dark-mode" />
-        </div>
-
-        <div className="header-right">
-          <button 
-            className="mode-toggle"
-            onClick={() => setDarkMode(!darkMode)}
-            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {darkMode ? '🌞' : '🌙'}
-          </button>
-        </div>
-      </header>
+    <div className={`app-container ${theme}`}>
+      <Header theme={theme} toggleTheme={toggleTheme} />
       <main>
         <EmotionSlider />
         <ThoughtInput onSubmit={handleThoughtSubmit} />

@@ -70,37 +70,76 @@ html, body {
 }
 
 /* Header Styles */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
+header {
   width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
 }
 
-.header-left,
-.header-right {
-  flex: 1;
+.auth-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 100px;
+}
+
+.upgrade-btn, .sign-up-btn {
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: lowercase;
+  width: 100%;
+  text-align: center;
+}
+
+.login-btn {
+  color: #8b5cf6;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding-left: 1rem;
+}
+
+.mode-switcher {
+  padding: 0.75rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
-}
-
-.header-left {
-  gap: 1rem;
-}
-
-.header-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  justify-content: center;
+  margin-left: auto;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
+  width: auto;
+}
+
+.logo img {
   max-height: 60px;
   width: auto;
+  display: block;
 }
 
 .light-mode {
@@ -133,12 +172,6 @@ body.dark .dark-mode {
   color: inherit;
 }
 
-.logo img {
-  max-height: 60px;
-  width: auto;
-  display: block;
-}
-
 .logo.dark img, .logo.light img {
   filter: none;
 }
@@ -161,36 +194,6 @@ body.dark .dark-mode {
   align-items: center;
   gap: 1rem;
   justify-self: start;
-}
-
-.auth-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.75rem;
-  min-width: 100px;
-}
-
-.upgrade-btn, .sign-up-btn {
-  background: #8b5cf6;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-transform: lowercase;
-  width: 100%;
-  text-align: center;
-}
-
-.login-btn {
-  color: #8b5cf6;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.9rem;
-  padding-left: 1rem;
 }
 
 .menu-button {
@@ -631,18 +634,11 @@ main {
 
 /* Mobile styles */
 @media (max-width: 768px) {
-  .header {
+  header {
     padding: 1rem;
-  }
-
-  .header-left {
-    gap: 0.5rem;
-  }
-
-  .auth-buttons {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+    grid-template-columns: auto 1fr auto;
+    gap: 1.5rem;
+    position: relative;
   }
 
   .logo {
@@ -651,17 +647,19 @@ main {
     margin-left: -1rem;
   }
 
-  .logo img {
-    max-height: 45px;
-  }
-
-  .mode-toggle {
+  .mode-switcher {
     position: absolute;
     right: 1.5rem;
     top: 50%;
     transform: translateY(-50%);
     padding: 0.75rem;
     z-index: 10;
+  }
+
+  .auth-buttons {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
 
   .upgrade-btn, .sign-up-btn {
@@ -801,12 +799,12 @@ main {
 
 /* Small mobile screens */
 @media (max-width: 480px) {
-  .mode-toggle {
-    right: 1rem;
+  .mode-switcher {
+    right: 1.25rem;
     padding: 0.5rem;
   }
 
-  .header-left {
+  .auth-buttons {
     flex-wrap: wrap;
     gap: 0.25rem;
   }
@@ -814,7 +812,7 @@ main {
 
 /* Desktop styles */
 @media (min-width: 769px) {
-  .header {
+  header {
     padding: 1.5rem 3rem;
     gap: 3rem;
   }
@@ -833,7 +831,7 @@ main {
     align-items: center;
   }
 
-  .mode-toggle {
+  .mode-switcher {
     font-size: 1.5rem;
   }
 
