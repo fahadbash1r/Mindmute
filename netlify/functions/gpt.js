@@ -62,14 +62,14 @@ exports.handler = async function(event, context) {
 
 Analyze their input and provide:
 
-1. Summary: A validating reflection of their thoughts that shows deep understanding and acceptance
+1. Summary: A clear, concise reflection of their core message in 1-2 sentences (max 50 words). Focus on the main feeling or challenge they're expressing.
 2. Reframe: A gentle, balanced perspective that helps them see their situation with more self-compassion and clarity
 3. Next Steps: 2-3 small, manageable actions that feel doable without adding pressure
 4. Focus Areas: 3-4 priorities that matter most right now, with balanced percentage weights
 
 Format your response as a JSON object with these keys:
 {
-  "summary": "An empathetic summary that makes them feel heard...",
+  "summary": "A brief 1-2 sentence summary of their core message...",
   "reframe": "A gentle, grounding perspective...",
   "todoList": [
     "A small, manageable step...",
