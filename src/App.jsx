@@ -502,7 +502,7 @@ function ThoughtInput({ onSubmit }) {
 }
 
 function App() {
-  const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState('light')
   const [response, setResponse] = useState(null)
   const [oldThoughts, setOldThoughts] = useState([])
 
