@@ -98,16 +98,16 @@ header {
 }
 
 .logo img {
-  height: 40px;
+  height: 60px;
   width: auto;
 }
 
 .logo.dark img {
-  filter: brightness(0) invert(1);
+  filter: none;
 }
 
 .logo.light img {
-  filter: brightness(0);
+  filter: none;
 }
 
 .logo h1 {
@@ -634,7 +634,8 @@ main {
 @media (max-width: 768px) {
   header {
     padding: 1rem;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
   }
 
   .auth-buttons {
@@ -646,21 +647,33 @@ main {
   .upgrade-btn, .sign-up-btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
-    min-width: 70px;
+    min-width: 90px;
+    text-align: center;
+  }
+
+  .login-btn {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    margin-left: 0.5rem;
   }
 
   .logo {
     justify-self: center;
+    margin: 0 auto;
   }
 
   .logo img {
-    height: 30px;
+    height: 45px;
+    width: auto;
   }
 
   .mode-switcher {
     justify-self: end;
     font-size: 1.2rem;
     padding: 0.25rem;
+    margin-right: 0.5rem;
+    position: relative;
+    right: 0;
   }
 
   .emotion-section {
@@ -783,6 +796,14 @@ main {
   .swipe-dot.active {
     opacity: 1;
     background: #8b5cf6;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+  .logo img {
+    height: 45px;
+    width: auto;
   }
 }
 
