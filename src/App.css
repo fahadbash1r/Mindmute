@@ -75,9 +75,9 @@ header {
   max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   position: relative;
 }
 
@@ -113,10 +113,10 @@ header {
 }
 
 .logo-wrapper {
-  flex: 1;
   display: flex;
   justify-content: center;
-  padding: 0 2rem;
+  padding: 0;
+  grid-column: 2;
 }
 
 .logo {
@@ -149,6 +149,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+  justify-self: flex-end;
 }
 
 .light-mode {
@@ -817,15 +818,6 @@ main {
 @media (min-width: 769px) {
   header {
     padding: 1.5rem 3rem;
-    gap: 3rem;
-  }
-
-  .logo-container {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
-    padding: 0;
   }
 
   .auth-buttons {
@@ -845,6 +837,14 @@ main {
 
   .login-btn {
     padding-left: 0;
+  }
+
+  .logo img {
+    max-height: 42px;
+  }
+
+  .logo p {
+    font-size: 1rem;
   }
 }
 
