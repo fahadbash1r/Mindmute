@@ -308,11 +308,17 @@ function Header({ theme, toggleTheme }) {
       <div className={`logo ${theme}`}>
         <img 
           src={theme === 'dark' ? darkLogo : lightLogo} 
-          alt="Mindmute Logo" 
+          alt="Mindmute"
+          width="300"
+          height="80"
         />
       </div>
 
-      <button className="mode-switcher" onClick={toggleTheme}>
+      <button 
+        className="mode-switcher" 
+        onClick={toggleTheme}
+        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
         {theme === 'dark' ? '🌞' : '🌙'}
       </button>
     </header>

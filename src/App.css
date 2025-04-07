@@ -90,24 +90,18 @@ header {
 }
 
 .logo {
-  text-align: center;
   display: flex;
   align-items: center;
-  justify-self: center;
 }
 
 .logo img {
-  height: 65px;
+  max-height: 80px; /* Desktop size */
   width: auto;
-  transition: height 0.3s ease;
+  display: block;
 }
 
-.logo.dark img {
-  filter: brightness(0) invert(1); /* Makes logo white in dark mode */
-}
-
-.logo.light img {
-  filter: brightness(0); /* Makes logo black in light mode */
+.logo.dark img, .logo.light img {
+  filter: none;
 }
 
 .logo h1 {
@@ -156,12 +150,12 @@ header {
 }
 
 .mode-switcher {
-  padding: 0.5rem;
+  padding: 0.75rem;
   border: none;
   background: none;
   cursor: pointer;
   color: inherit;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -638,7 +632,7 @@ main {
   header {
     padding: 1rem;
     grid-template-columns: auto 1fr auto;
-    gap: 0.75rem;
+    gap: 1.25rem;
   }
 
   .auth-buttons {
@@ -646,6 +640,20 @@ main {
     align-items: flex-start;
     gap: 0.5rem;
     min-width: 90px;
+  }
+
+  .logo {
+    margin-left: 0.5rem;
+  }
+
+  .logo img {
+    max-height: 40px; /* Mobile size */
+  }
+
+  .mode-switcher {
+    padding: 0.75rem;
+    margin-right: 0;
+    font-size: 1.25rem;
   }
 
   .upgrade-btn, .sign-up-btn {
@@ -659,21 +667,6 @@ main {
     font-size: 0.85rem;
     margin-top: 0.25rem;
     margin-left: 0.25rem;
-  }
-
-  .logo {
-    margin-left: -1rem; /* Brings logo closer to buttons */
-  }
-
-  .logo img {
-    height: 45px;
-  }
-
-  .mode-switcher {
-    font-size: 1.2rem;
-    padding: 0.5rem;
-    margin-right: -0.5rem; /* Ensures it doesn't overflow */
-    position: relative;
   }
 
   .emotion-section {
@@ -806,18 +799,22 @@ main {
     gap: 3rem;
   }
 
+  .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .auth-buttons {
     gap: 1.25rem;
   }
 
-  .upgrade-btn, .sign-up-btn {
-    padding: 0.75rem 2rem;
+  .mode-switcher {
+    margin-left: auto;
   }
 
-  .logo {
-    transform: translateX(-50%);
-    left: 50%;
-    position: absolute;
+  .upgrade-btn, .sign-up-btn {
+    padding: 0.75rem 2rem;
   }
 }
 
