@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import './App.css'
+import darkLogo from './assets/mindmute-dark.png'
+import lightLogo from './assets/mindmute-light.png'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
@@ -297,25 +299,22 @@ function PieChartSection({ data, isVisible }) {
 function Header({ theme, toggleTheme }) {
   return (
     <header>
-      <div className="token-info">
-        <button className="upgrade-btn">upgrade</button>
-      </div>
-
-      <div className="logo">
-        <h1>
-          <span role="img" aria-label="brain">🧠</span>
-          MINDMUTE
-        </h1>
-        <p>turn overthinking into clear next steps</p>
-      </div>
-
       <div className="auth-buttons">
-        <button className="mode-switcher" onClick={toggleTheme}>
-          {theme === 'dark' ? '🌞' : '🌙'}
-        </button>
+        <button className="upgrade-btn">upgrade</button>
         <button className="sign-up-btn">sign up</button>
         <a href="#" className="login-btn">Login</a>
       </div>
+
+      <div className={`logo ${theme}`}>
+        <img 
+          src={theme === 'dark' ? darkLogo : lightLogo} 
+          alt="Mindmute Logo" 
+        />
+      </div>
+
+      <button className="mode-switcher" onClick={toggleTheme}>
+        {theme === 'dark' ? '🌞' : '🌙'}
+      </button>
     </header>
   );
 }
