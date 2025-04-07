@@ -306,12 +306,24 @@ function Header({ theme, toggleTheme }) {
       </div>
 
       <div className={`logo ${theme}`}>
-        <img 
-          src={theme === 'dark' ? lightLogo : darkLogo}
-          alt="Mindmute"
-          width="600"
-          height="160"
-        />
+        {/* Show dark logo (black text) in light mode */}
+        {theme === 'light' && (
+          <img 
+            src={darkLogo}
+            alt="Mindmute"
+            width="600"
+            height="160"
+          />
+        )}
+        {/* Show light logo (white text) in dark mode */}
+        {theme === 'dark' && (
+          <img 
+            src={lightLogo}
+            alt="Mindmute"
+            width="600"
+            height="160"
+          />
+        )}
       </div>
 
       <button 
