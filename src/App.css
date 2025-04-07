@@ -643,19 +643,20 @@ main {
   header {
     padding: 1rem;
     grid-template-columns: auto 1fr auto;
-    gap: 0.5rem;
+    align-items: center;
     position: relative;
   }
 
   .logo-container {
-    position: relative;
-    left: 0;
+    justify-content: flex-start;
+    padding-left: 0.5rem;
+    margin: 0;
     transform: none;
-    margin-left: 0.5rem;
+    position: relative;
   }
 
   .logo img {
-    max-height: 30px;
+    max-height: 36px;
     width: auto;
   }
 
@@ -664,30 +665,21 @@ main {
     top: 1rem;
     right: 1rem;
     transform: none;
+    font-size: 1.4rem;
     z-index: 100;
     padding: 0.5rem;
-    font-size: 1rem;
   }
 
   .auth-buttons {
-    flex-direction: column;
-    align-items: flex-start;
     gap: 0.5rem;
+    align-items: flex-start;
     min-width: 90px;
-    margin-right: 1rem;
   }
 
-  .upgrade-btn, .sign-up-btn {
+  .upgrade-btn,
+  .sign-up-btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
-    width: 100%;
-    min-width: 80px;
-  }
-
-  .login-btn {
-    font-size: 0.85rem;
-    padding-left: 0;
-    text-align: center;
     width: 100%;
   }
 
