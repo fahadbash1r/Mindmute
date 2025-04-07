@@ -78,7 +78,6 @@ header {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 2rem;
-  position: relative;
 }
 
 .light header {
@@ -92,10 +91,11 @@ header {
 .logo {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .logo img {
-  max-height: 80px; /* Desktop size */
+  height: 60px; /* Desktop default size */
   width: auto;
   display: block;
 }
@@ -126,27 +126,31 @@ header {
 
 .auth-buttons {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
 }
 
 .upgrade-btn, .sign-up-btn {
   background: #8b5cf6;
   color: white;
   border: none;
-  padding: 0.75rem 2rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 20px;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
   text-transform: lowercase;
-  transition: background-color 0.2s;
+  min-width: 100px;
+  text-align: center;
 }
 
 .login-btn {
   color: #8b5cf6;
   text-decoration: none;
   font-weight: 500;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
 }
 
 .mode-switcher {
@@ -155,7 +159,7 @@ header {
   background: none;
   cursor: pointer;
   color: inherit;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -638,35 +642,34 @@ main {
   .auth-buttons {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
-    min-width: 90px;
+    gap: 0.75rem;
   }
 
   .logo {
+    justify-self: flex-start;
     margin-left: 0.5rem;
   }
 
   .logo img {
-    max-height: 40px; /* Mobile size */
+    height: 45px; /* Mobile size */
   }
 
   .mode-switcher {
     padding: 0.75rem;
-    margin-right: 0;
-    font-size: 1.25rem;
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
   }
 
   .upgrade-btn, .sign-up-btn {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.25rem;
     font-size: 0.85rem;
     width: 100%;
-    text-align: center;
+    min-width: 90px;
   }
 
   .login-btn {
     font-size: 0.85rem;
-    margin-top: 0.25rem;
-    margin-left: 0.25rem;
+    margin-left: 0.75rem;
   }
 
   .emotion-section {
@@ -805,16 +808,27 @@ main {
     transform: translateX(-50%);
   }
 
+  .logo img {
+    height: 60px;
+  }
+
   .auth-buttons {
-    gap: 1.25rem;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
   }
 
   .mode-switcher {
     margin-left: auto;
+    font-size: 1.5rem;
   }
 
   .upgrade-btn, .sign-up-btn {
     padding: 0.75rem 2rem;
+  }
+
+  .login-btn {
+    margin-left: 0;
   }
 }
 

@@ -307,10 +307,10 @@ function Header({ theme, toggleTheme }) {
 
       <div className={`logo ${theme}`}>
         <img 
-          src={theme === 'dark' ? darkLogo : lightLogo} 
+          src={theme === 'dark' ? lightLogo : darkLogo}
           alt="Mindmute"
-          width="300"
-          height="80"
+          width="600"
+          height="160"
         />
       </div>
 
