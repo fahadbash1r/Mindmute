@@ -518,6 +518,21 @@ function App() {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
+    // Test Supabase connection
+    const testConnection = async () => {
+      try {
+        const { data, error } = await supabase.from('thoughts').select('count').single()
+        if (error) {
+          console.error('Supabase connection error:', error.message)
+        } else {
+          console.log('Supabase connected successfully')
+        }
+      } catch (error) {
+        console.error('Error testing Supabase connection:', error)
+      }
+    }
+    testConnection()
+
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
