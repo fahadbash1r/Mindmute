@@ -353,7 +353,7 @@ function ThoughtInput({ onSubmit }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ input: thought.trim() }),
+        body: JSON.stringify({ thought: thought.trim() }),
       });
 
       if (!response.ok) {
