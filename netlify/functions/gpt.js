@@ -35,15 +35,16 @@ exports.handler = async function(event, context) {
     }
     console.log('API key found, making OpenAI request...');
 
-    // Call OpenAI API
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-4',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a thoughtful, calm, and emotionally intelligent assistant built for people who often feel overwhelmed, overthink, or juggle many responsibilities. Your responses should be:
+    try {
+      // Call OpenAI API with timeout
+      const response = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          model: 'gpt-4',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a thoughtful, calm, and emotionally intelligent assistant built for people who often feel overwhelmed, overthink, or juggle many responsibilities. Your responses should be:
 
 1. Validating & Understanding:
 - Acknowledge the complexity of their thoughts and feelings
@@ -105,77 +106,115 @@ Example priority motivations:
 Keep motivational messages short (10-15 words), specific to the priority, and genuinely encouraging.
 
 IMPORTANT: Make sure your response is valid JSON. Double-check that all quotes are properly escaped and the structure is correct.`
-          },
-          {
-            role: 'user',
-            content: input
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 1000
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    console.log('Received response from OpenAI');
-    
-    // Extract the assistant's message and parse it as JSON
-    const assistantMessage = response.data.choices[0].message.content;
-    console.log('Assistant message:', assistantMessage);
-    
-    // Validate JSON before parsing
-    try {
-      const clarity = JSON.parse(assistantMessage);
-      console.log('Parsed clarity object:', clarity);
-
-      // Validate the structure
-      if (!clarity.summary || !clarity.reframe || !clarity.todoList || !clarity.priorities) {
-        throw new Error('Response missing required fields');
-      }
-
-      return {
-        statusCode: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Access-Control-Allow-Methods': 'POST'
+            },
+            {
+              role: 'user',
+              content: input
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 1000
         },
-        body: JSON.stringify(clarity)
-      };
-    } catch (parseError) {
-      console.error('JSON Parse Error:', parseError);
-      console.log('Invalid JSON response:', assistantMessage);
+        {
+          headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 30000 // 30 second timeout
+        }
+      );
+
+      console.log('Received response from OpenAI');
+      
+      if (!response.data || !response.data.choices || !response.data.choices[0]) {
+        console.error('Invalid response structure from OpenAI:', response.data);
+        throw new Error('Invalid response from OpenAI API');
+      }
+      
+      // Extract the assistant's message and parse it as JSON
+      const assistantMessage = response.data.choices[0].message.content;
+      console.log('Assistant message:', assistantMessage);
+      
+      // Validate JSON before parsing
+      try {
+        const clarity = JSON.parse(assistantMessage);
+        console.log('Parsed clarity object:', clarity);
+
+        // Validate the structure
+        if (!clarity.summary || !clarity.reframe || !clarity.todoList || !clarity.priorities) {
+          throw new Error('Response missing required fields');
+        }
+
+        return {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'POST'
+          },
+          body: JSON.stringify(clarity)
+        };
+      } catch (parseError) {
+        console.error('JSON Parse Error:', parseError);
+        console.log('Invalid JSON response:', assistantMessage);
+        throw new Error('Failed to parse OpenAI response as JSON');
+      }
+    } catch (apiError) {
+      console.error('OpenAI API Error:', {
+        message: apiError.message,
+        response: apiError.response?.data,
+        status: apiError.response?.status
+      });
+      
+      // Check for specific error types
+      if (apiError.code === 'ECONNABORTED') {
+        return {
+          statusCode: 504,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          },
+          body: JSON.stringify({
+            error: 'Request timeout',
+            details: 'The request to process your thought took too long. Please try again.'
+          })
+        };
+      }
+      
+      if (apiError.response?.status === 401) {
+        return {
+          statusCode: 500,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          },
+          body: JSON.stringify({
+            error: 'API authentication failed',
+            details: 'There was an issue with the API key. Please contact support.'
+          })
+        };
+      }
+
       return {
         statusCode: 500,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Access-Control-Allow-Methods': 'POST'
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
-          error: 'Failed to parse GPT response',
-          details: parseError.message,
-          response: assistantMessage
+          error: 'OpenAI API error',
+          details: apiError.message,
+          response: apiError.response?.data
         })
       };
     }
 
   } catch (error) {
-    console.error('Error details:', {
+    console.error('General Error:', {
       message: error.message,
       stack: error.stack,
-      response: error.response ? {
-        data: error.response.data,
-        status: error.response.status,
-        headers: error.response.headers
-      } : 'No response data'
+      type: error.constructor.name
     });
 
     return {
@@ -189,8 +228,7 @@ IMPORTANT: Make sure your response is valid JSON. Double-check that all quotes a
       body: JSON.stringify({ 
         error: 'Failed to process your thought',
         details: error.message,
-        type: error.name,
-        responseData: error.response ? error.response.data : null
+        type: error.constructor.name
       })
     };
   }
