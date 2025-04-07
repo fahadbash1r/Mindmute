@@ -5,29 +5,84 @@ import lightLogo from './assets/mindmute-light.png'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
-  const getMotivation = (task) => {
-    // Create a map of task keywords to motivational messages
+  const getMotivation = (task, index) => {
+    // Create a map of task keywords to motivational messages array
     const motivationMap = {
-      'review': "Taking time to review shows wisdom. Your adaptability is your strength!",
-      'adapt': "Change brings opportunity. You're already on the path to improvement!",
-      'feedback': "Seeking guidance is a sign of strength. The right answers will come!",
-      'advice': "Reaching out shows courage. You're taking positive steps forward!",
-      'break': "Rest is essential for clarity. You'll return stronger and more focused!",
-      'recharge': "Taking care of yourself is productive. Your energy will be renewed!",
-      'reflect': "Looking back helps us move forward. You're gaining valuable insights!",
-      'self': "Being kind to yourself is powerful. You're building inner strength!",
-      'goals': "Small steps lead to big changes. You're creating a better path!",
-      'practice': "Practice builds confidence. You're developing stronger habits!"
+      'self': [
+        "Being kind to yourself builds resilience. Keep nurturing your spirit!",
+        "Your well-being matters most. Take time to recharge.",
+        "Small acts of self-care create big positive changes."
+      ],
+      'support': [
+        "Reaching out shows strength. You're not alone in this.",
+        "Connection brings clarity. Your support network is there for you.",
+        "Every conversation is a step toward understanding."
+      ],
+      'routine': [
+        "Small habits build strong foundations. Keep going!",
+        "Each day is a chance to grow stronger.",
+        "Consistency creates lasting change. You're on the right path."
+      ],
+      'plan': [
+        "Breaking it down makes it manageable. One step at a time.",
+        "Your roadmap is taking shape. Trust the process.",
+        "Clear goals lead to clear progress."
+      ],
+      'reflect': [
+        "Your insights are valuable. Trust your inner wisdom.",
+        "Taking time to process helps you grow stronger.",
+        "Understanding yourself better with each moment of reflection."
+      ],
+      'action': [
+        "Every small step counts. You're making progress!",
+        "Movement creates momentum. Keep going forward.",
+        "Your actions shape your path. Trust your journey."
+      ],
+      'rest': [
+        "Rest is productive. You're recharging for what's ahead.",
+        "Taking breaks builds strength. Listen to your needs.",
+        "Pause and breathe. You're exactly where you need to be."
+      ],
+      'connect': [
+        "Reaching out creates bridges. You're building connections.",
+        "Sharing lightens the load. Your voice matters.",
+        "Together we go further. Keep connecting."
+      ],
+      'focus': [
+        "One thing at a time. You're finding your flow.",
+        "Clear mind, clear path. Stay focused on what matters.",
+        "Your attention is powerful. Direct it wisely."
+      ],
+      'change': [
+        "Change brings growth. Embrace the journey.",
+        "New paths lead to new strengths. Keep exploring.",
+        "You're adapting and growing stronger each day."
+      ]
     };
 
     // Find matching keywords in the task
     const taskLower = task.toLowerCase();
-    const matchingMessage = Object.entries(motivationMap).find(([key]) => 
-      taskLower.includes(key)
-    );
+    let matchingMessages = null;
 
-    // Return the matching message or a default encouraging message
-    return matchingMessage ? matchingMessage[1] : "You've got this! Every step counts toward your goal!";
+    for (const [key, messages] of Object.entries(motivationMap)) {
+      if (taskLower.includes(key)) {
+        matchingMessages = messages;
+        break;
+      }
+    }
+
+    // If no specific match found, use general encouraging messages
+    const generalMessages = [
+      "You've got this! Every step matters.",
+      "Trust your journey. You're making progress.",
+      "Small steps lead to big changes.",
+      "Your effort today shapes tomorrow.",
+      "Keep going! You're on the right path."
+    ];
+
+    // Use matching messages or general messages, and rotate based on index
+    const messageArray = matchingMessages || generalMessages;
+    return messageArray[index % messageArray.length];
   }
 
   if (!data || data.length === 0) {
@@ -61,7 +116,7 @@ function PriorityBars({ data }) {
               />
             </div>
             <div className="priority-motivation">
-              {getMotivation(item.label)}
+              {getMotivation(item.label, index)}
             </div>
           </div>
         ))}
@@ -363,6 +418,17 @@ function ThoughtInput({ onSubmit }) {
 
       const data = await response.json();
       
+      // Calculate percentages based on priority order
+      const totalPriorities = data.priorities.length;
+      const percentages = data.priorities.map((_, index) => {
+        // First priority gets 50%, second gets 30%, third gets 20%
+        if (index === 0) return 50;
+        if (index === 1) return 30;
+        if (index === 2) return 20;
+        // If there are more priorities, distribute remaining evenly
+        return Math.floor(100 / totalPriorities);
+      });
+      
       // Format the response data
       const formattedData = {
         summary: data.summary || "Unable to generate summary",
@@ -370,7 +436,7 @@ function ThoughtInput({ onSubmit }) {
         todoList: data.nextSteps || [],
         priorities: data.priorities ? data.priorities.map((priority, index) => ({
           label: priority.title,
-          percentage: 100 / data.priorities.length, // Equal distribution if no weights
+          percentage: percentages[index],
           color: getColorForIndex(index)
         })) : []
       };
