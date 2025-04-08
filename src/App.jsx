@@ -511,6 +511,79 @@ function ThoughtInput({ onSubmit }) {
   )
 }
 
+function SignIn() {
+  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState(null)
+
+  const handleSignIn = async (e) => {
+    e.preventDefault()
+    try {
+      setLoading(true)
+      setError(null)
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) throw error
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSignUp = async (e) => {
+    e.preventDefault()
+    try {
+      setLoading(true)
+      setError(null)
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      if (error) throw error
+      alert('Check your email for the confirmation link!')
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="auth-container">
+      <form onSubmit={handleSignIn} className="auth-form">
+        <h2>Sign In / Sign Up</h2>
+        {error && <div className="auth-error">{error}</div>}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <div className="auth-buttons">
+          <button type="submit" disabled={loading}>
+            {loading ? 'Loading...' : 'Sign In'}
+          </button>
+          <button type="button" onClick={handleSignUp} disabled={loading}>
+            Sign Up
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
 function App() {
   const [theme, setTheme] = useState('light')
   const [response, setResponse] = useState(null)
@@ -518,45 +591,6 @@ function App() {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    // Test Supabase connection and table structure
-    const testConnection = async () => {
-      try {
-        // Insert a test record
-        const { error: insertError } = await supabase
-          .from('thoughts')
-          .insert([
-            {
-              summary: 'Test thought',
-              reframe: 'Test reframe',
-              todo_list: ['Test todo 1', 'Test todo 2'],
-              priorities: [
-                { title: 'Test priority 1', percentage: 60 },
-                { title: 'Test priority 2', percentage: 40 }
-              ]
-            }
-          ])
-
-        if (insertError) {
-          console.error('Error inserting test record:', insertError.message)
-        } else {
-          // Try to select records to verify
-          const { data, error } = await supabase
-            .from('thoughts')
-            .select('*')
-            .limit(1)
-          
-          if (error) {
-            console.error('Supabase connection error:', error.message)
-          } else {
-            console.log('Supabase connected successfully, table structure:', data)
-          }
-        }
-      } catch (error) {
-        console.error('Error testing Supabase connection:', error)
-      }
-    }
-    testConnection()
-
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
@@ -569,6 +603,30 @@ function App() {
 
     return () => subscription.unsubscribe()
   }, [])
+
+  // Only test connection if user is authenticated
+  useEffect(() => {
+    if (user) {
+      const testConnection = async () => {
+        try {
+          // Try to select records to verify
+          const { data, error } = await supabase
+            .from('thoughts')
+            .select('*')
+            .limit(1)
+          
+          if (error) {
+            console.error('Supabase connection error:', error.message)
+          } else {
+            console.log('Supabase connected successfully, table structure:', data)
+          }
+        } catch (error) {
+          console.error('Error testing Supabase connection:', error)
+        }
+      }
+      testConnection()
+    }
+  }, [user])
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark')
@@ -623,16 +681,22 @@ function App() {
         onSignOut={handleSignOut}
       />
       <main>
-        <EmotionSlider />
-        <ThoughtInput onSubmit={handleThoughtSubmit} />
-        <ResponseSection 
-          summary={response?.summary}
-          reframe={response?.reframe}
-          todoList={response?.todoList}
-          isVisible={!!response}
-        />
-        <PriorityBars data={response?.priorities} />
-        <ThoughtCabinet oldThoughts={oldThoughts} />
+        {!user ? (
+          <SignIn />
+        ) : (
+          <>
+            <EmotionSlider />
+            <ThoughtInput onSubmit={handleThoughtSubmit} />
+            <ResponseSection 
+              summary={response?.summary}
+              reframe={response?.reframe}
+              todoList={response?.todoList}
+              isVisible={!!response}
+            />
+            <PriorityBars data={response?.priorities} />
+            <ThoughtCabinet oldThoughts={oldThoughts} />
+          </>
+        )}
       </main>
     </div>
   )
