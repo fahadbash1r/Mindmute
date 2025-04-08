@@ -735,7 +735,11 @@ function App() {
   }
 
   if (!user) {
-    return isSignUp ? <SignUp /> : <Login />
+    return isSignUp ? (
+      <SignUp onLoginClick={() => setIsSignUp(false)} />
+    ) : (
+      <Login onSignUpClick={() => setIsSignUp(true)} />
+    );
   }
 
   return (
@@ -748,22 +752,18 @@ function App() {
           onSignOut={handleSignOut}
         />
         <main>
-          {!user ? (
-            <SignIn />
-          ) : (
-            <>
-              <EmotionSlider />
-              <ThoughtInput onSubmit={handleThoughtSubmit} />
-              <ResponseSection 
-                summary={response?.summary}
-                reframe={response?.reframe}
-                todoList={response?.todoList}
-                isVisible={!!response}
-              />
-              <PriorityBars data={response?.priorities} />
-              <ThoughtCabinet oldThoughts={oldThoughts} />
-            </>
-          )}
+          <>
+            <EmotionSlider />
+            <ThoughtInput onSubmit={handleThoughtSubmit} />
+            <ResponseSection 
+              summary={response?.summary}
+              reframe={response?.reframe}
+              todoList={response?.todoList}
+              isVisible={!!response}
+            />
+            <PriorityBars data={response?.priorities} />
+            <ThoughtCabinet oldThoughts={oldThoughts} />
+          </>
         </main>
       </div>
     </ErrorBoundary>
