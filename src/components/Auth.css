@@ -1,25 +1,40 @@
 .auth-page {
   min-height: 100vh;
   display: flex;
+  width: 100%;
+}
+
+.auth-left {
+  width: 40%;
+  background: #FFFFFF;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  padding: 2rem;
+}
+
+.auth-right {
+  width: 60%;
+  background: #8C52FF;
+  padding: 4rem;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .auth-container {
   width: 100%;
   max-width: 400px;
   padding: 2rem;
-  background: #fff;
-  border-radius: 16px;
-  border: 1px solid #E5E7EB;
+  background: #FFFFFF;
   text-align: center;
 }
 
 .auth-logo {
   width: 180px;
   height: auto;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .auth-container h1 {
@@ -28,6 +43,7 @@
   font-weight: 600;
   color: #171725;
   margin-bottom: 2rem;
+  text-align: left;
 }
 
 .auth-form {
@@ -168,9 +184,143 @@
   margin-bottom: 1rem;
 }
 
+/* Right side content */
+.auth-right-content {
+  max-width: 800px;
+  text-align: center;
+}
+
+.auth-right h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 45px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 68px;
+  letter-spacing: -0.02em;
+}
+
+.auth-right p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 48px;
+  margin-bottom: 3rem;
+  letter-spacing: -0.02em;
+  opacity: 0.9;
+}
+
+.example-message {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 1rem 2rem;
+  color: #825CFF;
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 36px;
+  margin-bottom: 2rem;
+  text-align: center;
+  max-width: 600px;
+}
+
+.response-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.response-box {
+  border: 3px solid #FFFFFF;
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.response-box h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-decoration: underline;
+}
+
+.response-box p {
+  font-size: 20px;
+  line-height: 30px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.testimonial {
+  background: #FFFFFF;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 600px;
+}
+
+.testimonial img {
+  width: 112px;
+  height: 112px;
+  border-radius: 100px;
+  object-fit: cover;
+}
+
+.testimonial p {
+  color: #000000;
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  line-height: 24px;
+  margin: 0;
+  text-align: left;
+}
+
+@media (max-width: 1024px) {
+  .auth-page {
+    flex-direction: column;
+  }
+
+  .auth-left,
+  .auth-right {
+    width: 100%;
+  }
+
+  .auth-right {
+    padding: 2rem;
+  }
+
+  .auth-right h2 {
+    font-size: 32px;
+    line-height: 48px;
+  }
+
+  .auth-right p {
+    font-size: 24px;
+    line-height: 36px;
+  }
+
+  .response-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .auth-container {
     padding: 1.5rem;
     margin: 1rem;
+  }
+
+  .testimonial {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .testimonial p {
+    text-align: center;
   }
 } 
