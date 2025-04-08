@@ -7,18 +7,27 @@
   </div>
   
   <div className="response-grid">
-    <div className="response-box">
-      <div className="response-box-title">📝 Summary</div>
+    <div className="response-box summary-box">
+      <div className="response-box-title">
+        <span>🚀</span>
+        <h3>Summary</h3>
+      </div>
       <p>You're overwhelmed with too many choices and feel stuck.</p>
     </div>
     
-    <div className="response-box">
-      <div className="response-box-title">🔄 Reframe</div>
-      <p>It's normal to feel stuck when too many options compete for your attention. It doesn't mean you're incapable — it means you care deeply about making the right choice. Remember that progress comes from action, not perfect decisions. You don't need the perfect option, just one good-enough starting point.</p>
+    <div className="response-box reframe-box">
+      <div className="response-box-title">
+        <span>🔄</span>
+        <h3>Reframe</h3>
+      </div>
+      <p>It's normal to feel stuck when too many options compete for your attention. It doesn't mean you're incapable — it means you care. You don't need the perfect option, just one good-enough starting point.</p>
     </div>
     
     <div className="response-box todo-box">
-      <div className="response-box-title">✅ To-Do List</div>
+      <div className="response-box-title">
+        <span>✅</span>
+        <h3>To-Do List</h3>
+      </div>
       <ul className="todo-list">
         <li>Pick one small task</li>
         <li>Start a 10-minute timer</li>
