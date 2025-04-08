@@ -3,6 +3,8 @@ import './App.css'
 import darkLogo from './assets/mindmute-dark.png'
 import lightLogo from './assets/mindmute-light.png'
 import { supabase } from './supabaseClient'
+import Login from './components/Login'
+import SignUp from './components/SignUp'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
@@ -622,6 +624,7 @@ function App() {
   const [response, setResponse] = useState(null)
   const [oldThoughts, setOldThoughts] = useState([])
   const [user, setUser] = useState(null)
+  const [isSignUp, setIsSignUp] = useState(false)
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
@@ -729,6 +732,10 @@ function App() {
 
   if (!initialized) {
     return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return isSignUp ? <SignUp /> : <Login />
   }
 
   return (
