@@ -19,12 +19,12 @@
 .auth-right {
   width: 60%;
   background: #8C52FF;
-  padding: 2rem;
+  padding: 4rem 2rem;
   color: #FFFFFF;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   height: 100vh;
   overflow-y: auto;
 }
@@ -192,48 +192,74 @@
 
 /* Right side content */
 .auth-right-content {
-  max-width: 700px;
+  max-width: 600px;
   margin: 0 auto;
-  padding: 1rem;
+  text-align: center;
 }
 
 .auth-right h2 {
-  font-size: 32px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 42px;
+  font-weight: 700;
   line-height: 1.2;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .auth-right p {
+  font-family: 'Poppins', sans-serif;
   font-size: 20px;
-  line-height: 1.4;
-  margin-bottom: 1.5rem;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 2.5rem;
+  opacity: 0.9;
+  text-align: center;
 }
 
 .example-message {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 1rem 2rem;
+  color: #825CFF;
+  font-family: 'Poppins', sans-serif;
   font-size: 18px;
-  padding: 0.75rem 1.25rem;
-  margin-bottom: 1.5rem;
-  max-width: 400px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+  max-width: 500px;
 }
 
 .response-grid {
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  max-width: 700px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  width: 100%;
+  max-width: 600px;
 }
 
 .response-box {
-  padding: 1rem;
+  border: 2px solid #FFFFFF;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: left;
 }
 
 .response-box h3 {
+  font-family: 'Poppins', sans-serif;
   font-size: 16px;
-  margin-bottom: 0.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
 }
 
 .response-box p {
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0.9;
+  text-align: left;
+  margin-bottom: 0;
 }
 
 .testimonial {
@@ -274,21 +300,28 @@
   }
 
   .auth-right {
-    padding: 2rem;
+    padding: 3rem 1.5rem;
   }
 
   .auth-right h2 {
-    font-size: 32px;
-    line-height: 48px;
+    font-size: 36px;
   }
 
   .auth-right p {
-    font-size: 24px;
-    line-height: 36px;
+    font-size: 18px;
+  }
+
+  .example-message {
+    font-size: 16px;
+    padding: 0.875rem 1.5rem;
   }
 
   .response-grid {
-    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .response-box {
+    padding: 1.25rem;
   }
 }
 
@@ -296,6 +329,22 @@
   .auth-container {
     padding: 1.5rem;
     margin: 1rem;
+  }
+
+  .auth-right {
+    padding: 2rem 1rem;
+  }
+
+  .auth-right h2 {
+    font-size: 32px;
+  }
+
+  .auth-right p {
+    font-size: 16px;
+  }
+
+  .response-grid {
+    grid-template-columns: 1fr;
   }
 
   .testimonial {
