@@ -14,7 +14,7 @@
     
     <div className="response-box">
       <div className="response-box-title">🔄 Reframe</div>
-      <p>It's normal to feel stuck when too many options compete for your attention. It doesn't mean you're incapable — it means you care. You don't need the perfect option, just one good-enough starting point.</p>
+      <p>It's normal to feel stuck when too many options compete for your attention. It doesn't mean you're incapable — it means you care deeply about making the right choice. Remember that progress comes from action, not perfect decisions. You don't need the perfect option, just one good-enough starting point.</p>
     </div>
     
     <div className="response-box todo-box">

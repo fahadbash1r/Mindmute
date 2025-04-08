@@ -241,96 +241,93 @@
   gap: 1rem;
   width: 100%;
   margin: 0;
+  max-width: 800px;
 }
 
 .response-box {
   border: 1.5px solid rgba(255, 255, 255, 0.8);
   border-radius: 12px;
-  padding: 1rem;
-  text-align: left;
+  padding: 1.5rem;
+  text-align: center;
   position: relative;
   background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 120px;
 }
 
 .response-box-title {
   position: absolute;
   top: -10px;
-  left: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
   background: #8C52FF;
-  padding: 0 0.5rem;
-  font-size: 13px;
+  padding: 0 0.75rem;
+  font-size: 15px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  white-space: nowrap;
 }
 
 .response-box p {
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.5;
   margin: 0;
-  opacity: 0.9;
-  text-align: left;
+  color: #FFFFFF;
+  text-align: center;
 }
 
 .todo-box {
   grid-column: 1 / -1;
+  min-height: 100px;
 }
 
 .todo-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .todo-list li {
-  font-size: 13px;
-  line-height: 1.4;
-  margin-bottom: 0.25rem;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.todo-list li:last-child {
-  margin-bottom: 0;
-}
-
-.todo-list li::before {
-  content: "•";
   color: #FFFFFF;
-  margin-right: 0.5rem;
 }
 
 .testimonial {
   background: #FFFFFF;
   border-radius: 10px;
-  padding: 1rem;
+  padding: 1.25rem;
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
   width: 100%;
-  max-width: 450px;
+  max-width: 600px;
 }
 
 .testimonial img {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 100px;
   object-fit: cover;
-}
-
-.testimonial-content {
-  flex: 1;
 }
 
 .testimonial p {
   color: #000000;
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 14px;
+  line-height: 1.5;
   margin: 0;
   text-align: left;
 }
