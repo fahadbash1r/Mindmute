@@ -2,6 +2,7 @@
   min-height: 100vh;
   display: flex;
   width: 100%;
+  overflow: hidden;
 }
 
 .auth-left {
@@ -11,21 +12,26 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .auth-right {
   width: 60%;
   background: #8C52FF;
-  padding: 4rem;
+  padding: 2rem;
   color: #FFFFFF;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .auth-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 360px;
   padding: 2rem;
   background: #FFFFFF;
   text-align: center;
@@ -57,7 +63,7 @@
 }
 
 .input-group input {
-  width: 100%;
+  width: calc(100% - 2rem);
   padding: 0.75rem 1rem;
   border: 1.6px solid #E0E2E9;
   border-radius: 8px;
@@ -186,87 +192,64 @@
 
 /* Right side content */
 .auth-right-content {
-  max-width: 800px;
-  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
 .auth-right h2 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 45px;
-  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.2;
   margin-bottom: 1rem;
-  line-height: 68px;
-  letter-spacing: -0.02em;
 }
 
 .auth-right p {
-  font-family: 'Poppins', sans-serif;
-  font-size: 32px;
-  font-weight: 500;
-  line-height: 48px;
-  margin-bottom: 3rem;
-  letter-spacing: -0.02em;
-  opacity: 0.9;
+  font-size: 20px;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
 }
 
 .example-message {
-  background: #FFFFFF;
-  border-radius: 20px;
-  padding: 1rem 2rem;
-  color: #825CFF;
-  font-family: 'Poppins', sans-serif;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 36px;
-  margin-bottom: 2rem;
-  text-align: center;
-  max-width: 600px;
+  font-size: 18px;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.5rem;
+  max-width: 400px;
 }
 
 .response-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  width: 100%;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 700px;
 }
 
 .response-box {
-  border: 3px solid #FFFFFF;
-  border-radius: 15px;
-  padding: 1.5rem;
-  text-align: left;
+  padding: 1rem;
 }
 
 .response-box h3 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  text-decoration: underline;
+  font-size: 16px;
+  margin-bottom: 0.5rem;
 }
 
 .response-box p {
-  font-size: 20px;
-  line-height: 30px;
-  margin: 0;
-  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .testimonial {
   background: #FFFFFF;
   border-radius: 10px;
-  padding: 1.5rem;
-  margin-top: 2rem;
+  padding: 1.25rem;
+  margin-top: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  max-width: 600px;
+  gap: 1.25rem;
+  max-width: 500px;
 }
 
 .testimonial img {
-  width: 112px;
-  height: 112px;
+  width: 80px;
+  height: 80px;
   border-radius: 100px;
   object-fit: cover;
 }
@@ -274,8 +257,8 @@
 .testimonial p {
   color: #000000;
   font-family: 'Poppins', sans-serif;
-  font-size: 22px;
-  line-height: 24px;
+  font-size: 16px;
+  line-height: 1.4;
   margin: 0;
   text-align: left;
 }
