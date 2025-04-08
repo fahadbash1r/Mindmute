@@ -19,12 +19,12 @@
 .auth-right {
   width: 60%;
   background: #8C52FF;
-  padding: 4rem 2rem;
+  padding: 3rem 2rem;
   color: #FFFFFF;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   height: 100vh;
   overflow-y: auto;
 }
@@ -192,26 +192,26 @@
 
 /* Right side content */
 .auth-right-content {
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   text-align: center;
 }
 
 .auth-right h2 {
   font-family: 'Poppins', sans-serif;
-  font-size: 42px;
+  font-size: 36px;
   font-weight: 700;
   line-height: 1.2;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   text-align: center;
 }
 
 .auth-right p {
   font-family: 'Poppins', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  line-height: 1.5;
-  margin-bottom: 2.5rem;
+  line-height: 1.4;
+  margin-bottom: 2rem;
   opacity: 0.9;
   text-align: center;
 }
@@ -219,13 +219,13 @@
 .example-message {
   background: #FFFFFF;
   border-radius: 16px;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
   color: #825CFF;
   font-family: 'Poppins', sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.4;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto 2rem;
   text-align: center;
   max-width: 500px;
 }
@@ -233,49 +233,78 @@
 .response-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
 }
 
 .response-box {
   border: 2px solid #FFFFFF;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.25rem;
   text-align: left;
+  position: relative;
 }
 
-.response-box h3 {
-  font-family: 'Poppins', sans-serif;
-  font-size: 16px;
+.response-box-title {
+  position: absolute;
+  top: -10px;
+  left: 1.25rem;
+  background: #8C52FF;
+  padding: 0 0.5rem;
+  font-size: 14px;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .response-box p {
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.4;
   margin: 0;
   opacity: 0.9;
   text-align: left;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-list li {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.todo-list li:last-child {
   margin-bottom: 0;
+}
+
+.todo-list li::before {
+  content: "•";
+  color: #FFFFFF;
+  margin-right: 0.5rem;
 }
 
 .testimonial {
   background: #FFFFFF;
   border-radius: 10px;
-  padding: 1.25rem;
+  padding: 1rem;
   margin-top: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   max-width: 500px;
 }
 
 .testimonial img {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 100px;
   object-fit: cover;
 }
@@ -283,10 +312,15 @@
 .testimonial p {
   color: #000000;
   font-family: 'Poppins', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.4;
   margin: 0;
   text-align: left;
+}
+
+.testimonial .author {
+  font-weight: 600;
+  margin-top: 0.25rem;
 }
 
 @media (max-width: 1024px) {
@@ -300,28 +334,15 @@
   }
 
   .auth-right {
-    padding: 3rem 1.5rem;
+    padding: 2rem 1.5rem;
   }
 
   .auth-right h2 {
-    font-size: 36px;
+    font-size: 32px;
   }
 
   .auth-right p {
-    font-size: 18px;
-  }
-
-  .example-message {
     font-size: 16px;
-    padding: 0.875rem 1.5rem;
-  }
-
-  .response-grid {
-    gap: 1rem;
-  }
-
-  .response-box {
-    padding: 1.25rem;
   }
 }
 
@@ -336,23 +357,10 @@
   }
 
   .auth-right h2 {
-    font-size: 32px;
-  }
-
-  .auth-right p {
-    font-size: 16px;
+    font-size: 28px;
   }
 
   .response-grid {
     grid-template-columns: 1fr;
-  }
-
-  .testimonial {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .testimonial p {
-    text-align: center;
   }
 } 
