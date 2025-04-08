@@ -424,8 +424,25 @@ function ThoughtInput({ onSubmit }) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Network response was not ok');
+        // Try to parse JSON, but handle cases where it's not JSON (like HTML error pages)
+        let errorMsg = 'Network response was not ok';
+        try {
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.indexOf("application/json") !== -1) {
+            const errorData = await response.json();
+            errorMsg = errorData.error || JSON.stringify(errorData);
+          } else {
+            // If not JSON, maybe it's an HTML error page or plain text
+            errorMsg = await response.text(); 
+            // Prevent displaying full HTML page in alert
+            if (errorMsg.trim().startsWith('<!DOCTYPE') || errorMsg.trim().startsWith('<html>')) {
+              errorMsg = `Server returned an unexpected response (Status: ${response.status}). Check Netlify function logs.`;
+            }
+          }
+        } catch (parseError) {
+          errorMsg = `Failed to parse error response (Status: ${response.status}). Check Netlify function logs.`;
+        }
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
@@ -456,9 +473,9 @@ function ThoughtInput({ onSubmit }) {
       onSubmit(formattedData);
       setThought('');
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error submitting thought:', error);
       // Don't clear the thought input on error
-      alert(error.message || 'Failed to process your thought. Please try again.');
+      alert(error.message || 'Failed to process your thought. Please check logs and try again.');
     } finally {
       setIsLoading(false);
     }
