@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import darkLogo from '../assets/mindmute-dark.png'
 import './Auth.css'
 
-export default function Login() {
+export default function Login({ onSignUpClick }) {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -115,7 +115,7 @@ export default function Login() {
         </form>
 
         <div className="auth-footer">
-          Don't have an account? <a href="/signup">Sign Up</a>
+          Don't have an account? <button onClick={onSignUpClick} className="auth-link">Sign Up</button>
         </div>
       </div>
     </div>

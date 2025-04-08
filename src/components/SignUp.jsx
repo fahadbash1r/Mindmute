@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'
 import darkLogo from '../assets/mindmute-dark.png'
 import './Auth.css'
 
-export default function SignUp() {
+export default function SignUp({ onLoginClick }) {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -100,7 +100,7 @@ export default function SignUp() {
           </div>
 
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Loading...' : 'Log in'}
+            {loading ? 'Loading...' : 'Sign Up'}
           </button>
 
           <div className="auth-divider">
@@ -129,7 +129,7 @@ export default function SignUp() {
         </form>
 
         <div className="auth-footer">
-          Already Have An Account? <a href="/login">Log in</a>
+          Already Have An Account? <button onClick={onLoginClick} className="auth-link">Log in</button>
         </div>
       </div>
     </div>
