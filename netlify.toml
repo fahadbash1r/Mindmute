@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "cp .env.production .env && npm run build"
   publish = "dist"
   functions = "netlify/functions"
 

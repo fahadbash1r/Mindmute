@@ -584,11 +584,45 @@ function SignIn() {
   )
 }
 
+// Add error boundary component
+function ErrorBoundary({ children }) {
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const handleError = (error) => {
+      console.error('Application error:', error);
+      setHasError(true);
+      setError(error);
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleError);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleError);
+    };
+  }, []);
+
+  if (hasError) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h1>Something went wrong</h1>
+        <pre style={{ color: 'red' }}>{error?.message || 'Unknown error'}</pre>
+      </div>
+    );
+  }
+
+  return children;
+}
+
 function App() {
   const [theme, setTheme] = useState('light')
   const [response, setResponse] = useState(null)
   const [oldThoughts, setOldThoughts] = useState([])
   const [user, setUser] = useState(null)
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     // Check active sessions and sets the user
@@ -672,33 +706,60 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    // Log environment variables (excluding sensitive data)
+    console.log('Supabase URL configured:', !!import.meta.env.VITE_SUPABASE_URL);
+    console.log('Supabase Key configured:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
+    
+    // Test Supabase connection
+    async function testConnection() {
+      try {
+        const { data, error } = await supabase.from('thoughts').select('count');
+        if (error) throw error;
+        console.log('Supabase connection successful');
+        setInitialized(true);
+      } catch (error) {
+        console.error('Supabase connection error:', error);
+        setInitialized(true); // Still set to true to show UI
+      }
+    }
+    
+    testConnection();
+  }, []);
+
+  if (!initialized) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className={`app-container ${theme}`}>
-      <Header 
-        theme={theme} 
-        toggleTheme={toggleTheme}
-        user={user}
-        onSignOut={handleSignOut}
-      />
-      <main>
-        {!user ? (
-          <SignIn />
-        ) : (
-          <>
-            <EmotionSlider />
-            <ThoughtInput onSubmit={handleThoughtSubmit} />
-            <ResponseSection 
-              summary={response?.summary}
-              reframe={response?.reframe}
-              todoList={response?.todoList}
-              isVisible={!!response}
-            />
-            <PriorityBars data={response?.priorities} />
-            <ThoughtCabinet oldThoughts={oldThoughts} />
-          </>
-        )}
-      </main>
-    </div>
+    <ErrorBoundary>
+      <div className={`app-container ${theme}`}>
+        <Header 
+          theme={theme} 
+          toggleTheme={toggleTheme}
+          user={user}
+          onSignOut={handleSignOut}
+        />
+        <main>
+          {!user ? (
+            <SignIn />
+          ) : (
+            <>
+              <EmotionSlider />
+              <ThoughtInput onSubmit={handleThoughtSubmit} />
+              <ResponseSection 
+                summary={response?.summary}
+                reframe={response?.reframe}
+                todoList={response?.todoList}
+                isVisible={!!response}
+              />
+              <PriorityBars data={response?.priorities} />
+              <ThoughtCabinet oldThoughts={oldThoughts} />
+            </>
+          )}
+        </main>
+      </div>
+    </ErrorBoundary>
   )
 }
 
