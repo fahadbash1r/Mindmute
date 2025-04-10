@@ -5,6 +5,7 @@ import lightLogo from './assets/mindmute-light.png'
 import { supabase } from './supabaseClient'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
+import SideMenu from './components/SideMenu'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
@@ -357,21 +358,8 @@ function PieChartSection({ data, isVisible }) {
 function Header({ theme, toggleTheme, user, onSignOut }) {
   return (
     <header>
-      <div className="auth-buttons">
-        {user ? (
-          <>
-            <span className="user-email">{user.email}</span>
-            <button className="sign-up-btn" onClick={onSignOut}>Sign Out</button>
-          </>
-        ) : (
-          <>
-            <button className="upgrade-btn">upgrade</button>
-            <button className="sign-up-btn">sign up</button>
-            <a href="#" className="login-btn">Login</a>
-          </>
-        )}
-      </div>
-
+      <SideMenu onSignOut={onSignOut} />
+      
       <div className="logo-wrapper">
         <div className="logo">
           {theme === 'light' ? (
@@ -643,6 +631,11 @@ function App() {
   const [user, setUser] = useState(null)
   const [isSignUp, setIsSignUp] = useState(false)
   const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    // Set theme attribute on document for CSS selector
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     // Check active sessions and sets the user
