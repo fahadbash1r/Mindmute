@@ -12,8 +12,24 @@ export default function SideMenu({ onSignOut }) {
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
+    if (isOpen) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
     return () => document.removeEventListener('click', handleClickOutside);
+  }, [isOpen]);
+
+  // Prevent body scroll when menu is open on mobile
+  useEffect(() => {
+    if (isOpen && window.innerWidth <= 768) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
 
   return (
