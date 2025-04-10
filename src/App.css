@@ -110,6 +110,7 @@ header {
   color: var(--text-primary);
   font-size: 0.8rem;
   white-space: nowrap;
+  text-align: center;
 }
 
 .mode-switcher {
@@ -628,31 +629,30 @@ main {
 
 /* Mobile styles */
 @media (max-width: 768px) {
-  header {
-    padding: 1rem;
-    height: 70px;
-  }
-
   .logo-wrapper {
     margin-right: 0;
+    padding: 0;
   }
 
   .logo {
-    width: 180px;
+    width: 200px;
     margin-top: 1.5rem;
-  }
-
-  .logo img {
-    width: 100%;
   }
 
   .logo p {
     font-size: 0.75rem;
-    padding: 0 1rem;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  header {
+    padding: 1rem 0;
   }
 
   .mode-switcher {
     right: 1rem;
+    top: 1.25rem;
   }
 
   .auth-buttons {
