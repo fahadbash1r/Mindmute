@@ -34,16 +34,20 @@
   height: 100vh;
   background-color: var(--background-color);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: left 0.3s ease;
+  transition: transform 0.3s ease;
   z-index: 999;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  transform: translateX(-100%);
+  visibility: hidden;
 }
 
 .side-menu.open {
   left: 0;
+  transform: translateX(0);
+  visibility: visible;
 }
 
 /* Hide hamburger button when menu is open */
@@ -110,10 +114,15 @@
     width: 60%;
     padding: 1.5rem;
     top: 0;
-    left: -60%;
+    left: 0;
     height: 100%;
     background-color: #ffffff;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%);
+  }
+
+  .side-menu.open {
+    transform: translateX(0);
   }
 
   [data-theme='dark'] .side-menu {
