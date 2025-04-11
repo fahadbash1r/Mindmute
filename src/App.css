@@ -57,6 +57,7 @@ html, body {
   align-items: center;
   overflow-x: hidden;
   position: relative;
+  padding-top: env(safe-area-inset-top, 0);
 }
 
 .app-container.light {
@@ -74,11 +75,11 @@ header {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 1rem 3rem;
+  justify-content: space-between;
+  padding: 0.75rem 3rem;
   background: var(--box-bg);
   border-bottom: 1px solid var(--box-border);
-  height: 80px;
+  height: 70px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -88,23 +89,23 @@ header {
   align-items: center;
   justify-content: center;
   flex: 1;
-  padding: 0;
-  margin: 0;
 }
 
 .logo {
   text-align: center;
-  width: 180px;
+  width: 160px;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .logo img {
-  width: 100%;
-  height: auto;
-  max-height: 36px;
+  width: auto;
+  height: 36px;
   object-fit: contain;
   display: block;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .logo p {
@@ -227,8 +228,8 @@ main {
   position: relative;
   background: var(--box-bg);
   border-radius: 20px;
-  padding: 1.5rem;
-  margin: 1rem auto;
+  padding: 1.25rem;
+  margin: 0.5rem auto;
   width: 100%;
   max-width: 1400px;
 }
@@ -407,7 +408,7 @@ main {
 .thought-input-section {
   width: 100%;
   max-width: 1400px;
-  margin: 1rem auto;
+  margin: 0.5rem auto;
   padding: 1rem;
   border-radius: 12px;
   background: var(--box-bg);
@@ -637,34 +638,35 @@ main {
   }
 
   .logo {
-    width: 160px;
-    margin: 0;
+    width: 140px;
   }
 
   .logo img {
-    max-height: 32px;
+    height: 32px;
   }
 
   .logo p {
     font-size: 0.75rem;
-    margin-top: 0.25rem;
+    margin-top: 0.2rem;
   }
 
   .personal-greeting {
-    margin: 1rem auto 0.75rem;
+    margin: 0.25rem auto;
   }
 
   .emotion-section {
-    margin: 0.75rem auto;
-    padding: 1.25rem;
+    margin: 0.5rem auto;
+    padding: 1rem;
   }
 
   .thought-input-section {
-    margin: 0.75rem auto;
+    margin: 0.5rem auto;
   }
 
   header {
-    padding: 1rem 0;
+    padding: 0.75rem 1rem;
+    height: 60px;
+    justify-content: space-between;
   }
 
   .mode-switcher {
@@ -705,8 +707,8 @@ main {
   .priorities-section,
   .thought-cabinet {
     width: calc(100% - 2rem);
-    margin: 1rem;
-    padding: 1.5rem;
+    margin: 0.5rem 1rem;
+    padding: 1.25rem;
     box-sizing: border-box;
   }
 
@@ -813,6 +815,10 @@ main {
 
   .hamburger-button {
     left: 1rem;
+  }
+
+  .app-container {
+    padding-top: max(env(safe-area-inset-top, 16px), 16px);
   }
 }
 
@@ -1059,7 +1065,7 @@ main {
 .personal-greeting {
   width: 100%;
   max-width: 1400px;
-  margin: 1.5rem auto 1rem;
+  margin: 0.5rem auto 0.25rem;
   padding: 0;
   text-align: center;
   display: flex;
