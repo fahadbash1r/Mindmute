@@ -195,6 +195,10 @@ function PersonalGreeting({ user }) {
   const getUserName = () => {
     if (!user) return 'there'
     
+    console.log('Full user object:', user)
+    console.log('User metadata:', user.user_metadata)
+    console.log('User identities:', user.identities)
+    
     // Try to get name from user metadata
     const metadataName = user.user_metadata?.full_name || user.user_metadata?.name
 
@@ -202,8 +206,9 @@ function PersonalGreeting({ user }) {
     const providerName = user.identities?.[0]?.identity_data?.full_name ||
                         user.identities?.[0]?.identity_data?.name
 
-    // Return the first available name or default to 'there'
-    return metadataName || providerName || 'there'
+    const finalName = metadataName || providerName || 'there'
+    console.log('Final name chosen:', finalName)
+    return finalName
   }
 
   const userName = getUserName()
@@ -680,11 +685,14 @@ function App() {
   useEffect(() => {
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session:', session)
       setUser(session?.user ?? null)
     })
 
     // Listen for changes on auth state (sign in, sign out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Auth state changed:', _event)
+      console.log('New session:', session)
       setUser(session?.user ?? null)
     })
 
@@ -694,6 +702,7 @@ function App() {
   // Only test connection if user is authenticated
   useEffect(() => {
     if (user) {
+      console.log('User authenticated:', user)
       const testConnection = async () => {
         try {
           // Try to select records to verify
