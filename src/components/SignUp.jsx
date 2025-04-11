@@ -25,7 +25,8 @@ export default function SignUp({ onLoginClick }) {
         password,
         options: {
           data: {
-            full_name: name
+            full_name: name,
+            name: name
           }
         }
       })
@@ -42,7 +43,13 @@ export default function SignUp({ onLoginClick }) {
     try {
       setLoading(true)
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google'
+        provider: 'google',
+        options: {
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
+        }
       })
       if (error) throw error
     } catch (error) {
@@ -56,7 +63,13 @@ export default function SignUp({ onLoginClick }) {
     try {
       setLoading(true)
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'facebook'
+        provider: 'facebook',
+        options: {
+          queryParams: {
+            display: 'popup',
+            auth_type: 'rerequest',
+          }
+        }
       })
       if (error) throw error
     } catch (error) {

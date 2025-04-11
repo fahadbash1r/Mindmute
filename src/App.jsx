@@ -191,7 +191,22 @@ function PersonalGreeting({ user }) {
     }
   }, [])
 
-  const userName = user?.user_metadata?.full_name || 'there'
+  // Get user's name from different possible locations in the user object
+  const getUserName = () => {
+    if (!user) return 'there'
+    
+    // Try to get name from user metadata
+    const metadataName = user.user_metadata?.full_name || user.user_metadata?.name
+
+    // Try to get name from identity provider data
+    const providerName = user.identities?.[0]?.identity_data?.full_name ||
+                        user.identities?.[0]?.identity_data?.name
+
+    // Return the first available name or default to 'there'
+    return metadataName || providerName || 'there'
+  }
+
+  const userName = getUserName()
   
   return (
     <div className="personal-greeting">
