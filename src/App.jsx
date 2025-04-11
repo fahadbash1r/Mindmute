@@ -178,6 +178,27 @@ function EmotionSlider() {
   )
 }
 
+function PersonalGreeting({ user }) {
+  const [timeOfDay, setTimeOfDay] = useState('')
+  
+  useEffect(() => {
+    const hour = new Date().getHours()
+    if (hour < 12) setTimeOfDay('Morning')
+    else if (hour < 17) setTimeOfDay('Afternoon')
+    else setTimeOfDay('Evening')
+  }, [])
+
+  const userName = user?.user_metadata?.full_name || 'there'
+  
+  return (
+    <div className="personal-greeting">
+      <h2>
+        <span role="img" aria-label="waving hand">👋</span> Hey {userName}, how's your mind feeling today?
+      </h2>
+    </div>
+  )
+}
+
 function ThoughtCabinet({ oldThoughts }) {
   return (
     <div className="thought-cabinet">
@@ -763,6 +784,7 @@ function App() {
         />
         <main>
           <>
+            <PersonalGreeting user={user} />
             <EmotionSlider />
             <ThoughtInput onSubmit={handleThoughtSubmit} />
             <ResponseSection 

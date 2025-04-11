@@ -1043,3 +1043,40 @@ main {
     left: 2rem;
   }
 }
+
+.personal-greeting {
+  width: 100%;
+  max-width: 1400px;
+  margin: 2rem auto 1rem;
+  padding: 0 2rem;
+  text-align: left;
+}
+
+.personal-greeting h2 {
+  color: var(--text-primary);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.personal-greeting span[role="img"] {
+  font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+  .personal-greeting {
+    padding: 0 1rem;
+    margin: 1.5rem auto 1rem;
+  }
+
+  .personal-greeting h2 {
+    font-size: 1.4rem;
+  }
+
+  .personal-greeting span[role="img"] {
+    font-size: 1.6rem;
+  }
+}
