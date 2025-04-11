@@ -179,13 +179,16 @@ function EmotionSlider() {
 }
 
 function PersonalGreeting({ user }) {
-  const [timeOfDay, setTimeOfDay] = useState('')
+  const [isReturningUser, setIsReturningUser] = useState(false)
   
   useEffect(() => {
-    const hour = new Date().getHours()
-    if (hour < 12) setTimeOfDay('Morning')
-    else if (hour < 17) setTimeOfDay('Afternoon')
-    else setTimeOfDay('Evening')
+    // Check if user has visited before using localStorage
+    const hasVisited = localStorage.getItem('hasVisited')
+    if (hasVisited) {
+      setIsReturningUser(true)
+    } else {
+      localStorage.setItem('hasVisited', 'true')
+    }
   }, [])
 
   const userName = user?.user_metadata?.full_name || 'there'
@@ -193,7 +196,8 @@ function PersonalGreeting({ user }) {
   return (
     <div className="personal-greeting">
       <h2>
-        <span role="img" aria-label="waving hand">👋</span> Hey {userName}, how's your mind feeling today?
+        <span role="img" aria-label="waving hand">👋</span>
+        {isReturningUser ? `Welcome back, ${userName}` : `Welcome, ${userName}`}
       </h2>
     </div>
   )
