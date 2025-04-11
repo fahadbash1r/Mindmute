@@ -88,21 +88,23 @@ header {
   align-items: center;
   justify-content: center;
   flex: 1;
-  padding: 0.5rem;
-  margin-right: -80px;
+  padding: 0;
+  margin: 0;
 }
 
 .logo {
   text-align: center;
-  width: 220px;
-  margin-top: 1rem;
+  width: 180px;
+  margin: 0;
 }
 
 .logo img {
   width: 100%;
   height: auto;
+  max-height: 36px;
   object-fit: contain;
   display: block;
+  margin: 0 auto;
 }
 
 .logo p {
@@ -225,8 +227,8 @@ main {
   position: relative;
   background: var(--box-bg);
   border-radius: 20px;
-  padding: 2rem;
-  margin: 2rem auto;
+  padding: 1.5rem;
+  margin: 1rem auto;
   width: 100%;
   max-width: 1400px;
 }
@@ -405,7 +407,7 @@ main {
 .thought-input-section {
   width: 100%;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 1rem auto;
   padding: 1rem;
   border-radius: 12px;
   background: var(--box-bg);
@@ -630,20 +632,35 @@ main {
 /* Mobile styles */
 @media (max-width: 768px) {
   .logo-wrapper {
-    margin-right: 0;
+    margin: 0;
     padding: 0;
   }
 
   .logo {
-    width: 200px;
-    margin-top: 1.5rem;
+    width: 160px;
+    margin: 0;
+  }
+
+  .logo img {
+    max-height: 32px;
   }
 
   .logo p {
     font-size: 0.75rem;
-    padding: 0;
-    width: 100%;
-    text-align: center;
+    margin-top: 0.25rem;
+  }
+
+  .personal-greeting {
+    margin: 1rem auto 0.75rem;
+  }
+
+  .emotion-section {
+    margin: 0.75rem auto;
+    padding: 1.25rem;
+  }
+
+  .thought-input-section {
+    margin: 0.75rem auto;
   }
 
   header {
@@ -664,11 +681,6 @@ main {
   .sign-up-btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
-  }
-
-  .emotion-section {
-    margin-top: 2rem;
-    padding: 2rem 1rem;
   }
 
   .emotion-label {
@@ -1047,7 +1059,7 @@ main {
 .personal-greeting {
   width: 100%;
   max-width: 1400px;
-  margin: 2rem auto 1rem;
+  margin: 1.5rem auto 1rem;
   padding: 0;
   text-align: center;
   display: flex;
