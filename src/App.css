@@ -1065,7 +1065,7 @@ main {
 .personal-greeting {
   width: 100%;
   max-width: 1400px;
-  margin: 0.5rem auto 0.25rem;
+  margin: 2rem auto 1.5rem;
   padding: 0;
   text-align: center;
   display: flex;
@@ -1075,33 +1075,38 @@ main {
 
 .personal-greeting h2 {
   color: var(--text-primary);
-  font-size: 1.5rem;
-  font-weight: 400;
+  font-size: 2.25rem;
+  font-weight: 500;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   font-family: 'Satoshi', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  opacity: 0.92;
 }
 
 .personal-greeting span[role="img"] {
-  font-size: 1.5rem;
+  font-size: 2.25rem;
+  margin-right: 0.25rem;
 }
 
 @media (max-width: 768px) {
   .personal-greeting {
-    margin: 0.25rem auto;
+    margin: 1.5rem auto 1rem;
   }
 
   .personal-greeting h2 {
-    font-size: 1.3rem;
-    gap: 0.4rem;
+    font-size: 1.4rem;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0 1rem;
   }
 
   .personal-greeting span[role="img"] {
-    font-size: 1.3rem;
+    font-size: 1.6rem;
   }
 }
 
