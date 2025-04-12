@@ -673,7 +673,7 @@ function ErrorBoundary({ children }) {
 
 function App() {
   const [session, setSession] = useState(null)
-  const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState('light')
   const [user, setUser] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
   const [oldThoughts, setOldThoughts] = useState([])
