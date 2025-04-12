@@ -78,11 +78,11 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 3rem;
-  background: var(--box-bg);
-  border-bottom: 1px solid var(--box-border);
+  background: transparent;
   height: 70px;
   max-width: 1400px;
   margin: 0 auto;
+  border-bottom: 1px solid var(--box-border);
 }
 
 .logo-wrapper {
@@ -115,6 +115,7 @@ header {
 .logo p {
   margin: 0;
   padding: 0;
+  color: var(--text-primary);
 }
 
 .mode-switcher {

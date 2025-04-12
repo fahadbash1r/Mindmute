@@ -692,6 +692,7 @@ function App() {
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Initial session:', session)
+      setSession(session)
       setUser(session?.user ?? null)
     })
 
@@ -699,6 +700,7 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       console.log('Auth state changed:', _event)
       console.log('New session:', session)
+      setSession(session)
       setUser(session?.user ?? null)
     })
 
