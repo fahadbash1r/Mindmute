@@ -302,7 +302,7 @@
     margin: 0 -1rem;
     gap: 1rem;
     width: calc(100vw - 1rem);
-    padding-bottom: 2rem; /* Add space for dots */
+    padding-bottom: 2rem;
   }
 
   .pricing-cards::-webkit-scrollbar {
@@ -386,4 +386,19 @@
   .choose-plan-button {
     margin-top: 0.75rem;
   }
+
+  .cancel-text {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 2;
+  }
+}
+
+.cancel-text {
+  color: #8b5cf6;
+  font-style: italic;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 1rem;
 } 
