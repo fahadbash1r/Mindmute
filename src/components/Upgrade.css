@@ -1,8 +1,8 @@
 .upgrade-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 4rem 2rem;
-  min-height: 100vh;
+  padding: 1.5rem 2rem;
+  min-height: calc(100vh - 70px); /* Subtract header height */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -109,7 +109,9 @@
 .pricing-card.popular .card-header h3,
 .pricing-card.popular .price,
 .pricing-card.popular .price-details,
-.pricing-card.popular .feature-item {
+.pricing-card.popular .feature-item,
+.pricing-card.popular .currency,
+.pricing-card.popular .amount {
   color: #ffffff;
 }
 
@@ -250,7 +252,8 @@
 
 @media (max-width: 768px) {
   .upgrade-container {
-    padding: 2rem 1rem;
+    padding: 1rem;
+    min-height: calc(100vh - 60px); /* Adjust for smaller header on mobile */
   }
 
   .pricing-cards {
