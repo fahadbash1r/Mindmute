@@ -222,6 +222,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  margin: 0 auto;
 }
 
 .emotion-section {
@@ -232,6 +233,7 @@ main {
   margin: 0.5rem auto;
   width: 100%;
   max-width: 800px;
+  box-sizing: border-box;
 }
 
 .emotion-label {
@@ -651,14 +653,15 @@ main {
   }
 
   .personal-greeting {
-    margin: 0.25rem auto 1rem;
+    margin: 0 auto 1rem;
     max-width: calc(100% - 2rem);
   }
 
   .emotion-section {
-    max-width: calc(100% - 3rem);
+    max-width: calc(100% - 2rem);
     padding: 1rem;
-    transform: scale(0.95);
+    margin: 0 auto;
+    transform: none;
   }
 
   .emotion-label {
@@ -671,6 +674,7 @@ main {
 
   .thought-input-section {
     margin: 0.5rem auto;
+    max-width: calc(100% - 2rem);
   }
 
   header {
@@ -693,13 +697,6 @@ main {
   .sign-up-btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
-  }
-
-  .emotion-label {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    text-align: center;
   }
 
   .mood-label {
@@ -1106,7 +1103,7 @@ main {
 
 @media (max-width: 768px) {
   .personal-greeting {
-    margin: 0.25rem auto 1rem;
+    margin: 0 auto 1rem;
     max-width: calc(100% - 2rem);
   }
 
