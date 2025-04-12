@@ -268,8 +268,28 @@
 @media (max-width: 768px) {
   .upgrade-container {
     padding: 1rem;
-    min-height: calc(100vh - 60px);
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
+    margin: 0;
+    width: 100%;
+  }
+
+  .upgrade-header {
+    padding: 1rem 0.5rem;
+    margin-bottom: 1rem;
+    position: sticky;
+    top: 0;
+    background: var(--background-color);
+    z-index: 10;
+  }
+
+  .upgrade-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .upgrade-header p {
+    font-size: 0.9rem;
   }
 
   .pricing-cards {
@@ -278,9 +298,10 @@
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    padding: 1rem 0.5rem;
+    padding: 0.5rem;
     margin: 0 -0.5rem;
-    gap: 1rem;
+    gap: 0.75rem;
+    width: 100vw;
   }
 
   .pricing-cards::-webkit-scrollbar {
@@ -288,41 +309,64 @@
   }
 
   .pricing-card {
-    flex: 0 0 85%;
+    flex: 0 0 90%;
     scroll-snap-align: center;
     transform: none !important;
-    margin: 0 0.5rem;
+    margin: 0;
+    padding: 1.25rem;
+    min-height: auto;
   }
 
   .pricing-card.popular {
     transform: none !important;
+    margin: 0;
+  }
+
+  .card-header {
+    margin-bottom: 1rem;
+  }
+
+  .card-header h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .price .amount {
+    font-size: 2.25rem;
+  }
+
+  .price-details {
+    font-size: 0.8rem;
+  }
+
+  .features-list {
+    margin: 1rem 0;
+    gap: 0.5rem;
+  }
+
+  .feature-item {
+    font-size: 0.85rem;
+    gap: 0.5rem;
   }
 
   .swipe-indicators {
     display: flex;
+    margin: 1rem 0;
   }
 
   .swipe-instruction {
     display: block;
+    margin: 0.5rem 0;
+    font-size: 0.85rem;
   }
 
-  /* Add fade effect to indicate more cards */
+  /* Remove the fade effect as it's causing visual issues */
   .pricing-cards::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 3rem;
-    background: linear-gradient(to right, transparent, var(--background-color, #ffffff));
-    pointer-events: none;
+    display: none;
   }
 
-  .upgrade-header h1 {
-    font-size: 1.75rem;
-  }
-
-  .price .amount {
-    font-size: 2.75rem;
+  .choose-plan-button {
+    padding: 0.75rem;
+    font-size: 0.9rem;
   }
 } 
