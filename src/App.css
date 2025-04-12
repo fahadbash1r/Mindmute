@@ -89,6 +89,8 @@ header {
   align-items: center;
   justify-content: center;
   flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .logo {
@@ -231,7 +233,7 @@ main {
   padding: 1.25rem;
   margin: 0.5rem auto;
   width: 100%;
-  max-width: 1400px;
+  max-width: 800px;
 }
 
 .emotion-label {
@@ -651,12 +653,12 @@ main {
   }
 
   .personal-greeting {
-    margin: 0.25rem auto;
+    margin: 1rem auto 1rem;
+    max-width: calc(100% - 2rem);
   }
 
   .emotion-section {
-    margin: 0.5rem auto;
-    padding: 1rem;
+    max-width: calc(100% - 2rem);
   }
 
   .thought-input-section {
@@ -1064,8 +1066,8 @@ main {
 
 .personal-greeting {
   width: 100%;
-  max-width: 1400px;
-  margin: 2rem auto 1.5rem;
+  max-width: 800px;
+  margin: 1rem auto 1.5rem;
   padding: 0;
   text-align: center;
   display: flex;
@@ -1086,6 +1088,7 @@ main {
   letter-spacing: -0.02em;
   line-height: 1.2;
   opacity: 0.92;
+  font-style: italic;
 }
 
 .personal-greeting span[role="img"] {
@@ -1095,7 +1098,8 @@ main {
 
 @media (max-width: 768px) {
   .personal-greeting {
-    margin: 1.5rem auto 1rem;
+    margin: 1rem auto 1rem;
+    max-width: calc(100% - 2rem);
   }
 
   .personal-greeting h2 {
@@ -1107,6 +1111,14 @@ main {
 
   .personal-greeting span[role="img"] {
     font-size: 1.6rem;
+  }
+
+  .emotion-section {
+    max-width: calc(100% - 2rem);
+  }
+
+  .logo-wrapper {
+    max-width: 100%;
   }
 }
 
