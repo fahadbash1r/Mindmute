@@ -58,6 +58,7 @@ html, body {
   overflow-x: hidden;
   position: relative;
   padding-top: env(safe-area-inset-top, 0);
+  box-sizing: border-box;
 }
 
 .app-container.light {
@@ -634,9 +635,70 @@ main {
 
 /* Mobile styles */
 @media (max-width: 768px) {
+  .app-container {
+    padding: 0;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  main {
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    overflow-x: hidden;
+  }
+
   .logo-wrapper {
     margin: 0;
     padding: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .personal-greeting {
+    margin: 0 auto 1rem;
+    padding: 0 1rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .emotion-section {
+    width: calc(100% - 2rem);
+    margin: 0 auto;
+    padding: 1rem;
+    box-sizing: border-box;
+    transform: none;
+  }
+
+  .emotion-slider {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .slider-track {
+    flex: 1;
+    max-width: calc(100% - 3rem);
+  }
+
+  .thought-input-section {
+    width: calc(100% - 2rem);
+    margin: 1rem auto;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  .thought-input {
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .logo {
@@ -650,37 +712,6 @@ main {
   .logo p {
     font-size: 0.75rem;
     margin-top: 0.2rem;
-  }
-
-  .personal-greeting {
-    margin: 0 auto 1rem;
-    max-width: calc(100% - 2rem);
-  }
-
-  .emotion-section {
-    max-width: calc(100% - 2rem);
-    padding: 1rem;
-    margin: 0 auto;
-    transform: none;
-  }
-
-  .emotion-label {
-    font-size: 1.2rem !important;
-  }
-
-  .logo-wrapper {
-    max-width: 100%;
-  }
-
-  .thought-input-section {
-    margin: 0.5rem auto;
-    max-width: calc(100% - 2rem);
-  }
-
-  header {
-    padding: 0.75rem 1rem;
-    height: 60px;
-    justify-content: space-between;
   }
 
   .mode-switcher {
@@ -703,20 +734,6 @@ main {
     font-size: 1rem;
     text-align: center;
     margin-bottom: 1.5rem;
-  }
-
-  .emotion-slider {
-    margin-top: 1rem;
-  }
-
-  .emotion-section,
-  .thought-input-section,
-  .priorities-section,
-  .thought-cabinet {
-    width: calc(100% - 2rem);
-    margin: 0.5rem 1rem;
-    padding: 1.25rem;
-    box-sizing: border-box;
   }
 
   .response-section {
