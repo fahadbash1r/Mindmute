@@ -656,20 +656,23 @@ main {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center;
   }
 
   .personal-greeting {
     margin: 0 auto 1rem;
-    padding: 0 1rem;
+    padding: 0;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
   }
 
   .emotion-section {
-    width: calc(100% - 2rem);
+    width: 100%;
+    max-width: calc(100% - 2rem);
     margin: 0 auto;
-    padding: 1rem;
+    padding: 1.25rem;
     box-sizing: border-box;
     transform: none;
   }
@@ -677,20 +680,22 @@ main {
   .emotion-slider {
     width: 100%;
     margin: 0 auto;
-    padding: 0.5rem 0;
+    padding: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 
   .slider-track {
     flex: 1;
-    max-width: calc(100% - 3rem);
+    max-width: calc(100% - 4rem);
+    margin: 0 0.5rem;
   }
 
   .thought-input-section {
-    width: calc(100% - 2rem);
+    width: 100%;
+    max-width: calc(100% - 2rem);
     margin: 1rem auto;
     padding: 1rem;
     box-sizing: border-box;
@@ -699,6 +704,47 @@ main {
   .thought-input {
     width: 100%;
     box-sizing: border-box;
+  }
+
+  .response-section {
+    width: 100%;
+    max-width: calc(100% - 2rem);
+    margin: 1rem auto;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .response-box {
+    width: 100%;
+    max-width: 100%;
+    margin-right: 0;
+    box-sizing: border-box;
+  }
+
+  .priorities-section {
+    width: 100%;
+    max-width: calc(100% - 2rem);
+    margin: 1rem auto;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  .thought-cabinet {
+    width: 100%;
+    max-width: calc(100% - 2rem);
+    margin: 1rem auto;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  .emotion-label {
+    font-size: 1.2rem;
+    padding: 0.5rem 1.25rem;
+  }
+
+  .mood-label {
+    margin: 2rem 0 1rem;
+    font-size: 0.95rem;
   }
 
   .logo {
@@ -728,38 +774,6 @@ main {
   .sign-up-btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
-  }
-
-  .mood-label {
-    font-size: 1rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .response-section {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    gap: 0;
-    margin: 1rem;
-    padding: 0;
-    width: calc(100% - 2rem);
-  }
-
-  .response-box {
-    flex: 0 0 100%;
-    scroll-snap-align: center;
-    margin-right: 1rem;
-    padding: 1.5rem;
-    min-height: 150px;
-    width: calc(100% - 1rem);
-    box-sizing: border-box;
-  }
-
-  .response-box:last-child {
-    margin-right: 0;
   }
 
   .swipe-instruction {
