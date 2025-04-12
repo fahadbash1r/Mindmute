@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Upgrade.css';
 
 const features = {
@@ -46,6 +46,7 @@ const PricingCard = ({ plan, price, period, features, isPopular, isActive, onCho
     <button 
       onClick={onChoose}
       className={`choose-plan-button ${isActive ? 'current' : ''}`}
+      disabled={isActive}
     >
       {isActive ? 'Current Plan' : 'Choose Plan'}
     </button>
@@ -53,8 +54,22 @@ const PricingCard = ({ plan, price, period, features, isPopular, isActive, onCho
 );
 
 export default function Upgrade() {
-  const handlePlanChoice = (plan) => {
-    console.log(`Selected plan: ${plan}`);
+  const [currentPlan, setCurrentPlan] = useState('basic'); // Default to basic plan
+
+  const handlePlanChoice = async (plan) => {
+    try {
+      // Here you would typically make an API call to update the subscription
+      console.log(`Switching to plan: ${plan}`);
+      
+      // For now, just update the UI
+      setCurrentPlan(plan);
+      
+      // You can add a success message here
+      alert('Plan updated successfully!');
+    } catch (error) {
+      console.error('Error updating plan:', error);
+      alert('Failed to update plan. Please try again.');
+    }
   };
 
   return (
@@ -70,7 +85,7 @@ export default function Upgrade() {
           price="0"
           period="month"
           features={features.basic}
-          isActive={true}
+          isActive={currentPlan === 'basic'}
           onChoose={() => handlePlanChoice('basic')}
         />
         <PricingCard
@@ -79,6 +94,7 @@ export default function Upgrade() {
           period="month"
           features={features.clarity}
           isPopular={true}
+          isActive={currentPlan === 'clarity'}
           onChoose={() => handlePlanChoice('clarity')}
         />
         <PricingCard
@@ -86,6 +102,7 @@ export default function Upgrade() {
           price="79"
           period="annual"
           features={features.clarity}
+          isActive={currentPlan === 'clarity-annual'}
           onChoose={() => handlePlanChoice('clarity-annual')}
         />
       </div>
