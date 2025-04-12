@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './SideMenu.css';
 
 export default function SideMenu({ onSignOut }) {
@@ -44,18 +45,18 @@ export default function SideMenu({ onSignOut }) {
         </button>
 
         <nav className="menu-items">
-          <a href="/" className="menu-item">
+          <Link to="/" className="menu-item" onClick={() => setIsOpen(false)}>
             <span className="menu-icon">🧠</span>
             Today's Session
-          </a>
-          <a href="/thoughts" className="menu-item">
+          </Link>
+          <Link to="/thoughts" className="menu-item" onClick={() => setIsOpen(false)}>
             <span className="menu-icon">📁</span>
             My Thoughts
-          </a>
-          <a href="/upgrade" className="menu-item">
+          </Link>
+          <Link to="/upgrade" className="menu-item" onClick={() => setIsOpen(false)}>
             <span className="menu-icon">⭐</span>
             Upgrade
-          </a>
+          </Link>
           <button onClick={onSignOut} className="menu-item sign-out">
             <span className="menu-icon">🚪</span>
             Sign Out

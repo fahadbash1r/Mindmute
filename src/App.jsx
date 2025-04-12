@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import darkLogo from './assets/mindmute-dark.png'
 import lightLogo from './assets/mindmute-light.png'
@@ -6,6 +7,7 @@ import { supabase } from './supabaseClient'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
 import SideMenu from './components/SideMenu'
+import Upgrade from './components/Upgrade'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
@@ -670,12 +672,16 @@ function ErrorBoundary({ children }) {
 }
 
 function App() {
-  const [theme, setTheme] = useState('light')
-  const [response, setResponse] = useState(null)
-  const [oldThoughts, setOldThoughts] = useState([])
+  const [session, setSession] = useState(null)
+  const [theme, setTheme] = useState('dark')
   const [user, setUser] = useState(null)
-  const [isSignUp, setIsSignUp] = useState(false)
-  const [initialized, setInitialized] = useState(false);
+  const [isConnected, setIsConnected] = useState(false)
+  const [oldThoughts, setOldThoughts] = useState([])
+  const [priorities, setPriorities] = useState([])
+  const [showPieChart, setShowPieChart] = useState(false)
+  const [summary, setSummary] = useState('')
+  const [reframe, setReframe] = useState('')
+  const [todoList, setTodoList] = useState([])
 
   useEffect(() => {
     // Set theme attribute on document for CSS selector
@@ -739,7 +745,10 @@ function App() {
 
   const handleThoughtSubmit = async (data) => {
     console.log('Received response:', data)
-    setResponse(data)
+    setSummary(data.summary)
+    setReframe(data.reframe)
+    setTodoList(data.todoList)
+    setPriorities(data.priorities)
     
     if (data.summary && user) {
       try {
@@ -779,54 +788,58 @@ function App() {
         const { data, error } = await supabase.from('thoughts').select('count');
         if (error) throw error;
         console.log('Supabase connection successful');
-        setInitialized(true);
+        setIsConnected(true);
       } catch (error) {
         console.error('Supabase connection error:', error);
-        setInitialized(true); // Still set to true to show UI
+        setIsConnected(true); // Still set to true to show UI
       }
     }
     
     testConnection();
   }, []);
 
-  if (!initialized) {
+  if (!isConnected) {
     return <div>Loading...</div>;
   }
 
-  if (!user) {
-    return isSignUp ? (
-      <SignUp onLoginClick={() => setIsSignUp(false)} />
-    ) : (
-      <Login onSignUpClick={() => setIsSignUp(true)} />
-    );
-  }
-
   return (
-    <ErrorBoundary>
+    <BrowserRouter>
       <div className={`app-container ${theme}`}>
-        <Header 
-          theme={theme} 
-          toggleTheme={toggleTheme}
-          user={user}
-          onSignOut={handleSignOut}
-        />
-        <main>
-          <>
-            <PersonalGreeting user={user} />
-            <EmotionSlider />
-            <ThoughtInput onSubmit={handleThoughtSubmit} />
-            <ResponseSection 
-              summary={response?.summary}
-              reframe={response?.reframe}
-              todoList={response?.todoList}
-              isVisible={!!response}
-            />
-            <PriorityBars data={response?.priorities} />
-            <ThoughtCabinet oldThoughts={oldThoughts} />
-          </>
-        </main>
+        <Header theme={theme} toggleTheme={toggleTheme} user={user} onSignOut={handleSignOut} />
+        
+        {!session ? (
+          <Routes>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="*" element={<Login />} />
+          </Routes>
+        ) : (
+          <Routes>
+            <Route path="/" element={
+              <main>
+                <PersonalGreeting user={user} />
+                <EmotionSlider />
+                <ThoughtInput onSubmit={handleThoughtSubmit} />
+                <ResponseSection 
+                  summary={summary}
+                  reframe={reframe}
+                  todoList={todoList}
+                  isVisible={summary || reframe || todoList.length > 0}
+                />
+                <PriorityBars data={priorities} />
+                <ThoughtCabinet oldThoughts={oldThoughts} />
+              </main>
+            } />
+            <Route path="/thoughts" element={
+              <main>
+                <ThoughtCabinet oldThoughts={oldThoughts} />
+              </main>
+            } />
+            <Route path="/upgrade" element={<Upgrade />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        )}
       </div>
-    </ErrorBoundary>
+    </BrowserRouter>
   )
 }
 
