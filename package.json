@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",
     "axios": "^1.8.4",
+    "pg": "^8.11.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.5.0"
