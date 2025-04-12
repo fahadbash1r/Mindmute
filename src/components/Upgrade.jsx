@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Upgrade.css';
 
 const features = {
@@ -21,8 +21,8 @@ const features = {
 
 const PricingCard = ({ plan, price, period, features, isPopular, isActive, onChoose }) => (
   <div className={`pricing-card ${isPopular ? 'popular' : ''} ${isActive ? 'active' : ''}`}>
+    {isPopular && <div className="popular-tag">Most Popular</div>}
     <div className="card-header">
-      {isPopular && <div className="popular-tag">Most Popular</div>}
       <h3>{plan}</h3>
       <div className="price">
         <span className="currency">$</span>
@@ -53,8 +53,6 @@ const PricingCard = ({ plan, price, period, features, isPopular, isActive, onCho
 );
 
 export default function Upgrade() {
-  const [billingPeriod, setBillingPeriod] = useState('monthly');
-
   const handlePlanChoice = (plan) => {
     console.log(`Selected plan: ${plan}`);
   };
@@ -66,28 +64,19 @@ export default function Upgrade() {
         <p>Choose the plan that works for you.</p>
       </div>
 
-      <div className="billing-toggle">
-        <button 
-          className={billingPeriod === 'monthly' ? 'active' : ''}
-          onClick={() => setBillingPeriod('monthly')}
-        >
-          Monthly
-        </button>
-      </div>
-
       <div className="pricing-cards">
         <PricingCard
           plan="Basic Plan"
           price="0"
-          period={billingPeriod === 'monthly' ? 'month' : 'annual'}
+          period="month"
           features={features.basic}
           isActive={true}
           onChoose={() => handlePlanChoice('basic')}
         />
         <PricingCard
           plan="Clarity+ Plan"
-          price={billingPeriod === 'monthly' ? '10' : '79'}
-          period={billingPeriod === 'monthly' ? 'month' : 'annual'}
+          price="10"
+          period="month"
           features={features.clarity}
           isPopular={true}
           onChoose={() => handlePlanChoice('clarity')}
