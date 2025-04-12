@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Upgrade.css';
 
 const features = {
@@ -54,21 +54,70 @@ const PricingCard = ({ plan, price, period, features, isPopular, isActive, onCho
 );
 
 export default function Upgrade() {
-  const [currentPlan, setCurrentPlan] = useState('basic'); // Default to basic plan
+  const [currentPlan, setCurrentPlan] = useState('basic');
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const cardsRef = useRef(null);
+
+  const plans = [
+    {
+      id: 'basic',
+      plan: "Basic Plan",
+      price: "0",
+      period: "month",
+      features: features.basic
+    },
+    {
+      id: 'clarity',
+      plan: "Clarity+ Plan",
+      price: "10",
+      period: "month",
+      features: features.clarity,
+      isPopular: true
+    },
+    {
+      id: 'clarity-annual',
+      plan: "Clarity+ Plan Annually",
+      price: "79",
+      period: "annual",
+      features: features.clarity
+    }
+  ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (cardsRef.current) {
+        const scrollPosition = cardsRef.current.scrollLeft;
+        const cardWidth = cardsRef.current.offsetWidth * 0.85; // 85% of container width
+        const newIndex = Math.round(scrollPosition / (cardWidth + 16)); // 16px is the gap
+        setActiveCardIndex(newIndex);
+      }
+    };
+
+    const cardsElement = cardsRef.current;
+    if (cardsElement) {
+      cardsElement.addEventListener('scroll', handleScroll);
+      return () => cardsElement.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
   const handlePlanChoice = async (plan) => {
     try {
-      // Here you would typically make an API call to update the subscription
       console.log(`Switching to plan: ${plan}`);
-      
-      // For now, just update the UI
       setCurrentPlan(plan);
-      
-      // You can add a success message here
       alert('Plan updated successfully!');
     } catch (error) {
       console.error('Error updating plan:', error);
       alert('Failed to update plan. Please try again.');
+    }
+  };
+
+  const scrollToCard = (index) => {
+    if (cardsRef.current) {
+      const cardWidth = cardsRef.current.offsetWidth * 0.85;
+      cardsRef.current.scrollTo({
+        left: index * (cardWidth + 16),
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -79,32 +128,33 @@ export default function Upgrade() {
         <p>Choose the plan that works for you.</p>
       </div>
 
-      <div className="pricing-cards">
-        <PricingCard
-          plan="Basic Plan"
-          price="0"
-          period="month"
-          features={features.basic}
-          isActive={currentPlan === 'basic'}
-          onChoose={() => handlePlanChoice('basic')}
-        />
-        <PricingCard
-          plan="Clarity+ Plan"
-          price="10"
-          period="month"
-          features={features.clarity}
-          isPopular={true}
-          isActive={currentPlan === 'clarity'}
-          onChoose={() => handlePlanChoice('clarity')}
-        />
-        <PricingCard
-          plan="Clarity+ Plan Annually"
-          price="79"
-          period="annual"
-          features={features.clarity}
-          isActive={currentPlan === 'clarity-annual'}
-          onChoose={() => handlePlanChoice('clarity-annual')}
-        />
+      <div className="swipe-instruction">
+        Swipe to compare plans
+      </div>
+
+      <div className="pricing-cards" ref={cardsRef}>
+        {plans.map((plan, index) => (
+          <PricingCard
+            key={plan.id}
+            plan={plan.plan}
+            price={plan.price}
+            period={plan.period}
+            features={plan.features}
+            isPopular={plan.isPopular}
+            isActive={currentPlan === plan.id}
+            onChoose={() => handlePlanChoice(plan.id)}
+          />
+        ))}
+      </div>
+
+      <div className="swipe-indicators">
+        {plans.map((_, index) => (
+          <div
+            key={index}
+            className={`swipe-indicator ${index === activeCardIndex ? 'active' : ''}`}
+            onClick={() => scrollToCard(index)}
+          />
+        ))}
       </div>
     </div>
   );

@@ -36,6 +36,38 @@
   position: relative;
 }
 
+/* Add swipe indicators */
+.swipe-indicators {
+  display: none;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.swipe-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-secondary, #666666);
+  opacity: 0.3;
+  transition: all 0.3s ease;
+}
+
+.swipe-indicator.active {
+  opacity: 1;
+  background: #8b5cf6;
+  transform: scale(1.2);
+}
+
+/* Mobile swipe instructions */
+.swipe-instruction {
+  display: none;
+  text-align: center;
+  color: var(--text-secondary, #666666);
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
 .pricing-card {
   background: var(--card-bg, #ffffff);
   border-radius: 1.25rem;
@@ -235,16 +267,55 @@
 
 @media (max-width: 768px) {
   .upgrade-container {
-    padding: 1rem 1rem 1.5rem;
+    padding: 1rem;
     min-height: calc(100vh - 60px);
+    overflow: hidden;
   }
 
   .pricing-cards {
-    grid-template-columns: 1fr;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem 0.5rem;
+    margin: 0 -0.5rem;
+    gap: 1rem;
+  }
+
+  .pricing-cards::-webkit-scrollbar {
+    display: none;
   }
 
   .pricing-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
     transform: none !important;
+    margin: 0 0.5rem;
+  }
+
+  .pricing-card.popular {
+    transform: none !important;
+  }
+
+  .swipe-indicators {
+    display: flex;
+  }
+
+  .swipe-instruction {
+    display: block;
+  }
+
+  /* Add fade effect to indicate more cards */
+  .pricing-cards::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 3rem;
+    background: linear-gradient(to right, transparent, var(--background-color, #ffffff));
+    pointer-events: none;
   }
 
   .upgrade-header h1 {
