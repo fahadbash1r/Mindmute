@@ -1247,12 +1247,17 @@ main {
 }
 
 .intention-option:hover {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(130, 92, 255, 0.1);
 }
 
 .intention-option.active {
-  background: rgba(139, 92, 246, 0.15);
+  background: #825cff;
   transform: translateY(-1px);
+}
+
+.intention-option.active .intention-icon,
+.intention-option.active .intention-text {
+  color: white;
 }
 
 .intention-icon {
