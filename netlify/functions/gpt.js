@@ -9,7 +9,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { thought } = JSON.parse(event.body);
+    const { thought, emotion, moodLabel } = JSON.parse(event.body);
 
     if (!thought) {
       return {
@@ -18,47 +18,155 @@ exports.handler = async (event) => {
       };
     }
 
-    // Process the thought with empathetic responses
+    // Helper function to get emotion-based response tone
+    const getEmotionalTone = (emotion) => {
+      if (emotion <= 25) {
+        return {
+          tone: 'supportive',
+          prefix: "I hear you're having a challenging time. ",
+          emphasis: "gentle support and understanding",
+          actionStyle: "small, manageable steps"
+        };
+      } else if (emotion <= 50) {
+        return {
+          tone: 'balanced',
+          prefix: "I notice you're finding your balance. ",
+          emphasis: "steady progress and grounding",
+          actionStyle: "balanced, mindful steps"
+        };
+      } else if (emotion <= 75) {
+        return {
+          tone: 'encouraging',
+          prefix: "I sense your positive momentum. ",
+          emphasis: "building on your progress",
+          actionStyle: "confident, forward-moving steps"
+        };
+      } else {
+        return {
+          tone: 'celebratory',
+          prefix: "I can feel your optimistic energy. ",
+          emphasis: "channeling your positive energy",
+          actionStyle: "expansive, inspiring actions"
+        };
+      }
+    };
+
+    const emotionalTone = getEmotionalTone(emotion);
     let summary, reframe, nextSteps, priorities;
 
     if (thought.toLowerCase().includes('overwhelm')) {
-      summary = "I hear that things feel overwhelming right now. Your mind is carrying a lot, and that's completely valid.";
-      reframe = "When thoughts start to pile up, it's not a sign of failure — it's your mind asking for a moment to breathe and find clarity. Let's create some space together.";
-      nextSteps = [
-        "Take a gentle pause - even 30 seconds of deep breathing can create a small shift",
-        "Name one thought that feels heaviest - sometimes just acknowledging it helps",
-        "Choose one tiny action that might bring relief - it doesn't have to be perfect"
-      ];
+      summary = `${emotionalTone.prefix}Things feel overwhelming right now, and that's completely valid.`;
+      
+      if (emotion <= 25) {
+        reframe = "When thoughts start to pile up, it's okay to take things slowly. Let's create a gentle space for you to breathe and find your footing.";
+        nextSteps = [
+          "Take a moment to breathe - even 10 seconds can help",
+          "Name one small thing that feels manageable right now",
+          "Remember it's okay to take things one tiny step at a time"
+        ];
+      } else if (emotion <= 50) {
+        reframe = "When thoughts start to accumulate, it's a sign to pause and find your center. You're already taking steps by acknowledging this.";
+        nextSteps = [
+          "Take a balanced pause - a few deep breaths can help",
+          "Identify one thought to focus on first",
+          "Choose one action that feels right for now"
+        ];
+      } else if (emotion <= 75) {
+        reframe = "Even in overwhelming moments, you're maintaining perspective. Let's channel this energy into clear, focused steps.";
+        nextSteps = [
+          "Use your momentum to break things down",
+          "Pick one area where you can make progress",
+          "Build on your current positive energy"
+        ];
+      } else {
+        reframe = "Your optimistic spirit is a powerful tool. Let's use this energy to transform overwhelming thoughts into exciting possibilities.";
+        nextSteps = [
+          "Channel your positive energy into organizing thoughts",
+          "Choose an inspiring first step to tackle",
+          "Use your enthusiasm to create positive change"
+        ];
+      }
+      
       priorities = [
-        { title: "Creating Space", percentage: 40 },
-        { title: "Gentle Focus", percentage: 35 },
-        { title: "Small Steps", percentage: 25 }
+        { title: emotionalTone.emphasis, percentage: 40 },
+        { title: "Focused Clarity", percentage: 35 },
+        { title: emotionalTone.actionStyle, percentage: 25 }
       ];
     } else if (thought.toLowerCase().includes('stuck') || thought.toLowerCase().includes('cant')) {
-      summary = "It sounds like you're feeling stuck right now. That's a really human experience, and it's okay to pause here.";
-      reframe = "Being stuck isn't always about being lost - sometimes it's about gathering energy for your next clear step. Your awareness right now is actually the first move forward.";
-      nextSteps = [
-        "Notice where you feel most drawn to begin - trust that instinct",
-        "Pick one small thing that feels possible today",
-        "Celebrate any movement, no matter how subtle it seems"
-      ];
+      summary = `${emotionalTone.prefix}You're working through a stuck point, and that takes courage.`;
+      
+      if (emotion <= 25) {
+        reframe = "Being stuck isn't a permanent state - it's okay to take time to gather your strength. Every small movement counts.";
+        nextSteps = [
+          "Be gentle with yourself right now",
+          "Notice one tiny possibility that feels safe",
+          "Remember that rest is also progress"
+        ];
+      } else if (emotion <= 50) {
+        reframe = "This stuck point is temporary. Your awareness and balanced approach will help you find your way forward.";
+        nextSteps = [
+          "Take a grounded look at where you are",
+          "Identify one clear path to explore",
+          "Trust your steady progress"
+        ];
+      } else if (emotion <= 75) {
+        reframe = "Your positive energy can help shift this stuck point. You're already building momentum just by addressing it.";
+        nextSteps = [
+          "Use your energy to explore new angles",
+          "Choose one promising direction",
+          "Build on what's already working"
+        ];
+      } else {
+        reframe = "Your optimistic spirit is perfect for transforming stuck points into launching pads. Let's channel this energy!";
+        nextSteps = [
+          "Transform this challenge into an opportunity",
+          "Pick an exciting new approach to try",
+          "Use your enthusiasm to break through"
+        ];
+      }
+      
       priorities = [
-        { title: "Self-Trust", percentage: 40 },
-        { title: "Mindful Action", percentage: 35 },
-        { title: "Patient Progress", percentage: 25 }
+        { title: emotionalTone.emphasis, percentage: 40 },
+        { title: "Moving Forward", percentage: 35 },
+        { title: emotionalTone.actionStyle, percentage: 25 }
       ];
     } else {
-      summary = "I'm hearing you're seeking some clarity. Your thoughts deserve this space to unfold.";
-      reframe = "Sometimes the path forward becomes clearer not by pushing harder, but by giving yourself permission to explore at your own pace. Each reflection is a step toward understanding.";
-      nextSteps = [
-        "Take a moment to sit with what feels most present for you",
-        "Notice what small step feels inviting - not pressured",
-        "Remember that any movement, even just reflection, is valuable"
-      ];
+      summary = `${emotionalTone.prefix}You're taking time to reflect and find clarity.`;
+      
+      if (emotion <= 25) {
+        reframe = "It's okay to take things slowly and be gentle with yourself as you explore these thoughts. Every bit of reflection matters.";
+        nextSteps = [
+          "Take a gentle moment to acknowledge where you are",
+          "Notice one small thing that feels possible",
+          "Remember that self-compassion is progress"
+        ];
+      } else if (emotion <= 50) {
+        reframe = "Your balanced approach to reflection will help you find clarity. Trust your process of understanding.";
+        nextSteps = [
+          "Center yourself in this moment",
+          "Explore what feels most relevant now",
+          "Take mindful steps forward"
+        ];
+      } else if (emotion <= 75) {
+        reframe = "Your positive energy enhances your reflection. Let's use this momentum to gain deeper insights.";
+        nextSteps = [
+          "Channel your energy into focused reflection",
+          "Choose an inspiring direction to explore",
+          "Build on your positive insights"
+        ];
+      } else {
+        reframe = "Your optimistic spirit brings light to this reflection. Let's use this energy to uncover exciting possibilities!";
+        nextSteps = [
+          "Use your enthusiasm to explore deeply",
+          "Transform insights into inspiring actions",
+          "Create positive momentum from here"
+        ];
+      }
+      
       priorities = [
-        { title: "Present Awareness", percentage: 40 },
-        { title: "Gentle Exploration", percentage: 35 },
-        { title: "Mindful Movement", percentage: 25 }
+        { title: emotionalTone.emphasis, percentage: 40 },
+        { title: "Clear Reflection", percentage: 35 },
+        { title: emotionalTone.actionStyle, percentage: 25 }
       ];
     }
 
