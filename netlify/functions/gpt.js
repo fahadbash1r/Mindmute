@@ -9,7 +9,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { thought, emotion, moodLabel } = JSON.parse(event.body);
+    const { thought, emotion, moodLabel, intention } = JSON.parse(event.body);
 
     if (!thought) {
       return {
@@ -51,18 +51,72 @@ exports.handler = async (event) => {
       }
     };
 
+    // Helper function to get intention-based focus
+    const getIntentionFocus = (intention) => {
+      switch (intention) {
+        case 'clarity':
+          return {
+            emphasis: "understanding and insight",
+            approach: "analytical and reflective",
+            nextStepsStyle: "clarifying actions",
+            priorityFocus: "Clear Understanding"
+          };
+        case 'motivation':
+          return {
+            emphasis: "energy and drive",
+            approach: "energizing and inspiring",
+            nextStepsStyle: "motivating actions",
+            priorityFocus: "Building Momentum"
+          };
+        case 'calm':
+          return {
+            emphasis: "peace and balance",
+            approach: "soothing and grounding",
+            nextStepsStyle: "calming practices",
+            priorityFocus: "Finding Peace"
+          };
+        case 'plan':
+          return {
+            emphasis: "structure and direction",
+            approach: "organized and strategic",
+            nextStepsStyle: "actionable steps",
+            priorityFocus: "Clear Direction"
+          };
+        default:
+          return {
+            emphasis: "understanding and insight",
+            approach: "balanced and thoughtful",
+            nextStepsStyle: "mindful actions",
+            priorityFocus: "Clear Path"
+          };
+      }
+    };
+
     const emotionalTone = getEmotionalTone(emotion);
+    const intentionFocus = getIntentionFocus(intention);
     let summary, reframe, nextSteps, priorities;
 
     if (thought.toLowerCase().includes('overwhelm')) {
       summary = `${emotionalTone.prefix}Things feel overwhelming right now, and that's completely valid.`;
       
       if (emotion <= 25) {
-        reframe = "When thoughts start to pile up, it's okay to take things slowly. Let's create a gentle space for you to breathe and find your footing.";
-        nextSteps = [
-          "Take a moment to breathe - even 10 seconds can help",
-          "Name one small thing that feels manageable right now",
-          "Remember it's okay to take things one tiny step at a time"
+        reframe = `When thoughts start to pile up, it's okay to take things slowly. Let's create a gentle space for you to find ${intentionFocus.emphasis}.`;
+        nextSteps = intention === 'clarity' ? [
+          "Take a moment to name one thought that feels clearest",
+          "Write down what you know for sure right now",
+          "Identify one area where you'd like more understanding"
+        ] : intention === 'motivation' ? [
+          "Choose one small win to focus on first",
+          "Remember a time you overcame something similar",
+          "Set one tiny goal that feels exciting"
+        ] : intention === 'calm' ? [
+          "Take three slow, deep breaths",
+          "Find one peaceful spot to rest your attention",
+          "Give yourself permission to pause"
+        ] : [
+          "List one thing you can address today",
+          "Break down your next step into smaller parts",
+          "Create a simple timeline for yourself"
         ];
       } else if (emotion <= 50) {
         reframe = "When thoughts start to accumulate, it's a sign to pause and find your center. You're already taking steps by acknowledging this.";
@@ -88,9 +142,9 @@ exports.handler = async (event) => {
       }
       
       priorities = [
-        { title: emotionalTone.emphasis, percentage: 40 },
-        { title: "Focused Clarity", percentage: 35 },
-        { title: emotionalTone.actionStyle, percentage: 25 }
+        { title: intentionFocus.priorityFocus, percentage: 40 },
+        { title: emotionalTone.emphasis, percentage: 35 },
+        { title: intentionFocus.nextStepsStyle, percentage: 25 }
       ];
     } else if (thought.toLowerCase().includes('stuck') || thought.toLowerCase().includes('cant')) {
       summary = `${emotionalTone.prefix}You're working through a stuck point, and that takes courage.`;
@@ -131,7 +185,7 @@ exports.handler = async (event) => {
         { title: emotionalTone.actionStyle, percentage: 25 }
       ];
     } else {
-      summary = `${emotionalTone.prefix}You're taking time to reflect and find clarity.`;
+      summary = `${emotionalTone.prefix}You're taking time to reflect and find ${intentionFocus.emphasis}.`;
       
       if (emotion <= 25) {
         reframe = "It's okay to take things slowly and be gentle with yourself as you explore these thoughts. Every bit of reflection matters.";

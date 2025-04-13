@@ -444,7 +444,72 @@ function Header({ theme, toggleTheme, user, onSignOut }) {
   );
 }
 
-function ThoughtInput({ onSubmit, emotion, moodLabel }) {
+function IntentionSelector({ onIntentionChange }) {
+  const [intention, setIntention] = useState('clarity')
+  
+  const handleChange = (e) => {
+    const value = e.target.value
+    setIntention(value)
+    onIntentionChange?.(value)
+  }
+  
+  return (
+    <div className="intention-section">
+      <div className="intention-label">What do you want to walk away with?</div>
+      <div className="intention-options">
+        <label className={`intention-option ${intention === 'clarity' ? 'active' : ''}`}>
+          <input
+            type="radio"
+            name="intention"
+            value="clarity"
+            checked={intention === 'clarity'}
+            onChange={handleChange}
+          />
+          <span className="intention-icon">💭</span>
+          <span className="intention-text">Clarity</span>
+        </label>
+        
+        <label className={`intention-option ${intention === 'motivation' ? 'active' : ''}`}>
+          <input
+            type="radio"
+            name="intention"
+            value="motivation"
+            checked={intention === 'motivation'}
+            onChange={handleChange}
+          />
+          <span className="intention-icon">🚀</span>
+          <span className="intention-text">Motivation</span>
+        </label>
+        
+        <label className={`intention-option ${intention === 'calm' ? 'active' : ''}`}>
+          <input
+            type="radio"
+            name="intention"
+            value="calm"
+            checked={intention === 'calm'}
+            onChange={handleChange}
+          />
+          <span className="intention-icon">🌊</span>
+          <span className="intention-text">Calm</span>
+        </label>
+        
+        <label className={`intention-option ${intention === 'plan' ? 'active' : ''}`}>
+          <input
+            type="radio"
+            name="intention"
+            value="plan"
+            checked={intention === 'plan'}
+            onChange={handleChange}
+          />
+          <span className="intention-icon">📋</span>
+          <span className="intention-text">Plan</span>
+        </label>
+      </div>
+    </div>
+  )
+}
+
+function ThoughtInput({ onSubmit, emotion, moodLabel, intention }) {
   const [thought, setThought] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -465,7 +530,8 @@ function ThoughtInput({ onSubmit, emotion, moodLabel }) {
         body: JSON.stringify({ 
           thought: thought.trim(),
           emotion: emotion,
-          moodLabel: moodLabel
+          moodLabel: moodLabel,
+          intention: intention
         }),
       });
 
@@ -695,6 +761,7 @@ function App() {
   const [todoList, setTodoList] = useState([])
   const [currentEmotion, setCurrentEmotion] = useState()
   const [currentMoodLabel, setCurrentMoodLabel] = useState()
+  const [currentIntention, setCurrentIntention] = useState('clarity')
 
   useEffect(() => {
     // Set theme attribute on document for CSS selector
@@ -797,6 +864,10 @@ function App() {
     setCurrentMoodLabel(label)
   }
 
+  const handleIntentionChange = (intention) => {
+    setCurrentIntention(intention)
+  }
+
   useEffect(() => {
     // Log environment variables (excluding sensitive data)
     console.log('Supabase URL configured:', !!import.meta.env.VITE_SUPABASE_URL);
@@ -837,11 +908,13 @@ function App() {
             <Route path="/" element={
               <main>
                 <PersonalGreeting user={user} />
+                <IntentionSelector onIntentionChange={handleIntentionChange} />
                 <EmotionSlider onEmotionChange={handleEmotionChange} />
                 <ThoughtInput 
                   onSubmit={handleThoughtSubmit} 
                   emotion={currentEmotion}
                   moodLabel={currentMoodLabel}
+                  intention={currentIntention}
                 />
                 <ResponseSection 
                   summary={summary}
