@@ -131,7 +131,7 @@ function PriorityBars({ data }) {
   );
 }
 
-function EmotionSlider() {
+function EmotionSlider({ onEmotionChange }) {
   const [emotion, setEmotion] = useState(50)
   const [moodLabel, setMoodLabel] = useState('Finding balance in the journey')
   
@@ -149,6 +149,9 @@ function EmotionSlider() {
     } else {
       setMoodLabel('Embracing joy and optimism')
     }
+
+    // Call the callback with the new value
+    onEmotionChange?.(value, moodLabel)
   }
   
   return (
@@ -441,12 +444,16 @@ function Header({ theme, toggleTheme, user, onSignOut }) {
   );
 }
 
-function ThoughtInput({ onSubmit }) {
+function ThoughtInput({ onSubmit, emotion, moodLabel }) {
   const [thought, setThought] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async () => {
     if (!thought.trim()) return;
+    if (emotion === undefined) {
+      alert("Please share how you're feeling using the slider above first.");
+      return;
+    }
     
     setIsLoading(true)
     try {
@@ -455,7 +462,11 @@ function ThoughtInput({ onSubmit }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ thought: thought.trim() }),
+        body: JSON.stringify({ 
+          thought: thought.trim(),
+          emotion: emotion,
+          moodLabel: moodLabel
+        }),
       });
 
       if (!response.ok) {
@@ -682,6 +693,8 @@ function App() {
   const [summary, setSummary] = useState('')
   const [reframe, setReframe] = useState('')
   const [todoList, setTodoList] = useState([])
+  const [currentEmotion, setCurrentEmotion] = useState()
+  const [currentMoodLabel, setCurrentMoodLabel] = useState()
 
   useEffect(() => {
     // Set theme attribute on document for CSS selector
@@ -779,6 +792,11 @@ function App() {
     }
   }
 
+  const handleEmotionChange = (emotion, label) => {
+    setCurrentEmotion(emotion)
+    setCurrentMoodLabel(label)
+  }
+
   useEffect(() => {
     // Log environment variables (excluding sensitive data)
     console.log('Supabase URL configured:', !!import.meta.env.VITE_SUPABASE_URL);
@@ -819,8 +837,12 @@ function App() {
             <Route path="/" element={
               <main>
                 <PersonalGreeting user={user} />
-                <EmotionSlider />
-                <ThoughtInput onSubmit={handleThoughtSubmit} />
+                <EmotionSlider onEmotionChange={handleEmotionChange} />
+                <ThoughtInput 
+                  onSubmit={handleThoughtSubmit} 
+                  emotion={currentEmotion}
+                  moodLabel={currentMoodLabel}
+                />
                 <ResponseSection 
                   summary={summary}
                   reframe={reframe}
