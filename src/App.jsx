@@ -8,6 +8,7 @@ import Login from './components/Login'
 import SignUp from './components/SignUp'
 import SideMenu from './components/SideMenu'
 import Upgrade from './components/Upgrade'
+import Tasks from './components/Tasks'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
@@ -898,6 +899,7 @@ function App() {
     <BrowserRouter>
       <div className={`app-container ${theme}`}>
         <Header theme={theme} toggleTheme={toggleTheme} user={user} onSignOut={handleSignOut} />
+        <SideMenu onSignOut={handleSignOut} />
         
         {!session ? (
           <Routes>
@@ -934,6 +936,7 @@ function App() {
                 <ThoughtCabinet oldThoughts={oldThoughts} />
               </main>
             } />
+            <Route path="/tasks" element={<Tasks />} />
             <Route path="/upgrade" element={<Upgrade />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
