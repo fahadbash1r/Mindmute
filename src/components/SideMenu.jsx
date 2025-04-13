@@ -34,7 +34,7 @@ export default function SideMenu({ onSignOut }) {
   }, [isOpen]);
 
   return (
-    <>
+    <div className="side-menu-container">
       <div className={`side-menu ${isOpen ? 'open' : ''}`}>
         <button 
           className="close-button"
@@ -68,13 +68,15 @@ export default function SideMenu({ onSignOut }) {
         </nav>
       </div>
 
-      <button 
-        className="hamburger-button"
-        onClick={() => setIsOpen(true)}
-        aria-label="Open menu"
-      >
-        <span className="hamburger-icon">☰</span>
-      </button>
-    </>
+      {!isOpen && (
+        <button 
+          className="hamburger-button"
+          onClick={() => setIsOpen(true)}
+          aria-label="Open menu"
+        >
+          <span className="hamburger-icon">☰</span>
+        </button>
+      )}
+    </div>
   );
 } 
