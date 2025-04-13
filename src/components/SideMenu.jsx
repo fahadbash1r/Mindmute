@@ -53,6 +53,10 @@ export default function SideMenu({ onSignOut }) {
             <span className="menu-icon">📁</span>
             My Thoughts
           </Link>
+          <Link to="/tasks" className="menu-item" onClick={() => setIsOpen(false)}>
+            <span className="menu-icon">✓</span>
+            Task Tracker
+          </Link>
           <Link to="/upgrade" className="menu-item" onClick={() => setIsOpen(false)}>
             <span className="menu-icon">⭐</span>
             Upgrade
