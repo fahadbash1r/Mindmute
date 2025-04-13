@@ -762,6 +762,7 @@ function App() {
   const [currentEmotion, setCurrentEmotion] = useState()
   const [currentMoodLabel, setCurrentMoodLabel] = useState()
   const [currentIntention, setCurrentIntention] = useState('clarity')
+  const [hasSharedThought, setHasSharedThought] = useState(false)
 
   useEffect(() => {
     // Set theme attribute on document for CSS selector
@@ -825,14 +826,14 @@ function App() {
     }
   }
 
-  const handleThoughtSubmit = async (data) => {
-    console.log('Received response:', data)
-    setSummary(data.summary)
-    setReframe(data.reframe)
-    setTodoList(data.todoList)
-    setPriorities(data.priorities)
+  const handleThoughtSubmit = async (formattedData) => {
+    setSummary(formattedData.summary);
+    setReframe(formattedData.reframe);
+    setTodoList(formattedData.todoList);
+    setPriorities(formattedData.priorities);
+    setHasSharedThought(true);
     
-    if (data.summary && user) {
+    if (formattedData.summary && user) {
       try {
         // Store thought in Supabase
         const { error } = await supabase
@@ -840,18 +841,18 @@ function App() {
           .insert([
             {
               user_id: user.id,
-              summary: data.summary,
-              reframe: data.reframe,
-              todo_list: data.todoList,
-              priorities: data.priorities
+              summary: formattedData.summary,
+              reframe: formattedData.reframe,
+              todo_list: formattedData.todoList,
+              priorities: formattedData.priorities
             }
           ])
         
         if (error) throw error
 
         setOldThoughts(prev => [{
-          question: data.summary,
-          summary: data.reframe
+          question: formattedData.summary,
+          summary: formattedData.reframe
         }, ...prev])
       } catch (error) {
         console.error('Error saving thought:', error.message)
@@ -922,7 +923,9 @@ function App() {
                   todoList={todoList}
                   isVisible={summary || reframe || todoList.length > 0}
                 />
-                <PriorityBars data={priorities} />
+                {(hasSharedThought || oldThoughts.length > 0) && (
+                  <PriorityBars data={priorities} />
+                )}
                 <ThoughtCabinet oldThoughts={oldThoughts} />
               </main>
             } />

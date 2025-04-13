@@ -1209,7 +1209,6 @@ main {
   width: 100%;
   max-width: 800px;
   box-sizing: border-box;
-  border: 2px solid #8b5cf6;
 }
 
 .intention-label {
@@ -1224,7 +1223,6 @@ main {
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
-  border: 2px solid #8b5cf6;
   z-index: 10;
 }
 
@@ -1246,32 +1244,21 @@ main {
   cursor: pointer;
   transition: all 0.2s ease;
   background: var(--box-bg);
-  border: 1px solid var(--border-color, #e5e7eb);
 }
 
-.intention-option input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
+.intention-option:hover {
+  background: rgba(139, 92, 246, 0.1);
 }
 
 .intention-option.active {
-  background: linear-gradient(145deg, #8b5cf6, #6366f1);
-  border-color: transparent;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
-}
-
-.intention-option.active .intention-text,
-.intention-option.active .intention-icon {
-  color: white;
+  background: rgba(139, 92, 246, 0.15);
+  transform: translateY(-1px);
 }
 
 .intention-icon {
   font-size: 1.5rem;
   transition: transform 0.2s ease;
+  color: var(--text-primary);
 }
 
 .intention-text {
@@ -1279,11 +1266,6 @@ main {
   font-weight: 500;
   color: var(--text-primary);
   transition: color 0.2s ease;
-}
-
-.intention-option:hover:not(.active) {
-  background: rgba(139, 92, 246, 0.1);
-  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
