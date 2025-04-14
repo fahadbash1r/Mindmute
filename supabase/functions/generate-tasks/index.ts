@@ -14,6 +14,7 @@ serve(async (req) => {
 
   try {
     const { thought, emotion, mood_label } = await req.json()
+    console.log('Received request:', { thought, emotion, mood_label })
 
     // Create OpenAI client
     const openai = new OpenAIApi(
@@ -31,8 +32,16 @@ serve(async (req) => {
           content: `You are a supportive AI assistant that generates personalized tasks to help users process their thoughts and emotions. 
           Create 3-4 actionable tasks based on the user's thought and emotional state.
           Each task should be categorized as either 'emotional', 'mental', 'practical', or 'clarity'.
-          Return the tasks in JSON format with fields: description, type, and optional (boolean).
-          Tasks should be specific, actionable, and directly related to the user's thought content.`
+          Tasks should be specific, actionable, and directly related to the user's thought content.
+          Return ONLY a JSON array of tasks with each task having: description (string), type (string), and optional (boolean).
+          Example format:
+          [
+            {
+              "description": "Take 5 deep breaths and ground yourself",
+              "type": "emotional",
+              "optional": false
+            }
+          ]`
         },
         {
           role: 'user',
@@ -40,14 +49,28 @@ serve(async (req) => {
           Emotional state: ${mood_label} (score: ${emotion})`
         }
       ],
-      response_format: { type: 'json_object' },
       temperature: 0.7,
     })
 
-    const tasks = JSON.parse(completion.data.choices[0].message.content)
+    const responseContent = completion.data.choices[0].message.content
+    console.log('GPT response:', responseContent)
+
+    // Parse and validate the response
+    let tasks
+    try {
+      tasks = JSON.parse(responseContent)
+      if (!Array.isArray(tasks)) {
+        throw new Error('Response is not an array')
+      }
+    } catch (error) {
+      console.error('Error parsing GPT response:', error)
+      throw new Error('Invalid response format from GPT')
+    }
+
+    console.log('Parsed tasks:', tasks)
 
     return new Response(
-      JSON.stringify(tasks.tasks),
+      JSON.stringify(tasks),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

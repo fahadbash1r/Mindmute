@@ -15,6 +15,7 @@ export default function Tasks() {
   useEffect(() => {
     // Set up auth subscription to handle auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Auth state changed:', session?.user?.id);
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchTasks();
@@ -24,6 +25,7 @@ export default function Tasks() {
 
     // Initial auth check
     supabase.auth.getUser().then(({ data: { user } }) => {
+      console.log('Initial auth check:', user?.id);
       setUser(user);
       if (user) {
         fetchTasks();
@@ -46,6 +48,7 @@ export default function Tasks() {
         return;
       }
 
+      console.log('Fetching thoughts for user:', user.id);
       const { data, error } = await supabase
         .from('thoughts')
         .select('*')
@@ -53,12 +56,19 @@ export default function Tasks() {
         .order('created_at', { ascending: false })
         .limit(5);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching thoughts:', error);
+        throw error;
+      }
+
+      console.log('Fetched thoughts:', data);
       setThoughts(data || []);
       
       // Generate tasks based on the most recent thought if it doesn't already have tasks
       if (data && data.length > 0) {
         const mostRecentThought = data[0];
+        console.log('Checking tasks for thought:', mostRecentThought.id);
+        
         const { data: existingTasks, error: tasksError } = await supabase
           .from('tasks')
           .select('id')
@@ -70,12 +80,14 @@ export default function Tasks() {
           return;
         }
           
+        console.log('Existing tasks for thought:', existingTasks);
         if (!existingTasks || existingTasks.length === 0) {
+          console.log('No existing tasks found, generating new tasks...');
           await generateTasksFromThought(mostRecentThought);
         }
       }
     } catch (error) {
-      console.error('Error fetching thoughts:', error);
+      console.error('Error in fetchThoughts:', error);
     }
   }
 
@@ -94,7 +106,13 @@ export default function Tasks() {
     
     try {
       // Get GPT response using existing integration
-      const gptResponse = await supabase.functions.invoke('generate-tasks', {
+      console.log('Calling Edge Function with:', {
+        thought: thought.content,
+        emotion: thought.emotion,
+        mood_label: thought.mood_label
+      });
+      
+      const { data: gptResponse, error: functionError } = await supabase.functions.invoke('generate-tasks', {
         body: {
           thought: thought.content,
           emotion: thought.emotion,
@@ -102,14 +120,24 @@ export default function Tasks() {
         }
       });
 
-      if (gptResponse.error) {
-        throw new Error(gptResponse.error.message);
+      if (functionError) {
+        console.error('Edge Function error:', functionError);
+        throw new Error(functionError.message);
       }
 
-      const suggestedTasks = gptResponse.data;
-      console.log('GPT generated tasks:', suggestedTasks);
+      console.log('GPT response:', gptResponse);
+      const suggestedTasks = gptResponse;
 
       // Save generated tasks to Supabase
+      console.log('Inserting tasks:', suggestedTasks.map(task => ({
+        task: task.description,
+        type: task.type,
+        thought_id: thought.id,
+        optional: task.optional || false,
+        user_id: user.id,
+        completed: false
+      })));
+
       const { data, error } = await supabase
         .from('tasks')
         .insert(suggestedTasks.map(task => ({
@@ -144,9 +172,10 @@ export default function Tasks() {
         return;
       }
 
+      console.log('Fetching tasks for user:', user.id);
       const { data, error } = await supabase
         .from('tasks')
-        .select('*, thoughts!inner(*)')
+        .select('*, thoughts(*)')
         .eq('user_id', user.id)
         .order('created_at', { ascending: true });
 
@@ -157,7 +186,7 @@ export default function Tasks() {
       
       console.log('Fetched tasks:', data);
       setTasks(data || []);
-      setTotalTasks(data.length);
+      setTotalTasks(data ? data.length : 0);
     } catch (error) {
       console.error('Error in fetchTasks:', error);
     } finally {
