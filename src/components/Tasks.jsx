@@ -127,11 +127,13 @@ export default function Tasks() {
     }
   }, []);
 
-  const generateTasksFromThought = useCallback(async (thought) => {
+  const generateTasksFromThought = async (thought) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('Current session:', session); // Debug session
+
       if (!session?.user) {
-        console.error('No active session when generating tasks');
+        console.error('No active session found');
         return;
       }
 
@@ -140,80 +142,91 @@ export default function Tasks() {
         return;
       }
 
-      console.log('Generating tasks for thought:', thought);
-      
-      // Get GPT response using Edge Function
+      console.log('Generating tasks for thought:', {
+        id: thought.id,
+        content: thought.content,
+        emotion: thought.emotion,
+        mood_label: thought.mood_label
+      });
+
       const functionBody = {
         thought: thought.content,
         emotion: thought.emotion || 50,
-        mood_label: thought.mood_label || 'neutral'
+        mood_label: thought.mood_label || 'neutral',
+        userId: session.user.id // Add user ID for tracking
       };
-      
-      console.log('Calling Edge Function with:', functionBody);
-      
+
+      console.log('Edge Function request:', {
+        body: functionBody,
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          apikey: process.env.VITE_SUPABASE_ANON_KEY
+        }
+      });
+
       const { data: gptResponse, error: functionError } = await supabase.functions.invoke(
         'generate-tasks',
         {
           body: JSON.stringify(functionBody),
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`,
-            'apikey': process.env.VITE_SUPABASE_ANON_KEY
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: process.env.VITE_SUPABASE_ANON_KEY
           }
         }
       );
 
       if (functionError) {
-        console.error('Edge Function error:', functionError);
+        console.error('Edge Function error details:', {
+          message: functionError.message,
+          details: functionError.details,
+          hint: functionError.hint
+        });
         return;
       }
 
-      if (!gptResponse) {
-        console.error('No response from Edge Function');
-        return;
-      }
+      console.log('Raw GPT response:', gptResponse);
 
       let tasks = [];
       try {
         tasks = Array.isArray(gptResponse) ? gptResponse : JSON.parse(gptResponse);
+        console.log('Parsed tasks:', tasks);
       } catch (e) {
         console.error('Failed to parse GPT response:', e);
         return;
       }
 
-      console.log('GPT response:', tasks);
+      if (!tasks || tasks.length === 0) {
+        console.error('No tasks generated');
+        return;
+      }
 
       // Save generated tasks to Supabase
       const tasksToInsert = tasks.map(task => ({
+        user_id: session.user.id,
+        thought_id: thought.id,
         task: task.description || task.task,
         type: task.type || 'mental',
-        thought_id: thought.id,
         optional: task.optional || false,
-        user_id: session.user.id,
         completed: false
       }));
 
       console.log('Inserting tasks:', tasksToInsert);
 
-      const { data, error } = await supabase
+      const { error: insertError } = await supabase
         .from('tasks')
-        .insert(tasksToInsert)
-        .select();
+        .insert(tasksToInsert);
 
-      if (error) {
-        console.error('Error inserting tasks:', error);
-        throw error;
+      if (insertError) {
+        console.error('Error inserting tasks:', insertError);
+        return;
       }
-      
-      console.log('Successfully inserted tasks:', data);
-      
-      // Fetch all tasks again to update the UI
+
+      console.log('Tasks successfully inserted');
       await fetchTasks();
     } catch (error) {
-      console.error('Error in task generation:', error);
-      alert('Failed to generate tasks. Please try again.');
+      console.error('Unexpected error in generateTasksFromThought:', error);
     }
-  }, [fetchTasks]);
+  };
 
   async function addTask(e) {
     e.preventDefault();
