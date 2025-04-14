@@ -7,15 +7,17 @@ export default function Tasks() {
   const [newTask, setNewTask] = useState('');
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [thoughts, setThoughts] = useState([]);
+  const [selectedThought, setSelectedThought] = useState(null);
   const [completedCount, setCompletedCount] = useState(0);
-  const [totalTasks, setTotalTasks] = useState(3); // Default number of tasks
+  const [totalTasks, setTotalTasks] = useState(3);
 
   useEffect(() => {
-    // Get current user
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
       if (user) {
         fetchTasks();
+        fetchThoughts();
       }
     });
   }, []);
@@ -25,15 +27,130 @@ export default function Tasks() {
     setCompletedCount(completed);
   }, [tasks]);
 
+  async function fetchThoughts() {
+    try {
+      const { data, error } = await supabase
+        .from('thoughts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      setThoughts(data || []);
+      
+      // Generate tasks based on the most recent thought
+      if (data && data.length > 0) {
+        generateTasksFromThought(data[0]);
+      }
+    } catch (error) {
+      console.error('Error fetching thoughts:', error);
+    }
+  }
+
+  async function generateTasksFromThought(thought) {
+    const moodLabel = thought.mood_label || 'neutral';
+    const emotionScore = thought.emotion || 50;
+    const thoughtText = thought.content;
+    
+    let suggestedTasks = [];
+    
+    // Generate tasks based on emotion score and thought content
+    if (emotionScore < 30) {
+      // For low emotional states - focus on self-care and gentle activities
+      suggestedTasks = [
+        {
+          task: "Take 5 minutes to breathe deeply and ground yourself",
+          type: "emotional",
+          thought_id: thought.id,
+          optional: false
+        },
+        {
+          task: "Write down one small win from today, no matter how tiny",
+          type: "mental",
+          thought_id: thought.id,
+          optional: false
+        },
+        {
+          task: "Do one gentle act of self-care (make tea, stretch, short walk)",
+          type: "practical",
+          thought_id: thought.id,
+          optional: false
+        }
+      ];
+    } else if (emotionScore < 70) {
+      // For moderate emotional states - focus on reflection and growth
+      suggestedTasks = [
+        {
+          task: "Reflect on what brought you balance today",
+          type: "mental",
+          thought_id: thought.id,
+          optional: false
+        },
+        {
+          task: "Set one small, achievable goal for tomorrow",
+          type: "practical",
+          thought_id: thought.id,
+          optional: false
+        }
+      ];
+    } else {
+      // For high emotional states - focus on maintaining positivity and channeling energy
+      suggestedTasks = [
+        {
+          task: "Channel this energy into one meaningful activity",
+          type: "practical",
+          thought_id: thought.id,
+          optional: false
+        },
+        {
+          task: "Share your positive state with someone you care about",
+          type: "emotional",
+          thought_id: thought.id,
+          optional: false
+        }
+      ];
+    }
+
+    // Add an optional clarity-boosting task
+    suggestedTasks.push({
+      task: "Take a moment to journal about what's on your mind",
+      type: "clarity",
+      thought_id: thought.id,
+      optional: true
+    });
+
+    // Save generated tasks to Supabase
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert(suggestedTasks.map(task => ({
+          task: task.task,
+          type: task.type,
+          thought_id: task.thought_id,
+          optional: task.optional,
+          user_id: user.id,
+          completed: false
+        })))
+        .select();
+
+      if (error) throw error;
+      setTasks(data);
+      setTotalTasks(data.length);
+    } catch (error) {
+      console.error('Error saving generated tasks:', error);
+    }
+  }
+
   async function fetchTasks() {
     try {
       const { data, error } = await supabase
         .from('tasks')
-        .select('*')
+        .select('*, thoughts(*)')
         .order('created_at', { ascending: true });
 
       if (error) throw error;
       setTasks(data || []);
+      setTotalTasks(data.length);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     } finally {
@@ -51,7 +168,8 @@ export default function Tasks() {
         .insert([{ 
           task: newTask, 
           completed: false,
-          user_id: user.id 
+          user_id: user.id,
+          type: 'custom'
         }])
         .select()
         .single();
@@ -59,12 +177,13 @@ export default function Tasks() {
       if (error) throw error;
       setTasks([...tasks, data]);
       setNewTask('');
+      setTotalTasks(prev => prev + 1);
     } catch (error) {
       console.error('Error adding task:', error);
     }
   }
 
-  async function toggleTask(id, completed) {
+  async function toggleTask(id, completed, thought_id) {
     try {
       const { error } = await supabase
         .from('tasks')
@@ -73,9 +192,18 @@ export default function Tasks() {
         .eq('user_id', user?.id);
 
       if (error) throw error;
-      setTasks(tasks.map(task => 
+      
+      const updatedTasks = tasks.map(task => 
         task.id === id ? { ...task, completed: !completed } : task
-      ));
+      );
+      setTasks(updatedTasks);
+
+      // Show thought context if task is being completed
+      if (!completed && thought_id) {
+        const thought = thoughts.find(t => t.id === thought_id);
+        setSelectedThought(thought);
+        setTimeout(() => setSelectedThought(null), 3000); // Hide after 3 seconds
+      }
     } catch (error) {
       console.error('Error updating task:', error);
     }
@@ -99,7 +227,7 @@ export default function Tasks() {
   async function refreshTasks() {
     setTasks([]);
     setNewTask('');
-    fetchTasks();
+    await fetchThoughts(); // This will trigger new task generation
   }
 
   if (!user) {
@@ -114,7 +242,7 @@ export default function Tasks() {
       </div>
 
       <div className="focus-section">
-        <span className="focus-label">🌟 Today's Focus: Gentle Self-Motivation</span>
+        <span className="focus-label">✨ Today's Focus: Gentle Self-Motivation</span>
       </div>
 
       <div className="progress-section">
@@ -151,16 +279,26 @@ export default function Tasks() {
         {tasks.map(task => (
           <div 
             key={task.id} 
-            className={`task-item ${task.completed ? 'completed' : ''}`}
-            onClick={() => toggleTask(task.id, task.completed)}
+            className={`task-item ${task.completed ? 'completed' : ''} ${task.optional ? 'optional' : ''} ${task.type}`}
+            onClick={() => toggleTask(task.id, task.completed, task.thought_id)}
           >
             <div className="checkbox">
               {task.completed ? '✓' : ''}
             </div>
-            <span className="task-text">{task.task}</span>
+            <div className="task-content">
+              <span className="task-text">{task.task}</span>
+              {task.optional && <span className="optional-tag">Optional</span>}
+              {task.type === 'clarity' && <span className="clarity-tag">Clarity Boost</span>}
+            </div>
           </div>
         ))}
       </div>
+
+      {selectedThought && (
+        <div className="thought-context">
+          💭 "This task was created from your reflection: {selectedThought.content}"
+        </div>
+      )}
 
       <div className="tasks-footer">
         <div className="motivation-message">
@@ -176,7 +314,7 @@ export default function Tasks() {
         <p>These tips evolve as your clarity grows.</p>
         <div className="suggestion-box">
           <div className="checkbox"></div>
-          <span>MindMute suggests...</span>
+          <span>MindMute suggests taking a moment to reflect on your progress...</span>
         </div>
       </div>
     </div>

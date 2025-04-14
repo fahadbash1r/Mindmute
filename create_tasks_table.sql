@@ -2,7 +2,10 @@
 CREATE TABLE IF NOT EXISTS tasks (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  thought_id UUID REFERENCES thoughts(id) ON DELETE SET NULL,
   task TEXT NOT NULL,
+  type VARCHAR(20) CHECK (type IN ('emotional', 'mental', 'practical', 'clarity', 'custom')),
+  optional BOOLEAN DEFAULT FALSE,
   completed BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
