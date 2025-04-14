@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import './Tasks.css';
 
@@ -13,9 +13,9 @@ export default function Tasks() {
   const [totalTasks, setTotalTasks] = useState(3);
 
   useEffect(() => {
-    // Set up auth subscription to handle auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Auth state changed:', session?.user?.id);
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session:', session?.user?.id);
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchTasks();
@@ -23,17 +23,21 @@ export default function Tasks() {
       }
     });
 
-    // Initial auth check
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      console.log('Initial auth check:', user?.id);
-      setUser(user);
-      if (user) {
+    // Set up auth subscription
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Auth state changed:', _event, session?.user?.id);
+      setUser(session?.user ?? null);
+      if (session?.user) {
         fetchTasks();
         fetchThoughts();
       }
     });
 
-    return () => subscription?.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -41,18 +45,50 @@ export default function Tasks() {
     setCompletedCount(completed);
   }, [tasks]);
 
-  async function fetchThoughts() {
+  // Memoize fetch functions to prevent unnecessary re-renders
+  const fetchTasks = useCallback(async () => {
     try {
-      if (!user) {
-        console.log('No user found when fetching thoughts');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        console.log('No active session when fetching tasks');
         return;
       }
 
-      console.log('Fetching thoughts for user:', user.id);
+      console.log('Fetching tasks for user:', session.user.id);
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*, thoughts(*)')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching tasks:', error);
+        throw error;
+      }
+      
+      console.log('Fetched tasks:', data);
+      setTasks(data || []);
+      setTotalTasks(data ? data.length : 0);
+    } catch (error) {
+      console.error('Error in fetchTasks:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchThoughts = useCallback(async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        console.log('No active session when fetching thoughts');
+        return;
+      }
+
+      console.log('Fetching thoughts for user:', session.user.id);
       const { data, error } = await supabase
         .from('thoughts')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
         .limit(5);
 
@@ -64,7 +100,7 @@ export default function Tasks() {
       console.log('Fetched thoughts:', data);
       setThoughts(data || []);
       
-      // Generate tasks based on the most recent thought if it doesn't already have tasks
+      // Generate tasks for the most recent thought if needed
       if (data && data.length > 0) {
         const mostRecentThought = data[0];
         console.log('Checking tasks for thought:', mostRecentThought.id);
@@ -73,7 +109,7 @@ export default function Tasks() {
           .from('tasks')
           .select('id')
           .eq('thought_id', mostRecentThought.id)
-          .eq('user_id', user.id);
+          .eq('user_id', session.user.id);
           
         if (tasksError) {
           console.error('Error checking existing tasks:', tasksError);
@@ -89,23 +125,24 @@ export default function Tasks() {
     } catch (error) {
       console.error('Error in fetchThoughts:', error);
     }
-  }
+  }, []);
 
-  async function generateTasksFromThought(thought) {
-    if (!user) {
-      console.error('No user found when generating tasks');
-      return;
-    }
-
-    if (!thought || !thought.id) {
-      console.error('Invalid thought data:', thought);
-      return;
-    }
-
-    console.log('Generating tasks for thought:', thought);
-    
+  const generateTasksFromThought = useCallback(async (thought) => {
     try {
-      // Get GPT response using existing integration
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        console.error('No active session when generating tasks');
+        return;
+      }
+
+      if (!thought || !thought.id) {
+        console.error('Invalid thought data:', thought);
+        return;
+      }
+
+      console.log('Generating tasks for thought:', thought);
+      
+      // Get GPT response using Edge Function
       console.log('Calling Edge Function with:', {
         thought: thought.content,
         emotion: thought.emotion,
@@ -126,28 +163,22 @@ export default function Tasks() {
       }
 
       console.log('GPT response:', gptResponse);
-      const suggestedTasks = gptResponse;
 
       // Save generated tasks to Supabase
-      console.log('Inserting tasks:', suggestedTasks.map(task => ({
+      const tasksToInsert = gptResponse.map(task => ({
         task: task.description,
         type: task.type,
         thought_id: thought.id,
         optional: task.optional || false,
-        user_id: user.id,
+        user_id: session.user.id,
         completed: false
-      })));
+      }));
+
+      console.log('Inserting tasks:', tasksToInsert);
 
       const { data, error } = await supabase
         .from('tasks')
-        .insert(suggestedTasks.map(task => ({
-          task: task.description,
-          type: task.type,
-          thought_id: thought.id,
-          optional: task.optional || false,
-          user_id: user.id,
-          completed: false
-        })))
+        .insert(tasksToInsert)
         .select();
 
       if (error) {
@@ -163,36 +194,7 @@ export default function Tasks() {
       console.error('Error in task generation:', error);
       alert('Failed to generate tasks. Please try again.');
     }
-  }
-
-  async function fetchTasks() {
-    try {
-      if (!user) {
-        console.log('No user found when fetching tasks');
-        return;
-      }
-
-      console.log('Fetching tasks for user:', user.id);
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('*, thoughts(*)')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: true });
-
-      if (error) {
-        console.error('Error fetching tasks:', error);
-        throw error;
-      }
-      
-      console.log('Fetched tasks:', data);
-      setTasks(data || []);
-      setTotalTasks(data ? data.length : 0);
-    } catch (error) {
-      console.error('Error in fetchTasks:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  }, [fetchTasks]);
 
   async function addTask(e) {
     e.preventDefault();
@@ -355,4 +357,4 @@ export default function Tasks() {
       </div>
     </div>
   );
-} 
+}
