@@ -13,6 +13,16 @@ export default function Tasks() {
   const [totalTasks, setTotalTasks] = useState(3);
 
   useEffect(() => {
+    // Set up auth subscription to handle auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchTasks();
+        fetchThoughts();
+      }
+    });
+
+    // Initial auth check
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
       if (user) {
@@ -20,6 +30,8 @@ export default function Tasks() {
         fetchThoughts();
       }
     });
+
+    return () => subscription?.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -29,9 +41,15 @@ export default function Tasks() {
 
   async function fetchThoughts() {
     try {
+      if (!user) {
+        console.log('No user found when fetching thoughts');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('thoughts')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(5);
 
@@ -41,10 +59,16 @@ export default function Tasks() {
       // Generate tasks based on the most recent thought if it doesn't already have tasks
       if (data && data.length > 0) {
         const mostRecentThought = data[0];
-        const { data: existingTasks } = await supabase
+        const { data: existingTasks, error: tasksError } = await supabase
           .from('tasks')
           .select('id')
-          .eq('thought_id', mostRecentThought.id);
+          .eq('thought_id', mostRecentThought.id)
+          .eq('user_id', user.id);
+          
+        if (tasksError) {
+          console.error('Error checking existing tasks:', tasksError);
+          return;
+        }
           
         if (!existingTasks || existingTasks.length === 0) {
           await generateTasksFromThought(mostRecentThought);
@@ -56,6 +80,18 @@ export default function Tasks() {
   }
 
   async function generateTasksFromThought(thought) {
+    if (!user) {
+      console.error('No user found when generating tasks');
+      return;
+    }
+
+    if (!thought || !thought.id) {
+      console.error('Invalid thought data:', thought);
+      return;
+    }
+
+    console.log('Generating tasks for thought:', thought);
+    
     const moodLabel = thought.mood_label || 'neutral';
     const emotionScore = thought.emotion || 50;
     const thoughtText = thought.content;
@@ -127,8 +163,11 @@ export default function Tasks() {
       optional: true
     });
 
+    console.log('Generated tasks:', suggestedTasks);
+
     // Save generated tasks to Supabase
     try {
+      console.log('Inserting tasks with user_id:', user.id);
       const { data, error } = await supabase
         .from('tasks')
         .insert(suggestedTasks.map(task => ({
@@ -141,27 +180,44 @@ export default function Tasks() {
         })))
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error inserting tasks:', error);
+        throw error;
+      }
       
-      // Instead of setting tasks directly, fetch all tasks again
+      console.log('Successfully inserted tasks:', data);
+      
+      // Fetch all tasks again to update the UI
       await fetchTasks();
     } catch (error) {
       console.error('Error saving generated tasks:', error);
+      alert('Failed to generate tasks. Please try again.');
     }
   }
 
   async function fetchTasks() {
     try {
+      if (!user) {
+        console.log('No user found when fetching tasks');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('tasks')
-        .select('*, thoughts(*)')
+        .select('*, thoughts!inner(*)')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching tasks:', error);
+        throw error;
+      }
+      
+      console.log('Fetched tasks:', data);
       setTasks(data || []);
       setTotalTasks(data.length);
     } catch (error) {
-      console.error('Error fetching tasks:', error);
+      console.error('Error in fetchTasks:', error);
     } finally {
       setLoading(false);
     }
