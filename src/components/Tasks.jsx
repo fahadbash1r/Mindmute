@@ -38,9 +38,17 @@ export default function Tasks() {
       if (error) throw error;
       setThoughts(data || []);
       
-      // Generate tasks based on the most recent thought
+      // Generate tasks based on the most recent thought if it doesn't already have tasks
       if (data && data.length > 0) {
-        generateTasksFromThought(data[0]);
+        const mostRecentThought = data[0];
+        const { data: existingTasks } = await supabase
+          .from('tasks')
+          .select('id')
+          .eq('thought_id', mostRecentThought.id);
+          
+        if (!existingTasks || existingTasks.length === 0) {
+          await generateTasksFromThought(mostRecentThought);
+        }
       }
     } catch (error) {
       console.error('Error fetching thoughts:', error);
@@ -134,8 +142,9 @@ export default function Tasks() {
         .select();
 
       if (error) throw error;
-      setTasks(data);
-      setTotalTasks(data.length);
+      
+      // Instead of setting tasks directly, fetch all tasks again
+      await fetchTasks();
     } catch (error) {
       console.error('Error saving generated tasks:', error);
     }
