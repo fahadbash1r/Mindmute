@@ -1,9 +1,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.1.0'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS'
 }
 
 serve(async (req) => {
@@ -13,10 +15,30 @@ serve(async (req) => {
   }
 
   try {
-    // Verify request has proper authorization
+    // Get authorization header
     const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      throw new Error('Missing authorization header')
+    const apiKey = req.headers.get('apikey')
+
+    if (!authHeader || !apiKey) {
+      throw new Error('Missing authorization headers')
+    }
+
+    // Create Supabase client to verify token
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      apiKey,
+      {
+        global: {
+          headers: { Authorization: authHeader }
+        }
+      }
+    )
+
+    // Verify the user's session
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser()
+    
+    if (authError || !user) {
+      throw new Error('Invalid authorization')
     }
 
     const body = await req.json()

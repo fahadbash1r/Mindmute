@@ -157,25 +157,34 @@ export default function Tasks() {
           body: JSON.stringify(functionBody),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`
+            'Authorization': `Bearer ${session.access_token}`,
+            'apikey': process.env.VITE_SUPABASE_ANON_KEY
           }
         }
       );
 
       if (functionError) {
         console.error('Edge Function error:', functionError);
-        throw new Error(functionError.message);
+        return;
       }
 
-      if (!gptResponse || !Array.isArray(gptResponse)) {
-        console.error('Invalid response from Edge Function:', gptResponse);
-        throw new Error('Invalid response format from Edge Function');
+      if (!gptResponse) {
+        console.error('No response from Edge Function');
+        return;
       }
 
-      console.log('GPT response:', gptResponse);
+      let tasks = [];
+      try {
+        tasks = Array.isArray(gptResponse) ? gptResponse : JSON.parse(gptResponse);
+      } catch (e) {
+        console.error('Failed to parse GPT response:', e);
+        return;
+      }
+
+      console.log('GPT response:', tasks);
 
       // Save generated tasks to Supabase
-      const tasksToInsert = gptResponse.map(task => ({
+      const tasksToInsert = tasks.map(task => ({
         task: task.description || task.task,
         type: task.type || 'mental',
         thought_id: thought.id,
