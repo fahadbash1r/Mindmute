@@ -92,89 +92,31 @@ export default function Tasks() {
 
     console.log('Generating tasks for thought:', thought);
     
-    const moodLabel = thought.mood_label || 'neutral';
-    const emotionScore = thought.emotion || 50;
-    const thoughtText = thought.content;
-    
-    let suggestedTasks = [];
-    
-    // Generate tasks based on emotion score and thought content
-    if (emotionScore < 30) {
-      // For low emotional states - focus on self-care and gentle activities
-      suggestedTasks = [
-        {
-          task: "Take 5 minutes to breathe deeply and ground yourself",
-          type: "emotional",
-          thought_id: thought.id,
-          optional: false
-        },
-        {
-          task: "Write down one small win from today, no matter how tiny",
-          type: "mental",
-          thought_id: thought.id,
-          optional: false
-        },
-        {
-          task: "Do one gentle act of self-care (make tea, stretch, short walk)",
-          type: "practical",
-          thought_id: thought.id,
-          optional: false
-        }
-      ];
-    } else if (emotionScore < 70) {
-      // For moderate emotional states - focus on reflection and growth
-      suggestedTasks = [
-        {
-          task: "Reflect on what brought you balance today",
-          type: "mental",
-          thought_id: thought.id,
-          optional: false
-        },
-        {
-          task: "Set one small, achievable goal for tomorrow",
-          type: "practical",
-          thought_id: thought.id,
-          optional: false
-        }
-      ];
-    } else {
-      // For high emotional states - focus on maintaining positivity and channeling energy
-      suggestedTasks = [
-        {
-          task: "Channel this energy into one meaningful activity",
-          type: "practical",
-          thought_id: thought.id,
-          optional: false
-        },
-        {
-          task: "Share your positive state with someone you care about",
-          type: "emotional",
-          thought_id: thought.id,
-          optional: false
-        }
-      ];
-    }
-
-    // Add an optional clarity-boosting task
-    suggestedTasks.push({
-      task: "Take a moment to journal about what's on your mind",
-      type: "clarity",
-      thought_id: thought.id,
-      optional: true
-    });
-
-    console.log('Generated tasks:', suggestedTasks);
-
-    // Save generated tasks to Supabase
     try {
-      console.log('Inserting tasks with user_id:', user.id);
+      // Get GPT response using existing integration
+      const gptResponse = await supabase.functions.invoke('generate-tasks', {
+        body: {
+          thought: thought.content,
+          emotion: thought.emotion,
+          mood_label: thought.mood_label
+        }
+      });
+
+      if (gptResponse.error) {
+        throw new Error(gptResponse.error.message);
+      }
+
+      const suggestedTasks = gptResponse.data;
+      console.log('GPT generated tasks:', suggestedTasks);
+
+      // Save generated tasks to Supabase
       const { data, error } = await supabase
         .from('tasks')
         .insert(suggestedTasks.map(task => ({
-          task: task.task,
+          task: task.description,
           type: task.type,
-          thought_id: task.thought_id,
-          optional: task.optional,
+          thought_id: thought.id,
+          optional: task.optional || false,
           user_id: user.id,
           completed: false
         })))
@@ -190,7 +132,7 @@ export default function Tasks() {
       // Fetch all tasks again to update the UI
       await fetchTasks();
     } catch (error) {
-      console.error('Error saving generated tasks:', error);
+      console.error('Error in task generation:', error);
       alert('Failed to generate tasks. Please try again.');
     }
   }
