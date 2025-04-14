@@ -143,31 +143,41 @@ export default function Tasks() {
       console.log('Generating tasks for thought:', thought);
       
       // Get GPT response using Edge Function
-      console.log('Calling Edge Function with:', {
+      const functionBody = {
         thought: thought.content,
-        emotion: thought.emotion,
-        mood_label: thought.mood_label
-      });
+        emotion: thought.emotion || 50,
+        mood_label: thought.mood_label || 'neutral'
+      };
       
-      const { data: gptResponse, error: functionError } = await supabase.functions.invoke('generate-tasks', {
-        body: {
-          thought: thought.content,
-          emotion: thought.emotion,
-          mood_label: thought.mood_label
+      console.log('Calling Edge Function with:', functionBody);
+      
+      const { data: gptResponse, error: functionError } = await supabase.functions.invoke(
+        'generate-tasks',
+        {
+          body: JSON.stringify(functionBody),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          }
         }
-      });
+      );
 
       if (functionError) {
         console.error('Edge Function error:', functionError);
         throw new Error(functionError.message);
       }
 
+      if (!gptResponse || !Array.isArray(gptResponse)) {
+        console.error('Invalid response from Edge Function:', gptResponse);
+        throw new Error('Invalid response format from Edge Function');
+      }
+
       console.log('GPT response:', gptResponse);
 
       // Save generated tasks to Supabase
       const tasksToInsert = gptResponse.map(task => ({
-        task: task.description,
-        type: task.type,
+        task: task.description || task.task,
+        type: task.type || 'mental',
         thought_id: thought.id,
         optional: task.optional || false,
         user_id: session.user.id,

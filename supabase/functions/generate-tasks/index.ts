@@ -1,5 +1,4 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.1.0'
 
 const corsHeaders = {
@@ -8,18 +7,30 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { thought, emotion, mood_label } = await req.json()
-    console.log('Received request:', { thought, emotion, mood_label })
+    // Verify request has proper authorization
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      throw new Error('Missing authorization header')
+    }
+
+    const body = await req.json()
+    const { thought, emotion, mood_label } = body
+    console.log('Processing request:', { thought, emotion, mood_label })
+
+    if (!thought) {
+      throw new Error('Missing thought content')
+    }
 
     // Create OpenAI client
     const openai = new OpenAIApi(
       new Configuration({
-        apiKey: Deno.env.get('OPENAI_API_KEY'),
+        apiKey: Deno.env.get('OPENAI_API_KEY')
       })
     )
 
@@ -49,7 +60,7 @@ serve(async (req) => {
           Emotional state: ${mood_label} (score: ${emotion})`
         }
       ],
-      temperature: 0.7,
+      temperature: 0.7
     })
 
     const responseContent = completion.data.choices[0].message.content
@@ -62,18 +73,25 @@ serve(async (req) => {
       if (!Array.isArray(tasks)) {
         throw new Error('Response is not an array')
       }
+
+      // Validate each task has required fields
+      tasks = tasks.map(task => ({
+        description: task.description || task.task || 'Reflect on your progress',
+        type: task.type || 'mental',
+        optional: task.optional || false
+      }))
     } catch (error) {
       console.error('Error parsing GPT response:', error)
       throw new Error('Invalid response format from GPT')
     }
 
-    console.log('Parsed tasks:', tasks)
+    console.log('Parsed and validated tasks:', tasks)
 
     return new Response(
       JSON.stringify(tasks),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
+        status: 200
       }
     )
   } catch (error) {
@@ -82,7 +100,7 @@ serve(async (req) => {
       JSON.stringify({ error: error.message }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
+        status: error.message.includes('authorization') ? 401 : 500
       }
     )
   }
