@@ -1,5 +1,5 @@
 .tasks-container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 2rem auto;
   padding: 2rem;
   font-family: 'Satoshi', sans-serif;
@@ -23,17 +23,19 @@
 }
 
 .focus-section {
+  text-align: center;
+  margin: 0 auto 2rem;
+  width: fit-content;
   background: rgba(139, 92, 246, 0.1);
   padding: 1rem 1.5rem;
   border-radius: 2rem;
-  margin-bottom: 2rem;
-  display: inline-block;
 }
 
 .focus-label {
   color: var(--text-primary);
   font-size: 1.1rem;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .progress-section {
@@ -218,6 +220,7 @@
   .tasks-container {
     margin: 1rem;
     padding: 1rem;
+    max-width: 100%;
   }
 
   .tasks-header h1 {
@@ -225,8 +228,12 @@
   }
 
   .focus-section {
-    width: 100%;
-    text-align: center;
+    margin: 0 auto 2rem;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .focus-label {
+    font-size: 1rem;
   }
 
   .tasks-footer {
