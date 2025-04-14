@@ -17,33 +17,36 @@ serve(async (req) => {
   try {
     // Get authorization header
     const authHeader = req.headers.get('Authorization')
-    const apiKey = req.headers.get('apikey')
-
-    if (!authHeader || !apiKey) {
-      throw new Error('Missing authorization headers')
+    if (!authHeader) {
+      throw new Error('Missing authorization header')
     }
 
-    // Create Supabase client to verify token
-    const supabaseClient = createClient(
+    // Get the JWT token from the Authorization header
+    const token = authHeader.replace('Bearer ', '')
+    
+    // Create Supabase admin client
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      apiKey,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       {
-        global: {
-          headers: { Authorization: authHeader }
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
         }
       }
     )
 
-    // Verify the user's session
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser()
+    // Verify the user's JWT
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
     
     if (authError || !user) {
+      console.error('Auth error:', authError)
       throw new Error('Invalid authorization')
     }
 
-    const body = await req.json()
-    const { thought, emotion, mood_label } = body
-    console.log('Processing request:', { thought, emotion, mood_label })
+    // Parse request body
+    const { thought, emotion, mood_label } = await req.json()
+    console.log('Processing request:', { thought, emotion, mood_label, userId: user.id })
 
     if (!thought) {
       throw new Error('Missing thought content')
@@ -96,18 +99,19 @@ serve(async (req) => {
         throw new Error('Response is not an array')
       }
 
-      // Validate each task has required fields
+      // Validate and normalize each task
       tasks = tasks.map(task => ({
-        description: task.description || task.task || 'Reflect on your progress',
-        type: task.type || 'mental',
-        optional: task.optional || false
+        task: task.description || task.task,
+        type: ['emotional', 'mental', 'practical', 'clarity'].includes(task.type) ? task.type : 'mental',
+        optional: Boolean(task.optional),
+        user_id: user.id
       }))
     } catch (error) {
       console.error('Error parsing GPT response:', error)
       throw new Error('Invalid response format from GPT')
     }
 
-    console.log('Parsed and validated tasks:', tasks)
+    console.log('Normalized tasks:', tasks)
 
     return new Response(
       JSON.stringify(tasks),
@@ -117,9 +121,12 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Function error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: error.message.includes('authorization') ? 401 : 500

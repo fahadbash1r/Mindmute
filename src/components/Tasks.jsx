@@ -152,15 +152,13 @@ export default function Tasks() {
       const functionBody = {
         thought: thought.content,
         emotion: thought.emotion || 50,
-        mood_label: thought.mood_label || 'neutral',
-        userId: session.user.id // Add user ID for tracking
+        mood_label: thought.mood_label || 'neutral'
       };
 
       console.log('Edge Function request:', {
         body: functionBody,
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          apikey: process.env.VITE_SUPABASE_ANON_KEY
+          Authorization: `Bearer ${session.access_token}`
         }
       });
 
@@ -169,8 +167,7 @@ export default function Tasks() {
         {
           body: JSON.stringify(functionBody),
           headers: {
-            Authorization: `Bearer ${session.access_token}`,
-            apikey: process.env.VITE_SUPABASE_ANON_KEY
+            Authorization: `Bearer ${session.access_token}`
           }
         }
       );
@@ -184,29 +181,17 @@ export default function Tasks() {
         return;
       }
 
+      if (!gptResponse) {
+        console.error('No response from Edge Function');
+        return;
+      }
+
       console.log('Raw GPT response:', gptResponse);
 
-      let tasks = [];
-      try {
-        tasks = Array.isArray(gptResponse) ? gptResponse : JSON.parse(gptResponse);
-        console.log('Parsed tasks:', tasks);
-      } catch (e) {
-        console.error('Failed to parse GPT response:', e);
-        return;
-      }
-
-      if (!tasks || tasks.length === 0) {
-        console.error('No tasks generated');
-        return;
-      }
-
-      // Save generated tasks to Supabase
-      const tasksToInsert = tasks.map(task => ({
-        user_id: session.user.id,
+      // Tasks are already in the correct format from the Edge Function
+      const tasksToInsert = gptResponse.map(task => ({
+        ...task,
         thought_id: thought.id,
-        task: task.description || task.task,
-        type: task.type || 'mental',
-        optional: task.optional || false,
         completed: false
       }));
 
