@@ -1,8 +1,10 @@
-const OpenAI = require('openai');
+const { Configuration, OpenAIApi } = require('openai');
 
-const openai = OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
 });
+
+const openai = new OpenAIApi(configuration);
 
 exports.handler = async (event) => {
   // Handle CORS preflight
@@ -39,7 +41,7 @@ exports.handler = async (event) => {
     }
 
     // Call GPT
-    const completion = await openai.chat.completions.create({
+    const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [
         {
@@ -71,11 +73,10 @@ exports.handler = async (event) => {
           content: `Thought: "${thought}"
           Emotional state: ${moodLabel} (score: ${emotion})`
         }
-      ],
-      response_format: { type: "json_object" }
+      ]
     });
 
-    const response = JSON.parse(completion.choices[0].message.content);
+    const response = JSON.parse(completion.data.choices[0].message.content);
 
     return {
       statusCode: 200,
