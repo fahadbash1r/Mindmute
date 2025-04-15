@@ -764,15 +764,26 @@ function App() {
         return;
       }
 
-      console.log('Starting thought submission with data:', formattedData);
+      // Validate input data
+      if (!formattedData.thought) {
+        console.error('Missing thought content in formattedData:', formattedData);
+        throw new Error('Thought content is required');
+      }
+
+      console.log('Starting thought submission with data:', {
+        thought: formattedData.thought,
+        emotion: formattedData.emotion,
+        moodLabel: formattedData.moodLabel,
+        intention: formattedData.intention
+      });
       console.log('User ID:', session.user.id);
 
       const thoughtRecord = {
         user_id: session.user.id,
-        content: formattedData.thought,
-        emotion: formattedData.emotion,
-        mood_label: formattedData.moodLabel,
-        intention: formattedData.intention,
+        summary: formattedData.thought,
+        emotion: formattedData.emotion || 50,
+        mood_label: formattedData.moodLabel || 'neutral',
+        intention: formattedData.intention || '',
         created_at: new Date().toISOString()
       };
 
@@ -786,8 +797,7 @@ function App() {
         .single();
 
       if (thoughtError) {
-        console.error('Error saving thought:', thoughtError);
-        console.error('Error details:', {
+        console.error('Error saving thought:', {
           code: thoughtError.code,
           message: thoughtError.message,
           details: thoughtError.details,
@@ -805,17 +815,31 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formattedData)
+        body: JSON.stringify({
+          thought: formattedData.thought,
+          emotion: formattedData.emotion || 50,
+          moodLabel: formattedData.moodLabel || 'neutral',
+          intention: formattedData.intention || ''
+        })
       });
 
       if (!gptResponse.ok) {
-        const error = await gptResponse.json();
-        console.error('Error processing thought with GPT:', error);
-        throw new Error(error.message || 'Failed to process thought');
+        const errorText = await gptResponse.text();
+        console.error('GPT Response Error:', {
+          status: gptResponse.status,
+          statusText: gptResponse.statusText,
+          body: errorText
+        });
+        throw new Error(`Failed to process thought: ${gptResponse.status} ${gptResponse.statusText}`);
       }
 
       const gptData = await gptResponse.json();
       console.log('Received GPT response:', gptData);
+
+      if (!gptData || !gptData.summary || !gptData.reframe || !gptData.nextSteps || !gptData.priorities) {
+        console.error('Invalid GPT response format:', gptData);
+        throw new Error('Invalid response format from GPT');
+      }
 
       // Calculate percentages for priorities
       const totalPriorities = gptData.priorities.length;
@@ -850,8 +874,8 @@ function App() {
           user_id: session.user.id,
           thought_id: thoughtData.id,
           task: task.task,
-          type: task.type,
-          optional: task.optional,
+          type: task.type || 'practical',
+          optional: task.optional || false,
           completed: false,
           created_at: new Date().toISOString()
         }));
@@ -863,8 +887,7 @@ function App() {
           .insert(tasksToInsert);
 
         if (insertError) {
-          console.error('Error inserting tasks:', insertError);
-          console.error('Task insertion error details:', {
+          console.error('Error inserting tasks:', {
             code: insertError.code,
             message: insertError.message,
             details: insertError.details,
@@ -877,13 +900,13 @@ function App() {
 
       return thoughtData;
     } catch (error) {
-      console.error('Error in handleThoughtSubmit:', error);
-      console.error('Full error details:', {
+      console.error('Error in handleThoughtSubmit:', {
         name: error.name,
         message: error.message,
-        stack: error.stack,
-        code: error.code,
-        details: error.details
+        code: error?.code,
+        details: error?.details,
+        hint: error?.hint,
+        stack: error.stack
       });
       throw error;
     }

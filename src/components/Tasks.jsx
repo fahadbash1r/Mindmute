@@ -144,13 +144,13 @@ export default function Tasks() {
 
       console.log('Generating tasks for thought:', {
         id: thought.id,
-        content: thought.content,
+        content: thought.summary,
         emotion: thought.emotion,
         mood_label: thought.mood_label
       });
 
       const functionBody = {
-        thought: thought.content,
+        thought: thought.summary,
         emotion: thought.emotion || 50,
         moodLabel: thought.mood_label || 'neutral',
         intention: thought.intention || ''
@@ -343,7 +343,7 @@ export default function Tasks() {
 
       {selectedThought && (
         <div className="thought-context">
-          💭 "This task was created from your reflection: {selectedThought.content}"
+          💭 "This task was created from your reflection: {selectedThought.summary}"
         </div>
       )}
 
