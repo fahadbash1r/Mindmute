@@ -778,17 +778,6 @@ function App() {
       });
       console.log('User ID:', session.user.id);
 
-      const thoughtRecord = {
-        user_id: session.user.id,
-        summary: formattedData.thought,
-        emotion: formattedData.emotion || 50,
-        mood_label: formattedData.moodLabel || 'neutral',
-        intention: formattedData.intention || '',
-        created_at: new Date().toISOString()
-      };
-
-      console.log('Attempting to save thought:', thoughtRecord);
-
       // First, save the thought to Supabase
       const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')
@@ -797,42 +786,40 @@ function App() {
           summary: formattedData.thought,
           emotion: formattedData.emotion || 50,
           mood_label: formattedData.moodLabel || 'neutral',
-          intention: formattedData.intention || '',
-          reframe: null,
-          todo_list: null,
-          priorities: null
+          intention: formattedData.intention || ''
         })
         .select('id, summary, emotion, mood_label, intention')
         .single();
 
       if (thoughtError) {
-        console.error('Error saving thought:', {
-          code: thoughtError.code,
-          message: thoughtError.message,
-          details: thoughtError.details,
-          hint: thoughtError.hint
-        });
+        console.error('Error saving thought:', thoughtError);
         throw thoughtError;
       }
 
       console.log('Thought saved successfully:', thoughtData);
 
-      // Process the thought with the Supabase Edge Function
-      console.log('Sending thought to process-thought function...');
-      const { data: gptData, error: gptError } = await supabase.functions.invoke('process-thought', {
-        body: {
+      // Process the thought with the Netlify function
+      console.log('Sending thought to GPT function...');
+      const gptResponse = await fetch('/.netlify/functions/gpt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           thought: formattedData.thought,
           emotion: formattedData.emotion || 50,
           moodLabel: formattedData.moodLabel || 'neutral',
           intention: formattedData.intention || ''
-        }
+        })
       });
 
-      if (gptError) {
-        console.error('GPT Response Error:', gptError);
-        throw new Error(`Failed to process thought: ${gptError.message}`);
+      if (!gptResponse.ok) {
+        const error = await gptResponse.json();
+        console.error('GPT Response Error:', error);
+        throw new Error(`Failed to process thought: ${error.message}`);
       }
 
+      const gptData = await gptResponse.json();
       console.log('Received GPT response:', gptData);
 
       if (!gptData || !gptData.summary || !gptData.reframe || !gptData.nextSteps || !gptData.priorities) {
@@ -886,12 +873,7 @@ function App() {
           .insert(tasksToInsert);
 
         if (insertError) {
-          console.error('Error inserting tasks:', {
-            code: insertError.code,
-            message: insertError.message,
-            details: insertError.details,
-            hint: insertError.hint
-          });
+          console.error('Error inserting tasks:', insertError);
         } else {
           console.log('Tasks inserted successfully');
         }
@@ -899,14 +881,7 @@ function App() {
 
       return thoughtData;
     } catch (error) {
-      console.error('Error in handleThoughtSubmit:', {
-        name: error.name,
-        message: error.message,
-        code: error?.code,
-        details: error?.details,
-        hint: error?.hint,
-        stack: error.stack
-      });
+      console.error('Error in handleThoughtSubmit:', error);
       throw error;
     }
   };
