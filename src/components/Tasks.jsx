@@ -155,44 +155,36 @@ export default function Tasks() {
         mood_label: thought.mood_label || 'neutral'
       };
 
-      console.log('Edge Function request:', {
-        body: functionBody,
+      console.log('Calling Netlify function with:', functionBody);
+
+      // Call the Netlify function to generate tasks
+      const response = await fetch('/.netlify/functions/generate-tasks', {
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`
-        }
+        },
+        body: JSON.stringify(functionBody)
       });
 
-      const { data: gptResponse, error: functionError } = await supabase.functions.invoke(
-        'generate-tasks',
-        {
-          body: JSON.stringify(functionBody),
-          headers: {
-            Authorization: `Bearer ${session.access_token}`
-          }
-        }
-      );
-
-      if (functionError) {
-        console.error('Edge Function error details:', {
-          message: functionError.message,
-          details: functionError.details,
-          hint: functionError.hint
-        });
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Netlify function error:', error);
         return;
       }
 
-      if (!gptResponse) {
-        console.error('No response from Edge Function');
-        return;
-      }
-
+      const gptResponse = await response.json();
       console.log('Raw GPT response:', gptResponse);
 
-      // Tasks are already in the correct format from the Edge Function
+      // Tasks are already in the correct format from the function
       const tasksToInsert = gptResponse.map(task => ({
-        ...task,
+        user_id: session.user.id,  // Make sure to include user_id
         thought_id: thought.id,
-        completed: false
+        task: task.task,
+        type: task.type || 'practical',
+        optional: task.optional || false,
+        completed: false,
+        created_at: new Date().toISOString()
       }));
 
       console.log('Inserting tasks:', tasksToInsert);
@@ -206,10 +198,10 @@ export default function Tasks() {
         return;
       }
 
-      console.log('Tasks successfully inserted');
+      // Refresh tasks list
       await fetchTasks();
     } catch (error) {
-      console.error('Unexpected error in generateTasksFromThought:', error);
+      console.error('Error in generateTasksFromThought:', error);
     }
   };
 

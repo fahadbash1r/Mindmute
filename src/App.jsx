@@ -764,9 +764,9 @@ function App() {
         return;
       }
 
-      console.log('Submitting thought:', formattedData);
+      console.log('Processing thought:', formattedData);
 
-      // Store thought in Supabase
+      // First, save the thought to Supabase
       const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')
         .insert([{
@@ -787,17 +787,48 @@ function App() {
 
       console.log('Thought saved:', thoughtData);
 
-      // Update state with the new thought
-      setSummary(formattedData.thought);
-      setReframe('Processing your thoughts...');
-      setTodoList([]);
-      setPriorities([]);
+      // Process the thought with GPT using Netlify function
+      const gptResponse = await fetch('/.netlify/functions/gpt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formattedData)
+      });
+
+      if (!gptResponse.ok) {
+        const error = await gptResponse.json();
+        console.error('Error processing thought:', error);
+        throw new Error(error.message || 'Failed to process thought');
+      }
+
+      const gptData = await gptResponse.json();
+      console.log('GPT response:', gptData);
+
+      // Calculate percentages for priorities
+      const totalPriorities = gptData.priorities.length;
+      const percentages = gptData.priorities.map((_, index) => {
+        if (index === 0) return 50;
+        if (index === 1) return 30;
+        if (index === 2) return 20;
+        return Math.floor(100 / totalPriorities);
+      });
+
+      // Update the UI with GPT response
+      setSummary(gptData.summary);
+      setReframe(gptData.reframe);
+      setTodoList(gptData.nextSteps);
+      setPriorities(gptData.priorities.map((priority, index) => ({
+        label: priority.title,
+        percentage: percentages[index],
+        color: getColorForIndex(index)
+      })));
       setHasSharedThought(true);
 
       // Update old thoughts list
       setOldThoughts(prev => [{
         question: formattedData.thought,
-        summary: 'Processing...'
+        summary: gptData.reframe
       }, ...prev]);
 
       return thoughtData;
@@ -805,6 +836,23 @@ function App() {
       console.error('Error in handleThoughtSubmit:', error);
       throw error;
     }
+  };
+
+  // Helper function to get colors for priorities
+  const getColorForIndex = (index) => {
+    const colors = [
+      '#8b5cf6', // Purple
+      '#06b6d4', // Cyan
+      '#10b981', // Emerald
+      '#f59e0b', // Amber
+      '#ef4444', // Red
+      '#ec4899', // Pink
+      '#6366f1', // Indigo
+      '#84cc16', // Lime
+      '#14b8a6', // Teal
+      '#f97316'  // Orange
+    ];
+    return colors[index % colors.length];
   };
 
   const handleEmotionChange = (emotion, label) => {
