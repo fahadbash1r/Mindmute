@@ -764,41 +764,9 @@ function App() {
         return;
       }
 
-      // Validate input data
-      if (!formattedData.thought) {
-        console.error('Missing thought content in formattedData:', formattedData);
-        throw new Error('Thought content is required');
-      }
+      console.log('Starting thought submission with data:', formattedData);
 
-      console.log('Starting thought submission with data:', {
-        thought: formattedData.thought,
-        emotion: formattedData.emotion,
-        moodLabel: formattedData.moodLabel,
-        intention: formattedData.intention
-      });
-      console.log('User ID:', session.user.id);
-
-      // First, save the thought to Supabase
-      const { data: thoughtData, error: thoughtError } = await supabase
-        .from('thoughts')
-        .insert({
-          user_id: session.user.id,
-          summary: formattedData.thought,
-          emotion: formattedData.emotion || 50,
-          mood_label: formattedData.moodLabel || 'neutral',
-          intention: formattedData.intention || ''
-        })
-        .select('id, summary, emotion, mood_label, intention')
-        .single();
-
-      if (thoughtError) {
-        console.error('Error saving thought:', thoughtError);
-        throw thoughtError;
-      }
-
-      console.log('Thought saved successfully:', thoughtData);
-
-      // Process the thought with the Netlify function
+      // Process the thought with the Netlify function first
       console.log('Sending thought to GPT function...');
       const gptResponse = await fetch('/.netlify/functions/gpt', {
         method: 'POST',
@@ -808,8 +776,7 @@ function App() {
         body: JSON.stringify({
           thought: formattedData.thought,
           emotion: formattedData.emotion || 50,
-          moodLabel: formattedData.moodLabel || 'neutral',
-          intention: formattedData.intention || ''
+          moodLabel: formattedData.moodLabel || 'neutral'
         })
       });
 
@@ -822,29 +789,46 @@ function App() {
       const gptData = await gptResponse.json();
       console.log('Received GPT response:', gptData);
 
-      if (!gptData || !gptData.summary || !gptData.reframe || !gptData.nextSteps || !gptData.priorities) {
-        console.error('Invalid GPT response format:', gptData);
-        throw new Error('Invalid response format from GPT');
+      // Save thought and GPT response to Supabase
+      const { data: thoughtData, error: thoughtError } = await supabase
+        .from('thoughts')
+        .insert({
+          user_id: session.user.id,
+          summary: formattedData.thought,
+          emotion: formattedData.emotion || 50,
+          mood_label: formattedData.moodLabel || 'neutral',
+          intention: formattedData.intention || '',
+          reframe: gptData.reframe,
+          todo_list: gptData.nextSteps,
+          priorities: gptData.priorities
+        })
+        .select()
+        .single();
+
+      if (thoughtError) {
+        console.error('Error saving thought:', thoughtError);
+        throw thoughtError;
       }
 
+      // Update UI with GPT response
+      setSummary(gptData.summary);
+      setReframe(gptData.reframe);
+      setTodoList(gptData.nextSteps);
+      
       // Calculate percentages for priorities
       const totalPriorities = gptData.priorities.length;
       const percentages = gptData.priorities.map((_, index) => {
         if (index === 0) return 50;
         if (index === 1) return 30;
-        if (index === 2) return 20;
-        return Math.floor(100 / totalPriorities);
+        return 20;
       });
 
-      // Update the UI with GPT response
-      setSummary(gptData.summary);
-      setReframe(gptData.reframe);
-      setTodoList(gptData.nextSteps);
       setPriorities(gptData.priorities.map((priority, index) => ({
         label: priority.title,
         percentage: percentages[index],
         color: getColorForIndex(index)
       })));
+
       setHasSharedThought(true);
 
       // Update old thoughts list
@@ -855,18 +839,15 @@ function App() {
 
       // Insert tasks from GPT response
       if (gptData.tasks && Array.isArray(gptData.tasks)) {
-        console.log('Preparing to insert tasks...');
         const tasksToInsert = gptData.tasks.map(task => ({
           user_id: session.user.id,
           thought_id: thoughtData.id,
           task: task.task,
-          type: task.type || 'practical',
-          optional: task.optional || false,
+          type: task.type,
+          optional: task.optional,
           completed: false,
           created_at: new Date().toISOString()
         }));
-
-        console.log('Attempting to insert tasks:', tasksToInsert);
 
         const { error: insertError } = await supabase
           .from('tasks')
@@ -874,8 +855,6 @@ function App() {
 
         if (insertError) {
           console.error('Error inserting tasks:', insertError);
-        } else {
-          console.log('Tasks inserted successfully');
         }
       }
 
