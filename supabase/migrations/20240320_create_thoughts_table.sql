@@ -1,66 +1,56 @@
-create table if not exists public.thoughts (
-    id uuid default gen_random_uuid() primary key,
-    user_id uuid references auth.users(id) not null,
-    summary text not null,
-    emotion integer not null default 50,
+-- Drop and recreate the table to force schema refresh
+DROP TABLE IF EXISTS public.thoughts CASCADE;
+
+CREATE TABLE public.thoughts (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id uuid REFERENCES auth.users(id) NOT NULL,
+    summary text NOT NULL,
+    emotion integer NOT NULL DEFAULT 50,
     mood_label text,
     intention text,
     reframe text,
     todo_list text[],
     priorities jsonb,
-    created_at timestamptz default now(),
-    updated_at timestamptz default now()
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
 );
 
-alter table public.thoughts enable row level security;
+-- Enable RLS
+ALTER TABLE public.thoughts ENABLE ROW LEVEL SECURITY;
 
--- Handle policies in a DO block to avoid errors if they already exist
-DO $$ 
-BEGIN 
-    -- Drop existing policies if they exist
-    BEGIN
-        DROP POLICY IF EXISTS "Users can create their own thoughts" ON thoughts;
-        DROP POLICY IF EXISTS "Users can view their own thoughts" ON thoughts;
-        DROP POLICY IF EXISTS "Users can update their own thoughts" ON thoughts;
-    EXCEPTION 
-        WHEN undefined_object THEN 
-            NULL;
-    END;
+-- Create policies
+CREATE POLICY "Users can create their own thoughts" 
+ON public.thoughts 
+FOR INSERT 
+WITH CHECK (auth.uid() = user_id);
 
-    -- Create policies
-    CREATE POLICY "Users can create their own thoughts" 
-    ON public.thoughts 
-    FOR INSERT 
-    WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can view their own thoughts" 
+ON public.thoughts 
+FOR SELECT 
+USING (auth.uid() = user_id);
 
-    CREATE POLICY "Users can view their own thoughts" 
-    ON public.thoughts 
-    FOR SELECT 
-    USING (auth.uid() = user_id);
-
-    CREATE POLICY "Users can update their own thoughts" 
-    ON public.thoughts 
-    FOR UPDATE 
-    USING (auth.uid() = user_id);
-END $$;
+CREATE POLICY "Users can update their own thoughts" 
+ON public.thoughts 
+FOR UPDATE 
+USING (auth.uid() = user_id);
 
 -- Create function to automatically update updated_at timestamp
-create or replace function update_updated_at_column()
-returns trigger as $$
-begin
-    new.updated_at = now();
-    return new;
-end;
-$$ language plpgsql;
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS trigger AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
--- Drop trigger if exists before creating it again
-drop trigger if exists update_thoughts_updated_at on thoughts;
+-- Create trigger
+CREATE TRIGGER update_thoughts_updated_at
+    BEFORE UPDATE ON thoughts
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
--- Create trigger to call the function
-create trigger update_thoughts_updated_at
-    before update on thoughts
-    for each row
-    execute function update_updated_at_column();
+-- Force schema cache refresh
+NOTIFY pgrst, 'reload schema';
 
 -- Add missing columns if they don't exist
 DO $$ 
