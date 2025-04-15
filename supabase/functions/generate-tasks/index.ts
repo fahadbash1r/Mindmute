@@ -41,32 +41,34 @@ serve(async (req) => {
       messages: [
         {
           role: 'system',
-          content: `You are an empathetic AI assistant that generates personalized tasks based on users' thoughts and emotional state.
+          content: `You are an empathetic AI assistant that creates a Daily Clarity Plan based on users' thoughts and emotional state.
           
-          Guidelines for task generation:
-          1. Generate exactly 3-5 tasks that are meaningful and actionable
-          2. Tasks should focus on emotional well-being and personal growth
-          3. Each task should be categorized as one of:
-             - 'emotional' (for feelings and self-reflection)
-             - 'mental' (for mindset and thought patterns)
-             - 'practical' (for concrete actions that improve mood)
-          4. Make tasks specific and achievable within a day
-          5. Consider the user's current emotional state when suggesting tasks
+          Guidelines for generating clarity steps:
+          1. Generate exactly 3-5 clarity steps that are broad yet meaningful
+          2. Each step should be:
+             - Gentle and non-prescriptive
+             - Focused on self-reflection and awareness
+             - Adaptable to different emotional states
+             - Actionable within a day
+          3. Steps should follow a natural progression:
+             - Starting with self-reflection
+             - Moving to understanding
+             - Ending with gentle action
           
-          Return tasks as a JSON array where each task has:
-          - task (string): The task description
-          - type (string): The category (emotional/mental/practical)
-          - optional (boolean): Whether the task is optional`
+          Return steps as a JSON array where each step has:
+          - step (string): The clarity step description
+          - type (string): Either 'reflect', 'understand', or 'act'
+          - optional (boolean): Whether the step is optional`
         },
         {
           role: 'user',
           content: `Based on this thought: "${thought}"
           Current emotional state: ${emotion}/100 (${mood_label || 'neutral'})
           
-          Generate 3-5 personalized tasks that will help them process their thoughts and improve their emotional well-being.`
+          Create 3-5 clarity steps for their Daily Clarity Plan that will help them process their thoughts and find mental clarity.`
         }
       ],
-      temperature: 0.8,
+      temperature: 0.7,
     })
 
     const responseText = completion.data.choices[0].message?.content
