@@ -91,7 +91,8 @@ serve(async (req) => {
           task: task.task,
           type: task.type,
           optional: task.optional,
-          source_thought: thought
+          source_thought: thought,
+          created_at: new Date().toISOString()
         }))
       )
 
@@ -99,8 +100,20 @@ serve(async (req) => {
       throw insertError
     }
 
+    // Return only the most recent 5 tasks
+    const { data: latestTasks, error: fetchError } = await supabaseClient
+      .from('tasks')
+      .select('*')
+      .eq('user_id', req.headers.get('x-user-id'))
+      .order('created_at', { ascending: false })
+      .limit(5)
+
+    if (fetchError) {
+      throw fetchError
+    }
+
     return new Response(
-      JSON.stringify({ tasks }),
+      JSON.stringify({ tasks: latestTasks }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
