@@ -764,18 +764,19 @@ function App() {
         return;
       }
 
+      console.log('Submitting thought:', formattedData);
+
       // Store thought in Supabase
       const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')
-        .insert([
-          {
-            user_id: session.user.id,
-            content: formattedData.thought,
-            emotion: formattedData.emotion,
-            mood_label: formattedData.moodLabel,
-            intention: formattedData.intention
-          }
-        ])
+        .insert([{
+          user_id: session.user.id,
+          content: formattedData.thought,
+          emotion: formattedData.emotion,
+          mood_label: formattedData.moodLabel,
+          intention: formattedData.intention,
+          created_at: new Date().toISOString()
+        }])
         .select()
         .single();
 
@@ -787,16 +788,16 @@ function App() {
       console.log('Thought saved:', thoughtData);
 
       // Update state with the new thought
-      setSummary(thoughtData.content);
-      setReframe(thoughtData.reframe || 'Processing your thoughts...');
-      setTodoList(thoughtData.todo_list || []);
-      setPriorities(thoughtData.priorities || []);
+      setSummary(formattedData.thought);
+      setReframe('Processing your thoughts...');
+      setTodoList([]);
+      setPriorities([]);
       setHasSharedThought(true);
 
       // Update old thoughts list
       setOldThoughts(prev => [{
-        question: thoughtData.content,
-        summary: thoughtData.reframe || 'Processing...'
+        question: formattedData.thought,
+        summary: 'Processing...'
       }, ...prev]);
 
       return thoughtData;
