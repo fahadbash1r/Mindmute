@@ -152,37 +152,37 @@ export default function Tasks() {
       const functionBody = {
         thought: thought.content,
         emotion: thought.emotion || 50,
-        mood_label: thought.mood_label || 'neutral'
+        moodLabel: thought.mood_label || 'neutral',
+        intention: thought.intention || ''
       };
 
-      console.log('Calling Netlify function with:', functionBody);
+      console.log('Calling GPT function with:', functionBody);
 
-      // Call the Netlify function to generate tasks
-      const response = await fetch('/.netlify/functions/generate-tasks', {
+      // Call the GPT function to process thought and generate tasks
+      const response = await fetch('/.netlify/functions/gpt', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`
         },
         body: JSON.stringify(functionBody)
       });
 
       if (!response.ok) {
         const error = await response.json();
-        console.error('Netlify function error:', error);
+        console.error('GPT function error:', error);
         return;
       }
 
       const gptResponse = await response.json();
       console.log('Raw GPT response:', gptResponse);
 
-      // Tasks are already in the correct format from the function
-      const tasksToInsert = gptResponse.map(task => ({
-        user_id: session.user.id,  // Make sure to include user_id
+      // Extract tasks from the GPT response
+      const tasksToInsert = gptResponse.tasks.map(task => ({
+        user_id: session.user.id,
         thought_id: thought.id,
         task: task.task,
-        type: task.type || 'practical',
-        optional: task.optional || false,
+        type: task.type,
+        optional: task.optional,
         completed: false,
         created_at: new Date().toISOString()
       }));

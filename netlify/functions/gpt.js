@@ -67,12 +67,25 @@ When analyzing thoughts, follow this specific structure:
    - Include both emotional and practical priorities
    - Keep them aligned with the user's intention
 
+5. Tasks (3-4 actionable items):
+   - Each task should be specific and achievable
+   - Include a mix of emotional and practical tasks
+   - Some tasks can be marked as optional for self-care
+   - Each task should have a type: 'emotional', 'mental', 'practical', 'clarity', or 'custom'
+
 Return the response as a JSON object with these fields:
 {
   "summary": "string",
   "reframe": "string",
   "nextSteps": ["string"],
-  "priorities": [{"title": "string"}]
+  "priorities": [{"title": "string"}],
+  "tasks": [
+    {
+      "task": "string",
+      "type": "string",
+      "optional": boolean
+    }
+  ]
 }`
         },
         {
@@ -92,8 +105,16 @@ Return the response as a JSON object with these fields:
     let response;
     try {
       response = JSON.parse(responseContent);
-      if (!response.summary || !response.reframe || !response.nextSteps || !response.priorities) {
+      if (!response.summary || !response.reframe || !response.nextSteps || !response.priorities || !response.tasks) {
         throw new Error('Invalid response format');
+      }
+      // Validate tasks format
+      if (!Array.isArray(response.tasks) || !response.tasks.every(task => 
+        task.task && 
+        task.type && 
+        typeof task.optional === 'boolean'
+      )) {
+        throw new Error('Invalid tasks format');
       }
     } catch (error) {
       console.error('Error parsing GPT response:', error);
