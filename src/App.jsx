@@ -817,32 +817,22 @@ function App() {
 
       console.log('Thought saved successfully:', thoughtData);
 
-      // Process the thought with GPT using Netlify function
-      console.log('Sending thought to GPT for processing...');
-      const gptResponse = await fetch('/.netlify/functions/gpt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Process the thought with the Supabase Edge Function
+      console.log('Sending thought to process-thought function...');
+      const { data: gptData, error: gptError } = await supabase.functions.invoke('process-thought', {
+        body: {
           thought: formattedData.thought,
           emotion: formattedData.emotion || 50,
           moodLabel: formattedData.moodLabel || 'neutral',
           intention: formattedData.intention || ''
-        })
+        }
       });
 
-      if (!gptResponse.ok) {
-        const errorText = await gptResponse.text();
-        console.error('GPT Response Error:', {
-          status: gptResponse.status,
-          statusText: gptResponse.statusText,
-          body: errorText
-        });
-        throw new Error(`Failed to process thought: ${gptResponse.status} ${gptResponse.statusText}`);
+      if (gptError) {
+        console.error('GPT Response Error:', gptError);
+        throw new Error(`Failed to process thought: ${gptError.message}`);
       }
 
-      const gptData = await gptResponse.json();
       console.log('Received GPT response:', gptData);
 
       if (!gptData || !gptData.summary || !gptData.reframe || !gptData.nextSteps || !gptData.priorities) {
