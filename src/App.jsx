@@ -792,8 +792,17 @@ function App() {
       // First, save the thought to Supabase
       const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')
-        .insert([thoughtRecord])
-        .select()
+        .insert({
+          user_id: session.user.id,
+          summary: formattedData.thought,
+          emotion: formattedData.emotion || 50,
+          mood_label: formattedData.moodLabel || 'neutral',
+          intention: formattedData.intention || '',
+          reframe: null,
+          todo_list: null,
+          priorities: null
+        })
+        .select('id, summary, emotion, mood_label, intention')
         .single();
 
       if (thoughtError) {
