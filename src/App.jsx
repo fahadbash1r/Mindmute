@@ -511,8 +511,8 @@ function IntentionSelector({ onIntentionChange }) {
 }
 
 function ThoughtInput({ onSubmit, emotion, moodLabel, intention }) {
-  const [thought, setThought] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [thought, setThought] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (!thought.trim()) return;
@@ -521,99 +521,28 @@ function ThoughtInput({ onSubmit, emotion, moodLabel, intention }) {
       return;
     }
     
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch('/.netlify/functions/gpt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          thought: thought.trim(),
-          emotion: emotion,
-          moodLabel: moodLabel,
-          intention: intention
-        }),
-      });
-
-      if (!response.ok) {
-        // Try to parse JSON, but handle cases where it's not JSON (like HTML error pages)
-        let errorMsg = 'Network response was not ok';
-        try {
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.indexOf("application/json") !== -1) {
-            const errorData = await response.json();
-            errorMsg = errorData.error || JSON.stringify(errorData);
-          } else {
-            // If not JSON, maybe it's an HTML error page or plain text
-            errorMsg = await response.text(); 
-            // Prevent displaying full HTML page in alert
-            if (errorMsg.trim().startsWith('<!DOCTYPE') || errorMsg.trim().startsWith('<html>')) {
-              errorMsg = `Server returned an unexpected response (Status: ${response.status}). Check Netlify function logs.`;
-            }
-          }
-        } catch (parseError) {
-          errorMsg = `Failed to parse error response (Status: ${response.status}). Check Netlify function logs.`;
-        }
-        throw new Error(errorMsg);
-      }
-
-      const data = await response.json();
-      
-      // Calculate percentages based on priority order
-      const totalPriorities = data.priorities.length;
-      const percentages = data.priorities.map((_, index) => {
-        // First priority gets 50%, second gets 30%, third gets 20%
-        if (index === 0) return 50;
-        if (index === 1) return 30;
-        if (index === 2) return 20;
-        // If there are more priorities, distribute remaining evenly
-        return Math.floor(100 / totalPriorities);
-      });
-      
-      // Format the response data
       const formattedData = {
-        summary: data.summary || "Unable to generate summary",
-        reframe: data.reframe || "Unable to generate reframe",
-        todoList: data.nextSteps || [],
-        priorities: data.priorities ? data.priorities.map((priority, index) => ({
-          label: priority.title,
-          percentage: percentages[index],
-          color: getColorForIndex(index)
-        })) : []
+        thought: thought.trim(),
+        emotion: emotion,
+        moodLabel: moodLabel,
+        intention: intention
       };
 
-      onSubmit(formattedData);
+      await onSubmit(formattedData);
       setThought('');
     } catch (error) {
       console.error('Error submitting thought:', error);
-      // Don't clear the thought input on error
-      alert(error.message || 'Failed to process your thought. Please check logs and try again.');
+      alert('Failed to process your thought. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  }
-
-  // Helper function to get colors for priorities
-  const getColorForIndex = (index) => {
-    const colors = [
-      '#8b5cf6', // Purple
-      '#06b6d4', // Cyan
-      '#10b981', // Emerald
-      '#f59e0b', // Amber
-      '#ef4444', // Red
-      '#ec4899', // Pink
-      '#6366f1', // Indigo
-      '#84cc16', // Lime
-      '#14b8a6', // Teal
-      '#f97316'  // Orange
-    ];
-    return colors[index % colors.length];
-  }
+  };
 
   const handleClear = () => {
     setThought('');
-  }
+  };
 
   return (
     <div className="thought-input-section">
@@ -640,7 +569,7 @@ function ThoughtInput({ onSubmit, emotion, moodLabel, intention }) {
         </button>
       </div>
     </div>
-  )
+  );
 }
 
 function SignIn() {
@@ -828,43 +757,59 @@ function App() {
   }
 
   const handleThoughtSubmit = async (formattedData) => {
-    setSummary(formattedData.summary);
-    setReframe(formattedData.reframe);
-    setTodoList(formattedData.todoList);
-    setPriorities(formattedData.priorities);
-    setHasSharedThought(true);
-    
-    if (formattedData.summary && user) {
-      try {
-        // Store thought in Supabase
-        const { error } = await supabase
-          .from('thoughts')
-          .insert([
-            {
-              user_id: user.id,
-              summary: formattedData.summary,
-              reframe: formattedData.reframe,
-              todo_list: formattedData.todoList,
-              priorities: formattedData.priorities
-            }
-          ])
-        
-        if (error) throw error
-
-        setOldThoughts(prev => [{
-          question: formattedData.summary,
-          summary: formattedData.reframe
-        }, ...prev])
-      } catch (error) {
-        console.error('Error saving thought:', error.message)
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        console.error('No active session when submitting thought');
+        return;
       }
+
+      // Store thought in Supabase
+      const { data: thoughtData, error: thoughtError } = await supabase
+        .from('thoughts')
+        .insert([
+          {
+            user_id: session.user.id,
+            content: formattedData.thought,
+            emotion: formattedData.emotion,
+            mood_label: formattedData.moodLabel,
+            intention: formattedData.intention
+          }
+        ])
+        .select()
+        .single();
+
+      if (thoughtError) {
+        console.error('Error saving thought:', thoughtError);
+        throw thoughtError;
+      }
+
+      console.log('Thought saved:', thoughtData);
+
+      // Update state with the new thought
+      setSummary(thoughtData.content);
+      setReframe(thoughtData.reframe || 'Processing your thoughts...');
+      setTodoList(thoughtData.todo_list || []);
+      setPriorities(thoughtData.priorities || []);
+      setHasSharedThought(true);
+
+      // Update old thoughts list
+      setOldThoughts(prev => [{
+        question: thoughtData.content,
+        summary: thoughtData.reframe || 'Processing...'
+      }, ...prev]);
+
+      return thoughtData;
+    } catch (error) {
+      console.error('Error in handleThoughtSubmit:', error);
+      throw error;
     }
-  }
+  };
 
   const handleEmotionChange = (emotion, label) => {
-    setCurrentEmotion(emotion)
-    setCurrentMoodLabel(label)
-  }
+    setCurrentEmotion(emotion);
+    setCurrentMoodLabel(label);
+  };
 
   const handleIntentionChange = (intention) => {
     setCurrentIntention(intention)
