@@ -32,6 +32,9 @@ exports.handler = async (event) => {
     // Parse and validate input
     const { thought, emotion, moodLabel } = JSON.parse(event.body);
     
+    // Log incoming request
+    console.log("Incoming thought:", { thought, moodLabel, emotion });
+    
     if (!thought) {
       return {
         statusCode: 400,
@@ -53,7 +56,8 @@ exports.handler = async (event) => {
           3. 2-3 specific action items they can take
           4. 2-3 key priorities to focus on
 
-          Format your response as JSON with these exact fields:
+          IMPORTANT: Respond ONLY with valid JSON. Do not include explanations, quotes, or markdown.
+          Your entire response must be parseable JSON in this exact format:
           {
             "summary": "brief empathetic reflection",
             "reframe": "positive perspective",
@@ -76,7 +80,36 @@ exports.handler = async (event) => {
       ]
     });
 
-    const response = JSON.parse(completion.data.choices[0].message.content);
+    // Log raw GPT response
+    console.log("Raw GPT response:", completion.data.choices[0].message.content);
+
+    // Parse response with error handling
+    let response;
+    try {
+      const responseContent = completion.data.choices[0].message.content;
+      response = JSON.parse(responseContent);
+      
+      // Validate required fields
+      if (!response.summary || !response.reframe || !response.nextSteps || !response.priorities || !response.tasks) {
+        throw new Error('Missing required fields in GPT response');
+      }
+    } catch (err) {
+      console.error("Failed to parse GPT response:", err);
+      return {
+        statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          error: "Could not parse GPT response",
+          raw: completion.data.choices[0].message.content
+        })
+      };
+    }
+
+    // Log parsed response
+    console.log("Parsed response:", response);
 
     return {
       statusCode: 200,
