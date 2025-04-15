@@ -5,23 +5,16 @@ import { Spinner } from './Spinner';
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [thoughts, setThoughts] = useState([]);
-  const [selectedThought, setSelectedThought] = useState(null);
-  const [completedCount, setCompletedCount] = useState(0);
-  const [totalTasks, setTotalTasks] = useState(3);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session:', session?.user?.id);
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchTasks();
-        fetchThoughts();
       }
     });
 
@@ -29,11 +22,9 @@ export default function Tasks() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Auth state changed:', _event, session?.user?.id);
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchTasks();
-        fetchThoughts();
       }
     });
 
@@ -42,192 +33,50 @@ export default function Tasks() {
     };
   }, []);
 
-  useEffect(() => {
-    const completed = tasks.filter(task => task.completed).length;
-    setCompletedCount(completed);
-  }, [tasks]);
-
-  // Memoize fetch functions to prevent unnecessary re-renders
   const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const { data: tasks, error } = await supabase
+      // First, delete any tasks beyond the most recent 5
+      const { count } = await supabase
+        .from('tasks')
+        .select('*', { count: 'exact' });
+
+      if (count > 5) {
+        const { data: oldTasks } = await supabase
+          .from('tasks')
+          .select('id, created_at')
+          .order('created_at', { ascending: false })
+          .range(5, count - 1);
+
+        if (oldTasks?.length > 0) {
+          await supabase
+            .from('tasks')
+            .delete()
+            .in('id', oldTasks.map(t => t.id));
+        }
+      }
+
+      // Now fetch the 5 most recent tasks
+      const { data: tasksData, error: tasksError } = await supabase
         .from('tasks')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(5);
 
-      if (error) throw error;
+      if (tasksError) throw tasksError;
 
-      setTasks(tasks || []);
-      setTotalTasks(tasks ? tasks.length : 0);
+      setTasks(tasksData || []);
     } catch (error) {
       console.error('Error fetching tasks:', error);
-      setError('Failed to load tasks. Please try again later.');
+      setError('Unable to load your clarity steps. Please try again.');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const fetchThoughts = useCallback(async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        console.log('No active session when fetching thoughts');
-        return;
-      }
-
-      console.log('Fetching thoughts for user:', session.user.id);
-      const { data, error } = await supabase
-        .from('thoughts')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      if (error) {
-        console.error('Error fetching thoughts:', error);
-        throw error;
-      }
-
-      console.log('Fetched thoughts:', data);
-      setThoughts(data || []);
-      
-      // Generate tasks for the most recent thought if needed
-      if (data && data.length > 0) {
-        const mostRecentThought = data[0];
-        console.log('Checking tasks for thought:', mostRecentThought.id);
-        
-        const { data: existingTasks, error: tasksError } = await supabase
-          .from('tasks')
-          .select('id')
-          .eq('thought_id', mostRecentThought.id)
-          .eq('user_id', session.user.id);
-          
-        if (tasksError) {
-          console.error('Error checking existing tasks:', tasksError);
-          return;
-        }
-          
-        console.log('Existing tasks for thought:', existingTasks);
-        if (!existingTasks || existingTasks.length === 0) {
-          console.log('No existing tasks found, generating new tasks...');
-          await generateTasksFromThought(mostRecentThought);
-        }
-      }
-    } catch (error) {
-      console.error('Error in fetchThoughts:', error);
-      setError(error.message);
-    }
-  }, []);
-
-  const generateTasksFromThought = async (thought) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      console.log('Current session:', session); // Debug session
-
-      if (!session?.user) {
-        console.error('No active session found');
-        return;
-      }
-
-      if (!thought || !thought.id) {
-        console.error('Invalid thought data:', thought);
-        return;
-      }
-
-      console.log('Generating tasks for thought:', {
-        id: thought.id,
-        content: thought.summary,
-        emotion: thought.emotion,
-        mood_label: thought.mood_label
-      });
-
-      const functionBody = {
-        thought: thought.summary,
-        emotion: thought.emotion || 50,
-        moodLabel: thought.mood_label || 'neutral',
-        intention: thought.intention || ''
-      };
-
-      console.log('Calling GPT function with:', functionBody);
-
-      // Call the GPT function to process thought and generate tasks
-      const response = await fetch('/.netlify/functions/gpt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(functionBody)
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('GPT function error:', error);
-        return;
-      }
-
-      const gptResponse = await response.json();
-      console.log('Raw GPT response:', gptResponse);
-
-      // Extract tasks from the GPT response
-      const tasksToInsert = gptResponse.tasks.map(task => ({
-        user_id: session.user.id,
-        thought_id: thought.id,
-        task: task.task,
-        type: task.type,
-        optional: task.optional,
-        completed: false,
-        created_at: new Date().toISOString()
-      }));
-
-      console.log('Inserting tasks:', tasksToInsert);
-
-      const { error: insertError } = await supabase
-        .from('tasks')
-        .insert(tasksToInsert);
-
-      if (insertError) {
-        console.error('Error inserting tasks:', insertError);
-        return;
-      }
-
-      // Refresh tasks list
-      await fetchTasks();
-    } catch (error) {
-      console.error('Error in generateTasksFromThought:', error);
-      setError(error.message);
-    }
-  };
-
-  async function addTask(e) {
-    e.preventDefault();
-    if (!newTask.trim() || !user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('tasks')
-        .insert([{ 
-          task: newTask, 
-          completed: false,
-          user_id: user.id,
-          type: 'custom'
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
-      setTasks([...tasks, data]);
-      setNewTask('');
-      setTotalTasks(prev => prev + 1);
-    } catch (error) {
-      console.error('Error adding task:', error);
-      setError(error.message);
-    }
-  }
-
-  async function toggleTask(id, completed, thought_id) {
+  const toggleTask = async (id, completed) => {
     try {
       const { error } = await supabase
         .from('tasks')
@@ -237,44 +86,14 @@ export default function Tasks() {
 
       if (error) throw error;
       
-      const updatedTasks = tasks.map(task => 
+      setTasks(tasks.map(task => 
         task.id === id ? { ...task, completed: !completed } : task
-      );
-      setTasks(updatedTasks);
-
-      // Show thought context if task is being completed
-      if (!completed && thought_id) {
-        const thought = thoughts.find(t => t.id === thought_id);
-        setSelectedThought(thought);
-        setTimeout(() => setSelectedThought(null), 3000); // Hide after 3 seconds
-      }
+      ));
     } catch (error) {
       console.error('Error updating task:', error);
       setError(error.message);
     }
-  }
-
-  async function deleteTask(id) {
-    try {
-      const { error } = await supabase
-        .from('tasks')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user?.id);
-
-      if (error) throw error;
-      setTasks(tasks.filter(task => task.id !== id));
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      setError(error.message);
-    }
-  }
-
-  async function refreshTasks() {
-    setTasks([]);
-    setNewTask('');
-    await fetchThoughts(); // This will trigger new task generation
-  }
+  };
 
   if (!user) {
     return <div className="loading">Please sign in to manage tasks.</div>;
@@ -282,89 +101,70 @@ export default function Tasks() {
 
   if (loading) return <Spinner />;
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (tasks.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto p-4 text-center">
+        <h2 className="text-2xl font-semibold mb-2">🧠 My Daily Clarity Plan</h2>
+        <p className="text-gray-600 mb-8">Share your thoughts to get your daily clarity steps.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="tasks-container">
-      <div className="tasks-header">
-        <h1>🧠 My Daily Clarity Plan</h1>
-        <p>Here's what your mind asked for today.</p>
+    <div className="max-w-2xl mx-auto p-4">
+      <div className="mb-6 text-center">
+        <h2 className="text-2xl font-semibold mb-2">🧠 My Daily Clarity Plan</h2>
+        <p className="text-gray-600">Here's what your mind asked for today.</p>
       </div>
 
-      <div className="focus-section">
-        <span className="focus-label">✨ Today's Focus: Gentle Self-Motivation</span>
+      <div className="focus-section mb-6">
+        <span className="inline-block px-4 py-2 bg-purple-50 dark:bg-purple-900/20 rounded-full text-purple-700 dark:text-purple-300">
+          ✨ Today's Focus: Gentle Self-Improvement
+        </span>
       </div>
 
-      <div className="progress-section">
-        <div className="progress-text">
-          You've cleared <span className="progress-count">{completedCount} of {totalTasks}</span> clarity steps
-        </div>
-        <div className="progress-bar">
+      <div className="space-y-4">
+        {tasks.map((task, index) => (
           <div 
-            className="progress-fill"
-            style={{ width: `${(completedCount / totalTasks) * 100}%` }}
-          ></div>
-        </div>
-      </div>
-
-      <div className="add-task-section">
-        <button className="add-task-button" onClick={() => setNewTask('')}>
-          ➕ Add your own task
-        </button>
-        {newTask !== '' && (
-          <form onSubmit={addTask} className="new-task-form">
-            <input
-              type="text"
-              value={newTask}
-              onChange={(e) => setNewTask(e.target.value)}
-              placeholder="Write a task that feels doable"
-              className="task-input"
-              autoFocus
-            />
-          </form>
-        )}
-      </div>
-
-      <div className="tasks-list">
-        {tasks.map(task => (
-          <div 
-            key={task.id} 
-            className={`task-item ${task.completed ? 'completed' : ''} ${task.optional ? 'optional' : ''} ${task.type}`}
-            onClick={() => toggleTask(task.id, task.completed, task.thought_id)}
+            key={task.id}
+            className={`p-4 rounded-lg transition-all duration-200 ${
+              task.completed ? 'bg-purple-50 dark:bg-purple-900/20' : 'bg-white dark:bg-gray-800'
+            }`}
           >
-            <div className="checkbox">
-              {task.completed ? '✓' : ''}
-            </div>
-            <div className="task-content">
-              <span className="task-text">{task.task}</span>
-              {task.optional && <span className="optional-tag">Optional</span>}
-              {task.type === 'clarity' && <span className="clarity-tag">Clarity Boost</span>}
+            <div className="flex items-start gap-4">
+              <div 
+                className={`flex-shrink-0 w-6 h-6 border-2 rounded cursor-pointer transition-colors ${
+                  task.completed 
+                    ? 'border-purple-500 bg-purple-500' 
+                    : 'border-gray-300 hover:border-purple-500'
+                }`}
+                onClick={() => toggleTask(task.id, task.completed)}
+              >
+                {task.completed && (
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-grow">
+                <p className={`text-lg ${task.completed ? 'text-gray-500 line-through' : ''}`}>
+                  {task.task}
+                </p>
+                <span className={`inline-block px-2 py-1 text-sm rounded-full mt-2 ${
+                  task.type === 'reflect' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300' :
+                  task.type === 'understand' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300' :
+                  'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300'
+                }`}>
+                  {task.type}
+                </span>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      {selectedThought && (
-        <div className="thought-context">
-          💭 "This task was created from your reflection: {selectedThought.summary}"
-        </div>
-      )}
-
-      <div className="tasks-footer">
-        <div className="motivation-message">
-          👣 "Small steps are still steps."
-        </div>
-        <button className="refresh-button" onClick={refreshTasks}>
-          Refresh Tasks
-        </button>
-      </div>
-
-      <div className="smart-suggestion">
-        <span className="suggestion-label">✏️ Smart suggestion</span>
-        <p>These tips evolve as your clarity grows.</p>
-        <div className="suggestion-box">
-          <div className="checkbox"></div>
-          <span>MindMute suggests taking a moment to reflect on your progress...</span>
-        </div>
+      <div className="mt-8 text-center text-gray-600 dark:text-gray-400">
+        <p>👣 "Small steps lead to big changes."</p>
       </div>
     </div>
   );
