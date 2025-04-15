@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import './Tasks.css';
+import { Spinner } from './Spinner';
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -11,6 +12,7 @@ export default function Tasks() {
   const [selectedThought, setSelectedThought] = useState(null);
   const [completedCount, setCompletedCount] = useState(0);
   const [totalTasks, setTotalTasks] = useState(3);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Get initial session
@@ -48,29 +50,21 @@ export default function Tasks() {
   // Memoize fetch functions to prevent unnecessary re-renders
   const fetchTasks = useCallback(async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        console.log('No active session when fetching tasks');
-        return;
-      }
+      setLoading(true);
+      setError(null);
 
-      console.log('Fetching tasks for user:', session.user.id);
-      const { data, error } = await supabase
+      const { data: tasks, error } = await supabase
         .from('tasks')
-        .select('*, thoughts(*)')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: true });
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching tasks:', error);
-        throw error;
-      }
-      
-      console.log('Fetched tasks:', data);
-      setTasks(data || []);
-      setTotalTasks(data ? data.length : 0);
+      if (error) throw error;
+
+      setTasks(tasks || []);
+      setTotalTasks(tasks ? tasks.length : 0);
     } catch (error) {
-      console.error('Error in fetchTasks:', error);
+      console.error('Error fetching tasks:', error);
+      setError('Failed to load tasks. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -124,6 +118,7 @@ export default function Tasks() {
       }
     } catch (error) {
       console.error('Error in fetchThoughts:', error);
+      setError(error.message);
     }
   }, []);
 
@@ -202,6 +197,7 @@ export default function Tasks() {
       await fetchTasks();
     } catch (error) {
       console.error('Error in generateTasksFromThought:', error);
+      setError(error.message);
     }
   };
 
@@ -227,6 +223,7 @@ export default function Tasks() {
       setTotalTasks(prev => prev + 1);
     } catch (error) {
       console.error('Error adding task:', error);
+      setError(error.message);
     }
   }
 
@@ -253,6 +250,7 @@ export default function Tasks() {
       }
     } catch (error) {
       console.error('Error updating task:', error);
+      setError(error.message);
     }
   }
 
@@ -268,6 +266,7 @@ export default function Tasks() {
       setTasks(tasks.filter(task => task.id !== id));
     } catch (error) {
       console.error('Error deleting task:', error);
+      setError(error.message);
     }
   }
 
@@ -280,6 +279,9 @@ export default function Tasks() {
   if (!user) {
     return <div className="loading">Please sign in to manage tasks.</div>;
   }
+
+  if (loading) return <Spinner />;
+  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
 
   return (
     <div className="tasks-container">
