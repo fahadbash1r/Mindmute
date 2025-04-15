@@ -41,31 +41,33 @@ serve(async (req) => {
       messages: [
         {
           role: 'system',
-          content: `You are an empathetic AI assistant that creates a Daily Clarity Plan based on users' thoughts and emotional state.
+          content: `You are an empathetic AI assistant that creates a focused Daily Clarity Plan to help users improve by 1% each day.
           
           Guidelines for generating clarity steps:
-          1. Generate exactly 3-5 clarity steps that are broad yet meaningful
-          2. Each step should be:
-             - Gentle and non-prescriptive
-             - Focused on self-reflection and awareness
-             - Adaptable to different emotional states
-             - Actionable within a day
-          3. Steps should follow a natural progression:
-             - Starting with self-reflection
-             - Moving to understanding
-             - Ending with gentle action
+          1. Generate EXACTLY 5 clarity steps that form a cohesive daily plan
+          2. Each step should:
+             - Be gentle and achievable
+             - Focus on small, 1% improvements
+             - Match their emotional state
+             - Lead to meaningful progress
+          3. Steps should follow this structure:
+             - Step 1: Morning reflection (type: reflect)
+             - Step 2: Understanding patterns (type: understand)
+             - Step 3: Small action step (type: act)
+             - Step 4: Mindful practice (type: reflect)
+             - Step 5: Growth action (type: act)
           
-          Return steps as a JSON array where each step has:
-          - step (string): The clarity step description
+          Return EXACTLY 5 steps as a JSON array where each step has:
+          - task (string): Clear, actionable step description
           - type (string): Either 'reflect', 'understand', or 'act'
-          - optional (boolean): Whether the step is optional`
+          - optional (boolean): Whether the step is optional (max 2 optional steps)`
         },
         {
           role: 'user',
           content: `Based on this thought: "${thought}"
           Current emotional state: ${emotion}/100 (${mood_label || 'neutral'})
           
-          Create 3-5 clarity steps for their Daily Clarity Plan that will help them process their thoughts and find mental clarity.`
+          Create a Daily Clarity Plan with exactly 5 steps that will help them improve by 1% today while being mindful of their emotional state.`
         }
       ],
       temperature: 0.7,
@@ -82,7 +84,22 @@ serve(async (req) => {
       throw new Error('Invalid response format from GPT')
     }
 
-    // Save tasks to database
+    // Delete all existing tasks for this user before adding new ones
+    const { error: deleteError } = await supabaseClient
+      .from('tasks')
+      .delete()
+      .eq('user_id', req.headers.get('x-user-id'))
+
+    if (deleteError) {
+      throw deleteError
+    }
+
+    // Validate we have exactly 5 tasks
+    if (!Array.isArray(tasks) || tasks.length !== 5) {
+      throw new Error('Invalid number of tasks generated. Expected exactly 5 tasks.')
+    }
+
+    // Save new tasks
     const { error: insertError } = await supabaseClient
       .from('tasks')
       .insert(
@@ -91,7 +108,6 @@ serve(async (req) => {
           task: task.task,
           type: task.type,
           optional: task.optional,
-          source_thought: thought,
           created_at: new Date().toISOString()
         }))
       )
@@ -100,20 +116,8 @@ serve(async (req) => {
       throw insertError
     }
 
-    // Return only the most recent 5 tasks
-    const { data: latestTasks, error: fetchError } = await supabaseClient
-      .from('tasks')
-      .select('*')
-      .eq('user_id', req.headers.get('x-user-id'))
-      .order('created_at', { ascending: false })
-      .limit(5)
-
-    if (fetchError) {
-      throw fetchError
-    }
-
     return new Response(
-      JSON.stringify({ tasks: latestTasks }),
+      JSON.stringify({ tasks }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
