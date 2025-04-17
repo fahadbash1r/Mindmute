@@ -71,22 +71,22 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1rem;
-  background: white;
+  background: transparent;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
-  border-left: 4px solid;
+  border: 2px solid rgb(126, 34, 206);
 }
 
 .task-item.emotional {
-  border-left-color: #ec4899;
+  border-color: #ec4899;
 }
 
 .task-item.mental {
-  border-left-color: #8b5cf6;
+  border-color: #8b5cf6;
 }
 
 .task-item.practical {
-  border-left-color: #10b981;
+  border-color: #10b981;
 }
 
 .task-item.completed {
@@ -172,7 +172,20 @@
 
 @media (prefers-color-scheme: dark) {
   .task-item {
-    background: rgba(17, 24, 39, 0.8);
+    background: transparent;
+    border: 2px solid #c084fc;
+  }
+
+  .task-item.emotional {
+    border-color: #ec4899;
+  }
+
+  .task-item.mental {
+    border-color: #8b5cf6;
+  }
+
+  .task-item.practical {
+    border-color: #10b981;
   }
 
   .task-item.completed {
