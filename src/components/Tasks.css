@@ -115,6 +115,7 @@
 
 .task-content {
   flex-grow: 1;
+  color: #000000;
 }
 
 .tasks-container .task-item {
@@ -130,12 +131,12 @@
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   display: block;
-  color: #000000;
+  color: #000000 !important;
   font-weight: 500;
 }
 
 .tasks-container .task-item.completed .task-text {
-  color: #6b7280;
+  color: #6b7280 !important;
   text-decoration: line-through;
 }
 
@@ -207,12 +208,16 @@
     border-color: #4b5563;
   }
 
-  .tasks-container .task-text {
+  .task-content {
     color: #ffffff;
   }
 
+  .tasks-container .task-text {
+    color: #ffffff !important;
+  }
+
   .tasks-container .task-item.completed .task-text {
-    color: #9ca3af;
+    color: #9ca3af !important;
   }
 
   .focus-label {
