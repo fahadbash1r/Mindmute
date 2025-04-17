@@ -121,12 +121,12 @@
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   display: block;
-  color: #000;
-  font-weight: 500;
+  color: #000000 !important;
+  font-weight: 600;
 }
 
 .task-item.completed .task-text {
-  color: #9ca3af;
+  color: #9ca3af !important;
   text-decoration: line-through;
 }
 
@@ -199,11 +199,11 @@
   }
 
   .task-text {
-    color: #e5e7eb;
+    color: #ffffff !important;
   }
 
   .task-item.completed .task-text {
-    color: #6b7280;
+    color: #6b7280 !important;
   }
 
   .focus-label {
