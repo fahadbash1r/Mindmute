@@ -117,7 +117,7 @@
   flex-grow: 1;
 }
 
-.task-text {
+.tasks-container .task-text {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   display: block;
@@ -125,7 +125,7 @@
   font-weight: 600;
 }
 
-.task-item.completed .task-text {
+.tasks-container .task-item.completed .task-text {
   color: #9ca3af !important;
   text-decoration: line-through;
 }
@@ -198,11 +198,11 @@
     border-color: #4b5563;
   }
 
-  .task-text {
-    color: #ffffff !important;
+  .tasks-container .task-text {
+    color: #e5e7eb !important;
   }
 
-  .task-item.completed .task-text {
+  .tasks-container .task-item.completed .task-text {
     color: #6b7280 !important;
   }
 
