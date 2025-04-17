@@ -117,7 +117,7 @@
 }
 
 .task-text {
-  color: #000000 !important;
+  color: #000000;
 }
 
 .task-item.completed .task-content,
@@ -148,6 +148,7 @@
 .task-tag.emotional {
   background-color: rgba(236, 72, 153, 0.1);
   color: #ec4899;
+  border-radius: 9999px;
 }
 
 .task-tag.practical {
@@ -158,6 +159,7 @@
 .task-tag.optional {
   background-color: rgba(147, 51, 234, 0.1);
   color: rgb(126, 34, 206);
+  border-radius: 9999px;
 }
 
 .tasks-footer {
@@ -170,8 +172,9 @@
   font-style: italic;
 }
 
-/* Light mode: force dark text */
-@media (prefers-color-scheme: light) {
+/* Replace media queries with theme attribute selectors */
+/* Light theme styles */
+html[data-theme="light"] {
   .task-content {
     color: #111 !important;
   }
@@ -179,11 +182,16 @@
   .task-item.completed .task-content {
     color: #6b7280 !important;
   }
+
+  .task-text {
+    color: #000000;
+  }
 }
 
-/* Dark mode styles */
-@media (prefers-color-scheme: dark) {
-  .task-content {
+/* Dark theme styles */
+html[data-theme="dark"] {
+  .task-content,
+  .task-text {
     color: #ffffff !important;
   }
   
@@ -236,7 +244,13 @@
     color: #9ca3af;
   }
 
-  /* Dark mode tag colors */
+  .tasks-header h1,
+  .tasks-header p,
+  .progress-text {
+    color: #ffffff !important;
+  }
+
+  /* Dark theme tag colors */
   .task-tag.mental {
     background-color: rgba(139, 92, 246, 0.2);
     color: #a78bfa;
