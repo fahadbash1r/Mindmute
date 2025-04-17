@@ -124,56 +124,13 @@
 
 @media (prefers-color-scheme: dark) {
   .task-content {
-    color: #000000 !important;
+    color: #ffffff !important;
   }
 
   .task-item.completed .task-content {
     color: #9ca3af !important;
   }
-}
 
-/* Task tags */
-.task-tags {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.task-tag {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-/* Ensure tag text is always visible */
-.task-tag.mental {
-  background-color: rgb(216, 180, 254);
-  color: rgb(107, 33, 168);
-}
-
-.task-tag.emotional {
-  background-color: rgb(253, 164, 175);
-  color: rgb(159, 18, 57);
-}
-
-.task-tag.practical {
-  background-color: rgb(167, 243, 208);
-  color: rgb(6, 95, 70);
-}
-
-.tasks-footer {
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.motivation-message {
-  color: #666;
-  font-style: italic;
-}
-
-/* Dark mode specific styles */
-@media (prefers-color-scheme: dark) {
   .task-item {
     background: transparent;
     border: 2px solid #c084fc;
@@ -197,15 +154,6 @@
 
   .checkbox {
     border-color: #4b5563;
-  }
-
-  .task-item .task-text {
-    color: #ffffff;
-  }
-
-  .task-item.completed .task-text {
-    color: #9ca3af;
-    text-decoration: line-through;
   }
 
   .focus-label {
@@ -257,4 +205,14 @@
 .task-tag.practical {
   background-color: rgb(167, 243, 208);
   color: rgb(6, 95, 70);
+}
+
+.tasks-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.motivation-message {
+  color: #666;
+  font-style: italic;
 } 
