@@ -121,12 +121,14 @@
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   display: block;
-  color: #000000;
+  color: rgba(0, 0, 0, 1);
+  opacity: 1;
 }
 
 .task-item.completed .task-text {
   color: #9ca3af;
   text-decoration: line-through;
+  opacity: 0.8;
 }
 
 .optional-tag {
@@ -199,10 +201,12 @@
 
   .task-text {
     color: #e5e7eb;
+    opacity: 1;
   }
 
   .task-item.completed .task-text {
     color: #6b7280;
+    opacity: 0.8;
   }
 
   .focus-label {
