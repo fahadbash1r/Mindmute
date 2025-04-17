@@ -121,13 +121,15 @@
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   display: block;
-  color: #000000 !important;
+  color: #000000;
   font-weight: 600;
+  opacity: 1;
 }
 
 .tasks-container .task-item.completed .task-text {
-  color: #9ca3af !important;
+  color: #6b7280;
   text-decoration: line-through;
+  opacity: 0.8;
 }
 
 .optional-tag {
@@ -199,11 +201,13 @@
   }
 
   .tasks-container .task-text {
-    color: #e5e7eb !important;
+    color: #ffffff;
+    opacity: 1;
   }
 
   .tasks-container .task-item.completed .task-text {
-    color: #6b7280 !important;
+    color: #9ca3af;
+    opacity: 0.8;
   }
 
   .focus-label {
