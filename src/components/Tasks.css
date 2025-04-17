@@ -122,22 +122,11 @@
 
 .task-item.completed .task-content,
 .task-item.completed .task-text {
-  color: #6b7280 !important;
   text-decoration: line-through;
 }
 
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
-  .task-content,
-  .task-text {
-    color: #ffffff !important;
-  }
-
-  .task-item.completed .task-content,
-  .task-item.completed .task-text {
-    color: #9ca3af !important;
-  }
-
   .task-item {
     background: transparent;
     border: 2px solid #c084fc;
@@ -229,9 +218,24 @@
   font-style: italic;
 }
 
-/* only in light mode, force the <p> inside .task-content to be dark */
+/* Light mode: force dark text */
 @media (prefers-color-scheme: light) {
-  .task-item .task-content > p {
+  .task-content {
     color: #111 !important;
+  }
+  
+  .task-item.completed .task-content {
+    color: #6b7280 !important;
+  }
+}
+
+/* Dark mode: force light text */
+@media (prefers-color-scheme: dark) {
+  .task-content {
+    color: #fff !important;
+  }
+  
+  .task-item.completed .task-content {
+    color: #9ca3af !important;
   }
 } 
