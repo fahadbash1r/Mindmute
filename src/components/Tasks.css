@@ -263,4 +263,15 @@
 .task-tag.practical {
   background-color: rgb(167, 243, 208);
   color: rgb(6, 95, 70);
+}
+
+/* Light mode override for task content */
+@media (prefers-color-scheme: light) {
+  .task-item:not(.completed) .task-content {
+    color: #000000;
+  }
+  
+  .task-item.completed .task-content {
+    color: #6b7280;
+  }
 } 
