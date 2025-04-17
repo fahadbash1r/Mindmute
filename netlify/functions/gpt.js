@@ -66,11 +66,20 @@ exports.handler = async (event) => {
             "tasks": [
               {
                 "task": "specific task",
-                "type": "emotional|mental|practical|clarity",
+                "type": "emotional|mental|practical",
                 "optional": boolean
               }
             ]
-          }`
+          }
+
+          IMPORTANT TASK GUIDELINES:
+          - Always provide exactly 5 tasks
+          - Include a balanced mix of task types:
+            * 1-2 emotional tasks (for feelings and self-care)
+            * 1-2 mental tasks (for thoughts and understanding)
+            * 1-2 practical tasks (for concrete actions)
+          - Tasks should be specific and actionable
+          - Vary the optional flag to give flexibility`
         },
         {
           role: "user",

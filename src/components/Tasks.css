@@ -121,6 +121,7 @@
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   display: block;
+  color: #000000;
 }
 
 .task-item.completed .task-text {
