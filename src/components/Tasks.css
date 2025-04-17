@@ -267,11 +267,11 @@
 
 /* Light mode override for task content */
 @media (prefers-color-scheme: light) {
-  .task-item:not(.completed) .task-content {
-    color: #000000;
+  .tasks-container .task-item .task-content {
+    color: #000000 !important;
   }
   
-  .task-item.completed .task-content {
-    color: #6b7280;
+  .tasks-container .task-item.completed .task-content {
+    color: #6b7280 !important;
   }
 } 
