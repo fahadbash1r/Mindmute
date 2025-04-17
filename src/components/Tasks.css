@@ -117,19 +117,26 @@
   flex-grow: 1;
 }
 
+.tasks-container .task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
 .tasks-container .task-text {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   display: block;
   color: #000000;
-  font-weight: 600;
-  opacity: 1;
+  font-weight: 500;
 }
 
 .tasks-container .task-item.completed .task-text {
   color: #6b7280;
   text-decoration: line-through;
-  opacity: 0.8;
 }
 
 .optional-tag {
@@ -202,12 +209,10 @@
 
   .tasks-container .task-text {
     color: #ffffff;
-    opacity: 1;
   }
 
   .tasks-container .task-item.completed .task-text {
     color: #9ca3af;
-    opacity: 0.8;
   }
 
   .focus-label {
