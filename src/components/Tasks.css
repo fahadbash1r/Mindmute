@@ -116,34 +116,27 @@
   flex-grow: 1;
 }
 
-/* Force black text in light mode */
+/* Light mode text colors */
 .task-content,
-.task-content span,
-.task-content div,
-.task-content p {
+.task-text {
   color: #000000 !important;
 }
 
 .task-item.completed .task-content,
-.task-item.completed .task-content span,
-.task-item.completed .task-content div,
-.task-item.completed .task-content p {
+.task-item.completed .task-text {
   color: #6b7280 !important;
   text-decoration: line-through;
 }
 
+/* Dark mode text colors */
 @media (prefers-color-scheme: dark) {
   .task-content,
-  .task-content span,
-  .task-content div,
-  .task-content p {
+  .task-text {
     color: #ffffff !important;
   }
 
   .task-item.completed .task-content,
-  .task-item.completed .task-content span,
-  .task-item.completed .task-content div,
-  .task-item.completed .task-content p {
+  .task-item.completed .task-text {
     color: #9ca3af !important;
   }
 
