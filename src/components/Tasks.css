@@ -71,9 +71,8 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1rem;
-  background: transparent;
+  margin-bottom: 1rem;
   border-radius: 0.5rem;
-  transition: all 0.2s ease;
   border: 2px solid rgb(126, 34, 206);
 }
 
@@ -117,15 +116,18 @@
   flex-grow: 1;
 }
 
-.tasks-container .task-text {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  display: block;
+/* Light mode specific styles */
+:root {
+  color-scheme: light;
+}
+
+.task-item .task-text {
   color: #000000;
+  font-size: 1.1rem;
   font-weight: 500;
 }
 
-.tasks-container .task-item.completed .task-text {
+.task-item.completed .task-text {
   color: #6b7280;
   text-decoration: line-through;
 }
@@ -172,6 +174,7 @@
   font-style: italic;
 }
 
+/* Dark mode specific styles */
 @media (prefers-color-scheme: dark) {
   .task-item {
     background: transparent;
@@ -198,12 +201,13 @@
     border-color: #4b5563;
   }
 
-  .tasks-container .task-text {
+  .task-item .task-text {
     color: #ffffff;
   }
 
-  .tasks-container .task-item.completed .task-text {
+  .task-item.completed .task-text {
     color: #9ca3af;
+    text-decoration: line-through;
   }
 
   .focus-label {
@@ -229,4 +233,34 @@
   .task-content {
     color: #ffffff;
   }
+}
+
+/* Task tags */
+.task-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.task-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Ensure tag text is always visible */
+.task-tag.mental {
+  background-color: rgb(216, 180, 254);
+  color: rgb(107, 33, 168);
+}
+
+.task-tag.emotional {
+  background-color: rgb(253, 164, 175);
+  color: rgb(159, 18, 57);
+}
+
+.task-tag.practical {
+  background-color: rgb(167, 243, 208);
+  color: rgb(6, 95, 70);
 } 
