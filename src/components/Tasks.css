@@ -114,6 +114,23 @@
 
 .task-content {
   flex-grow: 1;
+  color: #000000; /* Default light mode color */
+}
+
+.task-item.completed .task-content {
+  color: #6b7280;
+  text-decoration: line-through;
+}
+
+/* Dark mode overrides only */
+@media (prefers-color-scheme: dark) {
+  .task-content {
+    color: #ffffff;
+  }
+
+  .task-item.completed .task-content {
+    color: #9ca3af;
+  }
 }
 
 /* Light mode specific styles */
@@ -229,10 +246,6 @@
   .motivation-message {
     color: #9ca3af;
   }
-
-  .task-content {
-    color: #ffffff;
-  }
 }
 
 /* Task tags */
@@ -265,13 +278,12 @@
   color: rgb(6, 95, 70);
 }
 
-/* Light mode override for task content */
+/* FORCE dark text in light mode for all task items */
 @media (prefers-color-scheme: light) {
-  .tasks-container .task-item .task-content {
-    color: #000000 !important;
-  }
-  
-  .tasks-container .task-item.completed .task-content {
-    color: #6b7280 !important;
+  .tasks-list .task-item:not(.completed),
+  .tasks-list .task-item:not(.completed) *,
+  .tasks-list .task-item:not(.completed) .task-content,
+  .tasks-list .task-item:not(.completed) .task-text {
+    color: #111 !important;
   }
 } 
