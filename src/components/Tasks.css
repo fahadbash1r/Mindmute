@@ -114,10 +114,9 @@
 
 .task-content {
   flex-grow: 1;
+  color: #000000 !important;
 }
 
-/* Light mode text colors */
-.task-content,
 .task-text {
   color: #000000 !important;
 }
@@ -128,7 +127,7 @@
   text-decoration: line-through;
 }
 
-/* Dark mode text colors */
+/* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .task-content,
   .task-text {
@@ -200,7 +199,7 @@
   font-weight: 500;
 }
 
-/* Ensure tag text is always visible */
+/* Tag colors */
 .task-tag.mental {
   background-color: rgb(216, 180, 254);
   color: rgb(107, 33, 168);
@@ -214,6 +213,11 @@
 .task-tag.practical {
   background-color: rgb(167, 243, 208);
   color: rgb(6, 95, 70);
+}
+
+.task-tag.optional {
+  background-color: rgba(147, 51, 234, 0.1);
+  color: rgb(126, 34, 206);
 }
 
 .tasks-footer {
