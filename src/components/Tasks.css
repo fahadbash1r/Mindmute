@@ -280,10 +280,15 @@
 
 /* FORCE dark text in light mode for all task items */
 @media (prefers-color-scheme: light) {
-  .tasks-list .task-item:not(.completed),
-  .tasks-list .task-item:not(.completed) *,
-  .tasks-list .task-item:not(.completed) .task-content,
-  .tasks-list .task-item:not(.completed) .task-text {
+  .tasks-container .task-item:not(.completed),
+  .tasks-container .task-item:not(.completed) *,
+  .tasks-container .task-item:not(.completed) .task-content,
+  .tasks-container .task-item:not(.completed) .task-text,
+  .task-content {
     color: #111 !important;
+  }
+
+  .tasks-container .task-item.completed .task-content {
+    color: #6b7280 !important;
   }
 } 
