@@ -114,20 +114,36 @@
 
 .task-content {
   flex-grow: 1;
+}
+
+/* Force black text in light mode */
+.task-content,
+.task-content span,
+.task-content div,
+.task-content p {
   color: #000000 !important;
 }
 
-.task-item.completed .task-content {
+.task-item.completed .task-content,
+.task-item.completed .task-content span,
+.task-item.completed .task-content div,
+.task-item.completed .task-content p {
   color: #6b7280 !important;
   text-decoration: line-through;
 }
 
 @media (prefers-color-scheme: dark) {
-  .task-content {
+  .task-content,
+  .task-content span,
+  .task-content div,
+  .task-content p {
     color: #ffffff !important;
   }
 
-  .task-item.completed .task-content {
+  .task-item.completed .task-content,
+  .task-item.completed .task-content span,
+  .task-item.completed .task-content div,
+  .task-item.completed .task-content p {
     color: #9ca3af !important;
   }
 
