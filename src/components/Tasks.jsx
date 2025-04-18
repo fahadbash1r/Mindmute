@@ -102,6 +102,25 @@ export default function Tasks() {
     }
   };
 
+  const TaskItem = ({ task, onToggle }) => {
+    return (
+      <div className={`task-item ${task.type} ${task.completed ? 'completed' : ''}`}>
+        <div className="checkbox" onClick={() => onToggle(task.id, task.completed)}>
+          {task.completed && '✓'}
+        </div>
+        <div className="task-content">
+          <div className="task-text-container">
+            <span className="task-text">{task.task}</span>
+            {task.optional && <span className="task-tag optional">Optional</span>}
+          </div>
+          <div className="task-tags">
+            {task.type && <span className="task-tag">{task.type}</span>}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (!user) {
     return <div className="loading">Please sign in to manage tasks.</div>;
   }
@@ -134,22 +153,7 @@ export default function Tasks() {
 
       <div className="tasks-list">
         {tasks.map(task => (
-          <div 
-            key={task.id}
-            className={`task-item ${task.completed ? 'completed' : ''} ${task.type}`}
-          >
-            <div 
-              className="checkbox"
-              onClick={() => toggleTask(task.id, task.completed)}
-            >
-              {task.completed ? '✓' : ''}
-            </div>
-            <div className="task-content">
-              <span className="task-text">{task.task}</span>
-              {task.optional && <span className="optional-tag">Optional</span>}
-              <span className={`type-tag ${task.type}`}>{task.type}</span>
-            </div>
-          </div>
+          <TaskItem key={task.id} task={task} onToggle={toggleTask} />
         ))}
       </div>
 
