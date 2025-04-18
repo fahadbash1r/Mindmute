@@ -114,7 +114,7 @@ export default function Tasks() {
             {task.optional && <span className="task-tag optional">Optional</span>}
           </div>
           <div className="task-tags">
-            {task.type && <span className="task-tag">{task.type}</span>}
+            {task.type && <span className={`task-tag ${task.type}`}>{task.type}</span>}
           </div>
         </div>
       </div>
