@@ -1,0 +1,54 @@
+/* Task tags */
+.task-tag {
+  font-size: 0.875rem;
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.75rem;
+  border-radius: 9999px;
+  width: fit-content;
+}
+
+.task-tag.emotional {
+  color: #ec4899;
+  background-color: rgba(236, 72, 153, 0.1);
+}
+
+.task-tag.mental {
+  color: #8b5cf6;
+  background-color: rgba(139, 92, 246, 0.1);
+}
+
+.task-tag.practical {
+  color: #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.task-tag.optional {
+  color: #9333ea;
+  margin-left: auto;
+  background: none;
+  padding: 0;
+}
+
+/* Dark theme styles */
+html[data-theme="dark"] {
+  .task-tag.emotional {
+    color: #f472b6;
+    background-color: rgba(244, 114, 182, 0.1);
+  }
+
+  .task-tag.mental {
+    color: #a78bfa;
+    background-color: rgba(167, 139, 250, 0.1);
+  }
+
+  .task-tag.practical {
+    color: #34d399;
+    background-color: rgba(52, 211, 153, 0.1);
+  }
+
+  .task-tag.optional {
+    color: #c084fc;
+  }
+} 
