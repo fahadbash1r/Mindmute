@@ -109,13 +109,11 @@ export default function Tasks() {
           {task.completed && '✓'}
         </div>
         <div className="task-content">
-          <div className="task-text-container">
-            <span className="task-text">{task.task}</span>
+          <div className="task-text">
+            {task.task}
             {task.optional && <span className="task-tag optional">Optional</span>}
           </div>
-          <div className="task-tags">
-            {task.type && <span className={`task-tag ${task.type}`}>{task.type}</span>}
-          </div>
+          {task.type && <div className="task-tag">{task.type}</div>}
         </div>
       </div>
     );
