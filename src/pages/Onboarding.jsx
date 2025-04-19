@@ -112,7 +112,7 @@ export default function Onboarding() {
         })
         .eq('id', user.id);
 
-      navigate('/tasks', { replace: true });
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('Error saving onboarding answers:', error);
       // You might want to show an error message to the user here
