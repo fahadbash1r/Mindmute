@@ -1300,3 +1300,103 @@ main {
     font-size: 0.8rem;
   }
 }
+
+/* Onboarding styles */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+.radio-label:hover {
+  background: var(--hover-bg);
+}
+
+.radio-input {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  margin: 0;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.radio-input:checked {
+  border-color: var(--primary-color);
+  background: var(--primary-color);
+}
+
+.radio-input:checked::after {
+  content: '';
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.progress-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.progress-dot.active {
+  background: var(--primary-color);
+  transform: scale(1.2);
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.button-group button:last-child {
+  margin-left: auto;
+}
+
+/* Dark mode overrides for onboarding */
+[data-theme="dark"] .radio-label {
+  color: var(--text-color);
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .radio-label:hover {
+  background: var(--hover-bg);
+}
+
+[data-theme="dark"] .progress-dot {
+  background: var(--border-color);
+}
+
+[data-theme="dark"] .progress-dot.active {
+  background: var(--primary-color);
+}

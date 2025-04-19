@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import darkLogo from '../assets/mindmute-dark.png';
+import lightLogo from '../assets/mindmute-light.png';
+import './Onboarding.css';
 
 const questions = [
   {
@@ -104,13 +107,28 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="container mx-auto max-w-lg p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-4">{currentQuestion.question}</h2>
-          <div className="space-y-3">
+    <div className="onboarding-container" data-theme="dark">
+      <header className="onboarding-header">
+        <div className="logo-container">
+          <img
+            src={darkLogo}
+            alt="MindMute"
+            className="logo dark-logo"
+          />
+          <img
+            src={lightLogo}
+            alt="MindMute"
+            className="logo light-logo"
+          />
+        </div>
+      </header>
+
+      <div className="onboarding-content">
+        <div className="onboarding-card">
+          <h2 className="question-title">{currentQuestion.question}</h2>
+          <div className="radio-group">
             {currentQuestion.options.map((option) => (
-              <label key={option} className="flex items-center space-x-3 cursor-pointer">
+              <label key={option} className="radio-label">
                 <input
                   type="radio"
                   name={currentQuestion.id}
@@ -119,39 +137,35 @@ export default function Onboarding() {
                   onChange={() => handleAnswer(option)}
                   className="radio-input"
                 />
-                <span className="text-gray-700 dark:text-gray-300">{option}</span>
+                <span>{option}</span>
               </label>
             ))}
           </div>
-        </div>
 
-        <div className="flex justify-between mt-6">
-          {step > 1 && (
+          <div className="button-group">
+            {step > 1 && (
+              <button
+                onClick={handleBack}
+                className="btn btn-secondary"
+                disabled={isLoading}
+              >
+                Back
+              </button>
+            )}
             <button
-              onClick={handleBack}
-              className="btn btn-secondary"
-              disabled={isLoading}
+              onClick={handleNext}
+              className="btn btn-primary"
+              disabled={!answers[currentQuestion.id] || isLoading}
             >
-              Back
+              {isLastStep ? (isLoading ? 'Saving...' : 'Get Started') : 'Next'}
             </button>
-          )}
-          <button
-            onClick={handleNext}
-            className="btn btn-primary ml-auto"
-            disabled={!answers[currentQuestion.id] || isLoading}
-          >
-            {isLastStep ? (isLoading ? 'Saving...' : 'Get Started') : 'Next'}
-          </button>
-        </div>
+          </div>
 
-        <div className="mt-4 flex justify-center">
-          <div className="flex space-x-1">
+          <div className="progress-dots">
             {questions.map((_, index) => (
               <div
                 key={index}
-                className={`h-1 w-4 rounded ${
-                  index + 1 === step ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
+                className={`progress-dot ${index + 1 === step ? 'active' : ''}`}
               />
             ))}
           </div>
