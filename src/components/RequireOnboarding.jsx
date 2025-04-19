@@ -5,12 +5,15 @@ import { supabase } from '../supabaseClient';
 export default function RequireOnboarding() {
   const [loading, setLoading] = useState(true);
   const [onboarded, setOnboarded] = useState(null);
+  const [user, setUser] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
     async function checkOnboardingStatus() {
       try {
-        const user = supabase.auth.user();
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
+        
         if (!user) {
           setLoading(false);
           return;
@@ -44,7 +47,6 @@ export default function RequireOnboarding() {
     );
   }
 
-  const user = supabase.auth.user();
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

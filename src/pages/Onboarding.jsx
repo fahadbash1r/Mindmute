@@ -76,7 +76,7 @@ export default function Onboarding() {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-      const user = supabase.auth.user();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');
 
       await supabase
