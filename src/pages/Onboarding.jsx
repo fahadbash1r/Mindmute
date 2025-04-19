@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import darkLogo from '../assets/mindmute-dark.png';
@@ -52,10 +52,25 @@ export default function Onboarding() {
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [theme, setTheme] = useState('dark');
   const navigate = useNavigate();
 
   const currentQuestion = questions[step - 1];
   const isLastStep = step === questions.length;
+
+  useEffect(() => {
+    // Check local storage for theme preference
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
 
   const handleAnswer = (answer) => {
     setAnswers(prev => ({
@@ -107,20 +122,18 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="onboarding-container" data-theme="dark">
+    <div className="onboarding-container" data-theme={theme}>
       <header className="onboarding-header">
         <div className="logo-container">
           <img
-            src={darkLogo}
+            src={theme === 'dark' ? lightLogo : darkLogo}
             alt="MindMute"
-            className="logo dark-logo"
-          />
-          <img
-            src={lightLogo}
-            alt="MindMute"
-            className="logo light-logo"
+            className="logo"
           />
         </div>
+        <button onClick={toggleTheme} className="theme-toggle">
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
       </header>
 
       <div className="onboarding-content">
@@ -128,7 +141,10 @@ export default function Onboarding() {
           <h2 className="question-title">{currentQuestion.question}</h2>
           <div className="radio-group">
             {currentQuestion.options.map((option) => (
-              <label key={option} className="radio-label">
+              <label 
+                key={option} 
+                className={`radio-label ${answers[currentQuestion.id] === option ? 'selected' : ''}`}
+              >
                 <input
                   type="radio"
                   name={currentQuestion.id}
