@@ -8,36 +8,36 @@ export default function RequireOnboarding() {
   const [user, setUser] = useState(null);
   const location = useLocation();
 
-  useEffect(() => {
-    async function checkOnboardingStatus() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        setUser(user);
-        
-        if (!user) {
-          setLoading(false);
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('onboarded')
-          .eq('id', user.id)
-          .single();
-
-        if (error) throw error;
-
-        setOnboarded(data?.onboarded ?? false);
-      } catch (error) {
-        console.error('Error checking onboarding status:', error);
-        setOnboarded(false);
-      } finally {
+  const checkOnboardingStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      
+      if (!user) {
         setLoading(false);
+        return;
       }
-    }
 
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('onboarded')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+
+      setOnboarded(data?.onboarded ?? false);
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      setOnboarded(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     checkOnboardingStatus();
-  }, []);
+  }, [location.pathname]); // Refresh status when path changes
 
   if (loading) {
     return (
@@ -56,7 +56,7 @@ export default function RequireOnboarding() {
   }
 
   if (onboarded && location.pathname === '/onboarding') {
-    return <Navigate to="/tasks" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;
