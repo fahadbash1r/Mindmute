@@ -768,38 +768,36 @@ function App() {
 
       console.log('Starting thought submission with data:', formattedData);
 
-      // Process the thought with the Netlify function first
-      console.log('Sending thought to GPT function...');
-      const gptResponse = await fetch('/.netlify/functions/gpt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Process the thought with the Edge Function
+      console.log('Sending thought to process-thought function...');
+      const { data: gptData, error: functionError } = await supabase.functions.invoke('process-thought', {
+        body: {
           thought: formattedData.thought,
           emotion: formattedData.emotion || 50,
-          moodLabel: formattedData.moodLabel || 'neutral'
-        })
+          moodLabel: formattedData.moodLabel || 'neutral',
+          intention: formattedData.intention || '',
+          userId: session.user.id
+        }
       });
 
-      if (!gptResponse.ok) {
-        const error = await gptResponse.json();
-        console.error('GPT Response Error:', error);
-        throw new Error(`Failed to process thought: ${error.message}`);
+      if (functionError) {
+        console.error('Edge Function Error:', functionError);
+        throw new Error(`Failed to process thought: ${functionError.message}`);
       }
 
-      const gptData = await gptResponse.json();
-      console.log('Received GPT response:', gptData);
+      console.log('Received Edge Function response:', gptData);
 
-      // Save thought and GPT response to Supabase
+      // Save thought and response to Supabase
       const { data: thoughtData, error: thoughtError } = await supabase
         .from('thoughts')
         .insert({
           user_id: session.user.id,
-          summary: formattedData.thought,
+          content: formattedData.thought,
           emotion: formattedData.emotion || 50,
           mood_label: formattedData.moodLabel || 'neutral',
           intention: formattedData.intention || '',
+          created_at: new Date().toISOString(),
+          summary: gptData.summary,
           reframe: gptData.reframe,
           todo_list: gptData.nextSteps,
           priorities: gptData.priorities
@@ -812,7 +810,7 @@ function App() {
         throw thoughtError;
       }
 
-      // Update UI with GPT response
+      // Update UI with response
       setSummary(gptData.summary);
       setReframe(gptData.reframe);
       setTodoList(gptData.nextSteps);
@@ -838,27 +836,6 @@ function App() {
         question: formattedData.thought,
         summary: gptData.reframe
       }, ...prev]);
-
-      // Insert tasks from GPT response
-      if (gptData.tasks && Array.isArray(gptData.tasks)) {
-        const tasksToInsert = gptData.tasks.map(task => ({
-          user_id: session.user.id,
-          thought_id: thoughtData.id,
-          task: task.task,
-          type: task.type,
-          optional: task.optional,
-          completed: false,
-          created_at: new Date().toISOString()
-        }));
-
-        const { error: insertError } = await supabase
-          .from('tasks')
-          .insert(tasksToInsert);
-
-        if (insertError) {
-          console.error('Error inserting tasks:', insertError);
-        }
-      }
 
       return thoughtData;
     } catch (error) {
