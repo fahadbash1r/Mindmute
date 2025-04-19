@@ -9,6 +9,8 @@ import SignUp from './components/SignUp'
 import SideMenu from './components/SideMenu'
 import Upgrade from './components/Upgrade'
 import Tasks from './components/Tasks'
+import RequireOnboarding from './components/RequireOnboarding'
+import Onboarding from './pages/Onboarding'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
@@ -918,50 +920,59 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className={`app-container ${theme}`}>
-        <Header theme={theme} toggleTheme={toggleTheme} user={user} onSignOut={handleSignOut} />
-        <SideMenu onSignOut={handleSignOut} />
-        
-        {!session ? (
+      <div className="app" data-theme={theme}>
+        <ErrorBoundary>
           <Routes>
+            <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="*" element={<Login />} />
-          </Routes>
-        ) : (
-          <Routes>
-            <Route path="/" element={
-              <main>
-                <PersonalGreeting user={user} />
-                <IntentionSelector onIntentionChange={handleIntentionChange} />
-                <EmotionSlider onEmotionChange={handleEmotionChange} />
-                <ThoughtInput 
-                  onSubmit={handleThoughtSubmit} 
-                  emotion={currentEmotion}
-                  moodLabel={currentMoodLabel}
-                  intention={currentIntention}
-                />
-                <ResponseSection 
-                  summary={summary}
-                  reframe={reframe}
-                  todoList={todoList}
-                  isVisible={summary || reframe || todoList.length > 0}
-                />
-                {(hasSharedThought || oldThoughts.length > 0) && (
-                  <PriorityBars data={priorities} />
-                )}
-                <ThoughtCabinet oldThoughts={oldThoughts} />
-              </main>
-            } />
-            <Route path="/thoughts" element={
-              <main>
-                <ThoughtCabinet oldThoughts={oldThoughts} />
-              </main>
-            } />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/upgrade" element={<Upgrade />} />
+            
+            <Route element={<RequireOnboarding />}>
+              <Route path="/onboarding" element={<Onboarding />} />
+              
+              {/* Protected routes that require onboarding */}
+              <Route
+                path="/"
+                element={
+                  <div className="main-container">
+                    <Header
+                      theme={theme}
+                      toggleTheme={toggleTheme}
+                      user={session?.user}
+                      onSignOut={handleSignOut}
+                    />
+                    <div className="content">
+                      <SideMenu />
+                      <div className="main-content">
+                        <PersonalGreeting user={session?.user} />
+                        <EmotionSlider onEmotionChange={handleEmotionChange} />
+                        <IntentionSelector onIntentionChange={handleIntentionChange} />
+                        <ThoughtInput
+                          onSubmit={handleThoughtSubmit}
+                          emotion={currentEmotion}
+                          moodLabel={currentMoodLabel}
+                          intention={currentIntention}
+                        />
+                        <ResponseSection
+                          summary={summary}
+                          reframe={reframe}
+                          todoList={todoList}
+                          isVisible={summary || reframe || todoList.length > 0}
+                        />
+                        <PriorityBars data={priorities} />
+                        <ThoughtCabinet oldThoughts={oldThoughts} />
+                      </div>
+                    </div>
+                  </div>
+                }
+              />
+              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/upgrade" element={<Upgrade />} />
+            </Route>
+
+            {/* Redirect unmatched routes to root */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        )}
+        </ErrorBoundary>
       </div>
     </BrowserRouter>
   )
