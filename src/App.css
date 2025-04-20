@@ -6,7 +6,7 @@
   --box-bg: #ffffff;
   --text-primary: #1a1a1a;
   --text-secondary: #666666;
-  --border-color: #e5e5e5;
+  --border-color: #e5e7eb;
   --input-bg: #f3f4f6;
   --box-border: #e5e7eb;
 }
@@ -17,7 +17,7 @@
   --box-bg: #2a2a2a;
   --text-primary: #ffffff;
   --text-secondary: #a3a3a3;
-  --border-color: #404040;
+  --border-color: #2d2d2d;
   --input-bg: #2a2a2a;
   --box-border: #333333;
 }
@@ -34,15 +34,14 @@
   background-color: var(--bg-color);
   min-height: 100vh;
   padding-top: 1rem;
+  border-color: var(--border-color);
 }
 
 header {
-  position: relative;
   display: flex;
-  align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  background: var(--header-bg);
+  background-color: var(--header-bg);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -131,16 +130,13 @@ header {
 }
 
 .logo-wrapper {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
-  align-items: center;
   justify-content: center;
+  margin-bottom: 24px;
 }
 
 .logo {
-  width: 160px;
+  width: 180px;
   height: auto;
 }
 
@@ -1135,8 +1131,11 @@ main {
 
 .personal-greeting {
   text-align: center;
-  padding: 2rem 0 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
+  padding: 0 16px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .personal-greeting h1 {
