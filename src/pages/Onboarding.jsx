@@ -127,12 +127,14 @@ export default function Onboarding() {
 
       console.log('Profile updated successfully:', data);
       
-      // Use React Router's navigate
-      navigate('/', { replace: true });
+      // Wait a moment to ensure the database update is complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Use window.location.href to force a full page reload
+      window.location.href = '/';
     } catch (error) {
       console.error('Error saving onboarding answers:', error);
       setError(error.message);
-      // Reset loading state but stay on the same page
       setIsLoading(false);
     }
   };
