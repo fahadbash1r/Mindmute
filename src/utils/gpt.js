@@ -8,7 +8,11 @@ export async function processThought(thought, emotion, moodLabel, intention) {
         emotion: emotion || 50,
         moodLabel: moodLabel || 'neutral',
         intention: intention || '',
-      }
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
     });
 
     if (functionError) {

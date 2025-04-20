@@ -41,12 +41,9 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 3rem;
+  padding: 1rem 2rem;
   background: var(--header-bg);
-  height: 70px;
-  width: 100%;
   border-bottom: 1px solid var(--border-color);
-  box-sizing: border-box;
 }
 
 /* Base styles for html and body */
@@ -128,27 +125,23 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 3rem;
+  padding: 1rem 2rem;
   background: var(--header-bg);
-  height: 70px;
-  width: 100%;
   border-bottom: 1px solid var(--border-color);
-  box-sizing: border-box;
 }
 
 .logo-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  margin-left: 60px; /* Align with hamburger button */
+  justify-content: center;
 }
 
 .logo {
-  text-align: center;
   width: 160px;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  height: auto;
 }
 
 .logo img {
@@ -458,57 +451,57 @@ main {
 }
 
 .thought-input-section {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0.5rem auto;
-  padding: 1rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
   border-radius: 12px;
-  background: var(--box-bg);
+  background: var(--input-bg);
 }
 
 .thought-input {
   width: 100%;
   min-height: 120px;
-  max-height: 200px;
   padding: 1rem;
-  background: var(--box-bg);
-  border: 2px solid #8b5cf6;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
-  color: var(--text-primary);
+  background: var(--bg-color);
+  color: var(--text-color);
   font-size: 1rem;
   resize: vertical;
   margin-bottom: 1rem;
-  font-family: inherit;
-  box-sizing: border-box;
 }
 
 .button-group {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
+  justify-content: flex-end;
 }
 
 .share-btn, .clear-btn {
-  padding: 0.75rem 2rem;
-  border: none;
-  border-radius: 20px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .share-btn {
-  background: #8b5cf6;
+  background: var(--primary-color);
   color: white;
-  flex: 2;
+  border: none;
 }
 
 .clear-btn {
   background: transparent;
-  color: var(--text-primary);
-  border: 2px solid #8b5cf6;
-  flex: 1;
+  border: 2px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.share-btn:hover {
+  opacity: 0.9;
+}
+
+.clear-btn:hover {
+  background: var(--hover-bg);
 }
 
 .response-box ul {
@@ -1141,11 +1134,13 @@ main {
 }
 
 .personal-greeting {
-  width: 100%;
-  max-width: 800px;
-  margin: 2.5rem auto 0.5rem;
-  padding: 0;
   text-align: center;
+  padding: 2rem 0 1rem;
+  margin-bottom: 2rem;
+}
+
+.personal-greeting h1 {
+  margin-bottom: 1.5rem;
 }
 
 .personal-greeting h2 {
