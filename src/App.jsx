@@ -11,6 +11,7 @@ import Upgrade from './components/Upgrade'
 import Tasks from './components/Tasks'
 import RequireOnboarding from './components/RequireOnboarding'
 import Onboarding from './pages/Onboarding'
+import { processThought, saveThought } from './utils/gpt'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
@@ -768,47 +769,23 @@ function App() {
 
       console.log('Starting thought submission with data:', formattedData);
 
-      // Process the thought with the Edge Function
-      console.log('Sending thought to process-thought function...');
-      const { data: gptData, error: functionError } = await supabase.functions.invoke('process-thought', {
-        body: {
-          thought: formattedData.thought,
-          emotion: formattedData.emotion || 50,
-          moodLabel: formattedData.moodLabel || 'neutral',
-          intention: formattedData.intention || '',
-          userId: session.user.id
-        }
-      });
+      // Process the thought using GPT utility
+      const gptData = await processThought(
+        formattedData.thought,
+        formattedData.emotion,
+        formattedData.moodLabel,
+        formattedData.intention
+      );
 
-      if (functionError) {
-        console.error('Edge Function Error:', functionError);
-        throw new Error(`Failed to process thought: ${functionError.message}`);
-      }
-
-      console.log('Received Edge Function response:', gptData);
-
-      // Save thought and response to Supabase
-      const { data: thoughtData, error: thoughtError } = await supabase
-        .from('thoughts')
-        .insert({
-          user_id: session.user.id,
-          content: formattedData.thought,
-          emotion: formattedData.emotion || 50,
-          mood_label: formattedData.moodLabel || 'neutral',
-          intention: formattedData.intention || '',
-          created_at: new Date().toISOString(),
-          summary: gptData.summary,
-          reframe: gptData.reframe,
-          todo_list: gptData.nextSteps,
-          priorities: gptData.priorities
-        })
-        .select()
-        .single();
-
-      if (thoughtError) {
-        console.error('Error saving thought:', thoughtError);
-        throw thoughtError;
-      }
+      // Save thought and response using utility
+      const thoughtData = await saveThought(
+        session.user.id,
+        formattedData.thought,
+        formattedData.emotion,
+        formattedData.moodLabel,
+        formattedData.intention,
+        gptData
+      );
 
       // Update UI with response
       setSummary(gptData.summary);

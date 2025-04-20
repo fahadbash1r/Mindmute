@@ -1,0 +1,2 @@
+# This file ensures the Netlify functions directory is preserved
+# DO NOT DELETE THIS DIRECTORY - It contains critical app functionality 

@@ -33,11 +33,20 @@
 .main-container {
   background-color: var(--bg-color);
   min-height: 100vh;
+  padding-top: 1rem;
 }
 
 header {
-  background-color: var(--header-bg);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 3rem;
+  background: var(--header-bg);
+  height: 70px;
+  width: 100%;
   border-bottom: 1px solid var(--border-color);
+  box-sizing: border-box;
 }
 
 /* Base styles for html and body */
@@ -120,21 +129,17 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 3rem;
-  background: transparent;
+  background: var(--header-bg);
   height: 70px;
-  max-width: 1400px;
-  margin: 0 auto;
-  border-bottom: 1px solid var(--box-border);
+  width: 100%;
+  border-bottom: 1px solid var(--border-color);
+  box-sizing: border-box;
 }
 
 .logo-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex: 1;
-  max-width: 800px;
-  margin: 0 auto;
-  padding-bottom: 0;
+  margin-left: 60px; /* Align with hamburger button */
 }
 
 .logo {
@@ -271,10 +276,10 @@ main {
 
 .emotion-section {
   position: relative;
-  background: var(--box-bg);
+  background: transparent;
   border-radius: 20px;
-  padding: 1.5rem 2rem;
-  margin: 0.5rem auto;
+  padding: 1rem 2rem;
+  margin: 0.5rem auto 2rem;
   width: 100%;
   max-width: 800px;
   box-sizing: border-box;
@@ -695,30 +700,17 @@ main {
   }
 
   .logo-wrapper {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    display: flex;
+    margin-left: 0;
     justify-content: center;
   }
 
   .personal-greeting {
-    margin: 0 auto 1rem;
-    padding: 0;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+    margin: 2rem auto 1rem;
   }
 
+  .intention-section,
   .emotion-section {
-    width: 100%;
-    max-width: calc(100% - 2rem);
-    margin: 0 auto;
-    padding: 1.5rem 1rem;
-    box-sizing: border-box;
-    transform: none;
+    padding: 1rem;
   }
 
   .emotion-slider {
@@ -1151,12 +1143,9 @@ main {
 .personal-greeting {
   width: 100%;
   max-width: 800px;
-  margin: 0.5rem auto 1.5rem;
+  margin: 2.5rem auto 0.5rem;
   padding: 0;
   text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .personal-greeting h2 {
@@ -1244,10 +1233,10 @@ main {
 
 .intention-section {
   position: relative;
-  background: var(--box-bg);
+  background: transparent;
   border-radius: 20px;
-  padding: 1.5rem 2rem;
-  margin: 0.5rem auto;
+  padding: 1rem 2rem;
+  margin: 1rem auto;
   width: 100%;
   max-width: 800px;
   box-sizing: border-box;
@@ -1441,4 +1430,26 @@ main {
 
 [data-theme="dark"] .progress-dot.active {
   background: var(--primary-color);
+}
+
+/* Content spacing */
+.main-container {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  padding-top: 1rem;
+}
+
+/* Remove box backgrounds in dark mode */
+[data-theme='dark'] .intention-section,
+[data-theme='dark'] .emotion-section,
+[data-theme='dark'] .thought-input-section {
+  background: transparent;
+}
+
+/* Adjust spacing between components */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0 1rem;
 }

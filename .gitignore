@@ -23,5 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
-# Ignore the .env file
+# Environment variables
 .env
+.env.*
+
+# Explicitly keep Netlify functions
+!netlify/functions/
+!netlify/functions/**
+!netlify/functions/gpt.js
+!netlify/functions/package.json
