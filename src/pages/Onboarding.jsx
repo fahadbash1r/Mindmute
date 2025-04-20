@@ -135,28 +135,9 @@ export default function Onboarding() {
 
       console.log('Profile updated successfully:', data);
       
-      // Verify the profile was updated correctly
-      const { data: verifyData, error: verifyError } = await supabase
-        .from('profiles')
-        .select('onboarded')
-        .eq('id', user.id)
-        .single();
-        
-      if (verifyError || !verifyData?.onboarded) {
-        console.error('Verification error:', verifyError);
-        setError('Failed to verify profile update. Please try again.');
-        setIsLoading(false);
-        return;
-      }
-
-      // Navigate to home page
-      try {
-        window.location.href = `${window.location.origin}`;
-      } catch (navError) {
-        console.error('Navigation error:', navError);
-        // Fallback navigation
-        window.location.replace('/');
-      }
+      // Navigate immediately after successful update
+      navigate('/', { replace: true });
+      
     } catch (error) {
       console.error('Error in handleSubmit:', error);
       setError(error.message || 'An unexpected error occurred. Please try again.');
