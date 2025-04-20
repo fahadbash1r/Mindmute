@@ -20,7 +20,9 @@ export default function SignUp({ onLoginClick }) {
     try {
       setLoading(true)
       setError(null)
-      const { data: { user }, error } = await supabase.auth.signUp({
+      
+      // Sign up the user
+      const { data: { user }, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -30,7 +32,21 @@ export default function SignUp({ onLoginClick }) {
           }
         }
       })
-      if (error) throw error
+      
+      if (signUpError) throw signUpError
+
+      // Create profile for the user
+      if (user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([{ id: user.id }])
+          .single()
+
+        if (profileError && profileError.code !== '23505') { // Ignore duplicate key violations
+          throw profileError
+        }
+      }
+
       alert(`Welcome ${name}! Please check your email for the confirmation link.`)
     } catch (error) {
       setError(error.message)

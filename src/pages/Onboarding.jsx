@@ -97,9 +97,11 @@ export default function Onboarding() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');
 
-      const { error: updateError } = await supabase
+      // Use upsert instead of update to create the profile if it doesn't exist
+      const { error: upsertError } = await supabase
         .from('profiles')
-        .update({
+        .upsert({
+          id: user.id, // Required for upsert
           mood: answers.mood,
           challenge: answers.challenge,
           clarity_area: answers.clarity_area,
@@ -108,11 +110,18 @@ export default function Onboarding() {
           daily_time: answers.daily_time,
           tone_preference: answers.tone_preference,
           reminder_pref: answers.reminder_pref,
-          onboarded: true
-        })
-        .eq('id', user.id);
+          onboarded: true,
+          updated_at: new Date().toISOString(),
+          created_at: new Date().toISOString()
+        }, {
+          onConflict: 'id',
+          ignoreDuplicates: false
+        });
 
-      if (updateError) throw updateError;
+      if (upsertError) {
+        console.error('Upsert error:', upsertError);
+        throw upsertError;
+      }
 
       // Force a small delay to ensure the database update is complete
       await new Promise(resolve => setTimeout(resolve, 500));
