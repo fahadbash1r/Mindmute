@@ -97,7 +97,7 @@ export default function Onboarding() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');
 
-      await supabase
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({
           mood: answers.mood,
@@ -112,7 +112,13 @@ export default function Onboarding() {
         })
         .eq('id', user.id);
 
-      navigate('/', { replace: true });
+      if (updateError) throw updateError;
+
+      // Force a small delay to ensure the database update is complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Navigate to the main app page and force a reload to ensure fresh state
+      window.location.href = '/';
     } catch (error) {
       console.error('Error saving onboarding answers:', error);
       // You might want to show an error message to the user here
