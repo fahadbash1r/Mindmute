@@ -28,6 +28,11 @@ CREATE POLICY "Users can update their own profile"
     FOR UPDATE
     USING (auth.uid() = id);
 
+CREATE POLICY "Users can insert their own profile"
+    ON public.profiles
+    FOR INSERT
+    WITH CHECK (auth.uid() = id);
+
 -- Create updated_at trigger
 CREATE OR REPLACE FUNCTION handle_updated_at()
 RETURNS TRIGGER AS $$

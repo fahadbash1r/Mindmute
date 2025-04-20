@@ -53,6 +53,7 @@ export default function Onboarding() {
   const [answers, setAnswers] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [theme, setTheme] = useState('dark');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const currentQuestion = questions[step - 1];
@@ -97,8 +98,11 @@ export default function Onboarding() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');
 
+      console.log('Saving onboarding answers for user:', user.id);
+      console.log('Answers:', answers);
+
       // Use upsert instead of update to create the profile if it doesn't exist
-      const { error: upsertError } = await supabase
+      const { data, error: upsertError } = await supabase
         .from('profiles')
         .upsert({
           id: user.id, // Required for upsert
@@ -111,27 +115,24 @@ export default function Onboarding() {
           tone_preference: answers.tone_preference,
           reminder_pref: answers.reminder_pref,
           onboarded: true,
-          updated_at: new Date().toISOString(),
-          created_at: new Date().toISOString()
-        }, {
-          onConflict: 'id',
-          ignoreDuplicates: false
-        });
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
 
       if (upsertError) {
         console.error('Upsert error:', upsertError);
         throw upsertError;
       }
 
-      // Force a small delay to ensure the database update is complete
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('Profile updated successfully:', data);
       
-      // Navigate to the main app page and force a reload to ensure fresh state
-      window.location.href = '/';
+      // Use React Router's navigate
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('Error saving onboarding answers:', error);
-      // You might want to show an error message to the user here
-    } finally {
+      setError(error.message);
+      // Reset loading state but stay on the same page
       setIsLoading(false);
     }
   };
@@ -154,6 +155,11 @@ export default function Onboarding() {
       <div className="onboarding-content">
         <div className="onboarding-card">
           <h2 className="question-title">{currentQuestion.question}</h2>
+          {error && (
+            <div className="error-message" style={{ color: '#ef4444', marginBottom: '1rem', textAlign: 'center' }}>
+              {error}
+            </div>
+          )}
           <div className="radio-group">
             {currentQuestion.options.map((option) => (
               <label 
