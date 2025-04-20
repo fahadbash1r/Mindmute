@@ -95,17 +95,22 @@ export default function Onboarding() {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
+      setError(''); // Clear any previous errors
+      
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('No user found');
+      if (!user) {
+        setError('User session expired. Please refresh and try again.');
+        setIsLoading(false);
+        return;
+      }
 
       console.log('Saving onboarding answers for user:', user.id);
-      console.log('Answers:', answers);
-
+      
       // Use upsert instead of update to create the profile if it doesn't exist
       const { data, error: upsertError } = await supabase
         .from('profiles')
         .upsert({
-          id: user.id, // Required for upsert
+          id: user.id,
           mood: answers.mood,
           challenge: answers.challenge,
           clarity_area: answers.clarity_area,
@@ -115,6 +120,7 @@ export default function Onboarding() {
           tone_preference: answers.tone_preference,
           reminder_pref: answers.reminder_pref,
           onboarded: true,
+          created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
         .select()
@@ -122,20 +128,38 @@ export default function Onboarding() {
 
       if (upsertError) {
         console.error('Upsert error:', upsertError);
-        throw upsertError;
+        setError('Failed to save preferences. Please try again.');
+        setIsLoading(false);
+        return;
       }
 
       console.log('Profile updated successfully:', data);
       
-      // Wait a moment to ensure the database update is complete
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Force navigation to the main app
-      const baseUrl = window.location.origin;
-      window.location.replace(baseUrl);
+      // Verify the profile was updated correctly
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('profiles')
+        .select('onboarded')
+        .eq('id', user.id)
+        .single();
+        
+      if (verifyError || !verifyData?.onboarded) {
+        console.error('Verification error:', verifyError);
+        setError('Failed to verify profile update. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Navigate to home page
+      try {
+        window.location.href = `${window.location.origin}`;
+      } catch (navError) {
+        console.error('Navigation error:', navError);
+        // Fallback navigation
+        window.location.replace('/');
+      }
     } catch (error) {
-      console.error('Error saving onboarding answers:', error);
-      setError(error.message);
+      console.error('Error in handleSubmit:', error);
+      setError(error.message || 'An unexpected error occurred. Please try again.');
       setIsLoading(false);
     }
   };
