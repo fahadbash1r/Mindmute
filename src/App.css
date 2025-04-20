@@ -1,3 +1,45 @@
+/* Add theme variables at the top of the file */
+:root {
+  /* Light theme defaults */
+  --bg-color: #ffffff;
+  --header-bg: #ffffff;
+  --box-bg: #ffffff;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --border-color: #e5e5e5;
+  --input-bg: #f3f4f6;
+  --box-border: #e5e7eb;
+}
+
+[data-theme='dark'] {
+  --bg-color: #1a1a1a;
+  --header-bg: #1a1a1a;
+  --box-bg: #2a2a2a;
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --border-color: #404040;
+  --input-bg: #2a2a2a;
+  --box-border: #333333;
+}
+
+/* Add these styles to ensure theme is applied */
+.app {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.main-container {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+}
+
+header {
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
 /* Base styles for html and body */
 html, body {
   margin: 0;
