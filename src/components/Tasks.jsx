@@ -12,12 +12,11 @@ export default function Tasks() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [completedCount, setCompletedCount] = useState(0);
-  const [totalTasks, setTotalTasks] = useState(5); // Fixed at 5 tasks
+  const [totalTasks, setTotalTasks] = useState(5);
   const [theme, setTheme] = useState('light');
   const [priorities, setPriorities] = useState([]);
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -25,19 +24,14 @@ export default function Tasks() {
       }
     });
 
-    // Set up auth subscription
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchTasks();
       }
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -50,27 +44,6 @@ export default function Tasks() {
       setLoading(true);
       setError(null);
 
-      // First, delete any tasks beyond the most recent 5
-      const { count } = await supabase
-        .from('tasks')
-        .select('*', { count: 'exact' });
-
-      if (count > 5) {
-        const { data: oldTasks } = await supabase
-          .from('tasks')
-          .select('id, created_at')
-          .order('created_at', { ascending: false })
-          .range(5, count - 1);
-
-        if (oldTasks?.length > 0) {
-          await supabase
-            .from('tasks')
-            .delete()
-            .in('id', oldTasks.map(t => t.id));
-        }
-      }
-
-      // Now fetch the 5 most recent tasks
       const { data: tasksData, error: tasksError } = await supabase
         .from('tasks')
         .select('*')
@@ -78,7 +51,6 @@ export default function Tasks() {
         .limit(5);
 
       if (tasksError) throw tasksError;
-
       setTasks(tasksData || []);
     } catch (error) {
       console.error('Error fetching tasks:', error);

@@ -1,13 +1,13 @@
 .tasks-container {
-  flex: 1;
-  padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
-  color: var(--text-primary);
+  padding: 2rem;
+  width: 100%;
 }
 
 .tasks-header {
   margin-bottom: 2rem;
+  text-align: left;
 }
 
 .tasks-header h1 {
@@ -19,18 +19,19 @@
 
 .tasks-header p {
   color: var(--text-secondary);
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .focus-section {
-  background: var(--accent-bg);
-  padding: 1rem;
-  border-radius: 8px;
   margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
 }
 
 .focus-label {
   color: var(--text-primary);
+  font-size: 1rem;
   font-weight: 500;
 }
 
@@ -39,25 +40,25 @@
 }
 
 .progress-text {
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
-  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
 .progress-count {
-  color: var(--text-primary);
   font-weight: 600;
 }
 
 .progress-bar {
   height: 8px;
-  background: var(--progress-bg);
+  background-color: var(--bg-secondary);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: var(--accent-color);
+  background-color: var(--accent-color);
   transition: width 0.3s ease;
 }
 
@@ -73,15 +74,14 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1rem;
-  background: var(--card-bg);
+  background-color: var(--bg-secondary);
   border-radius: 8px;
-  border: 1px solid var(--border-color);
   transition: all 0.2s ease;
 }
 
 .task-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .task-item.completed {
@@ -91,19 +91,15 @@
 .checkbox {
   width: 24px;
   height: 24px;
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--accent-color);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-primary);
-  background: var(--card-bg);
-  transition: all 0.2s ease;
-}
-
-.checkbox:hover {
-  border-color: var(--accent-color);
+  color: var(--accent-color);
+  font-weight: bold;
+  flex-shrink: 0;
 }
 
 .task-content {
@@ -121,39 +117,43 @@
   display: inline-block;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 500;
   margin-right: 0.5rem;
 }
 
-.task-tag.emotional {
-  background: var(--emotional-tag-bg);
-  color: var(--emotional-tag-text);
-}
-
-.task-tag.mental {
-  background: var(--mental-tag-bg);
-  color: var(--mental-tag-text);
-}
-
-.task-tag.practical {
-  background: var(--practical-tag-bg);
-  color: var(--practical-tag-text);
-}
-
 .task-tag.optional {
-  background: var(--optional-tag-bg);
-  color: var(--optional-tag-text);
+  background-color: var(--tag-optional-bg);
+  color: var(--tag-optional-text);
+}
+
+.task-tag.summary {
+  background-color: var(--tag-summary-bg);
+  color: var(--tag-summary-text);
+}
+
+.task-tag.reframe {
+  background-color: var(--tag-reframe-bg);
+  color: var(--tag-reframe-text);
+}
+
+.task-tag.todo {
+  background-color: var(--tag-todo-bg);
+  color: var(--tag-todo-text);
 }
 
 .tasks-footer {
   text-align: center;
-  padding: 2rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-style: italic;
 }
 
 .motivation-message {
-  color: var(--text-secondary);
-  font-style: italic;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  margin-top: 2rem;
 }
 
 /* Dark theme overrides */

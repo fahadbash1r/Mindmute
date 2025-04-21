@@ -1,12 +1,29 @@
 /* Add theme variables at the top of the file */
 :root {
-  /* Light theme defaults */
+  /* Base theme variables */
   --bg-color: #ffffff;
-  --header-bg: #ffffff;
-  --box-bg: #ffffff;
+  --bg-secondary: #f5f5f5;
   --text-primary: #1a1a1a;
   --text-secondary: #666666;
-  --border-color: #e5e7eb;
+  --accent-color: #4f46e5;
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --border-color: #e5e5e5;
+  
+  /* Tag colors */
+  --tag-optional-bg: #e5e7eb;
+  --tag-optional-text: #374151;
+  --tag-summary-bg: #dbeafe;
+  --tag-summary-text: #1e40af;
+  --tag-reframe-bg: #fce7f3;
+  --tag-reframe-text: #9d174d;
+  --tag-todo-bg: #d1fae5;
+  --tag-todo-text: #065f46;
+  
+  /* Transitions */
+  --transition-speed: 0.2s;
+  
+  /* Light theme defaults */
+  --box-bg: #ffffff;
   --input-bg: #f3f4f6;
   --box-border: #e5e7eb;
   --error-color: #ef4444;
@@ -19,11 +36,25 @@
 
 [data-theme='dark'] {
   --bg-color: #1a1a1a;
-  --header-bg: #1a1a1a;
-  --box-bg: #2a2a2a;
+  --bg-secondary: #2d2d2d;
   --text-primary: #ffffff;
   --text-secondary: #a3a3a3;
-  --border-color: #2d2d2d;
+  --accent-color: #6366f1;
+  --header-bg: rgba(26, 26, 26, 0.8);
+  --border-color: #404040;
+  
+  /* Dark theme tag colors */
+  --tag-optional-bg: #374151;
+  --tag-optional-text: #e5e7eb;
+  --tag-summary-bg: #1e3a8a;
+  --tag-summary-text: #bfdbfe;
+  --tag-reframe-bg: #831843;
+  --tag-reframe-text: #fbcfe8;
+  --tag-todo-bg: #064e3b;
+  --tag-todo-text: #a7f3d0;
+  
+  /* Dark theme defaults */
+  --box-bg: #2a2a2a;
   --input-bg: #2a2a2a;
   --box-border: #333333;
   --error-color: #f87171;
@@ -1630,4 +1661,150 @@ main {
     width: 90%;
     max-width: 320px;
   }
+}
+
+/* Tasks page specific styles */
+.tasks-container {
+  flex: 1;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  color: var(--text-primary);
+}
+
+.tasks-header {
+  margin-bottom: 2rem;
+}
+
+.tasks-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.tasks-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.focus-section {
+  background: var(--accent-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.focus-label {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.task-item.emotional {
+  border-color: #ec4899;
+}
+
+.task-item.mental {
+  border-color: #8b5cf6;
+}
+
+.task-item.practical {
+  border-color: #10b981;
+}
+
+.task-item.completed {
+  background-color: rgba(147, 51, 234, 0.2);
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  background: var(--card-bg);
+  transition: all 0.2s ease;
+}
+
+.task-content {
+  flex: 1;
+}
+
+.task-text {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.task-tag {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.task-tag.optional {
+  color: #c084fc;
+  background: none;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .response-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .response-box {
+    margin-bottom: 1rem;
+  }
+  
+  .tasks-container {
+    padding: 1rem;
+  }
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] .task-item {
+  background: transparent;
+}
+
+[data-theme="dark"] .checkbox {
+  border-color: #4b5563;
+}
+
+[data-theme="dark"] .task-tag.emotional {
+  color: #f472b6;
+}
+
+[data-theme="dark"] .task-tag.mental {
+  color: #a78bfa;
+}
+
+[data-theme="dark"] .task-tag.practical {
+  color: #34d399;
 }
