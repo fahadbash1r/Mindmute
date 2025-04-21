@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import './Tasks.css';
 import { Spinner } from './Spinner';
+import Header from './Header';
+import SideMenu from './SideMenu';
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -10,6 +12,7 @@ export default function Tasks() {
   const [error, setError] = useState(null);
   const [completedCount, setCompletedCount] = useState(0);
   const [totalTasks, setTotalTasks] = useState(5); // Fixed at 5 tasks
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     // Get initial session
@@ -119,6 +122,19 @@ export default function Tasks() {
     );
   };
 
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   if (!user) {
     return <div className="loading">Please sign in to manage tasks.</div>;
   }
@@ -127,37 +143,50 @@ export default function Tasks() {
   if (error) return <div className="text-red-500 text-center p-4">{error}</div>;
 
   return (
-    <div className="tasks-container">
-      <div className="tasks-header">
-        <h1>🧠 My Daily Clarity Plan</h1>
-        <p>Here's what your mind asked for today.</p>
-      </div>
+    <div className="app" data-theme={theme}>
+      <div className="main-container">
+        <Header
+          theme={theme}
+          toggleTheme={toggleTheme}
+          user={user}
+          onSignOut={handleSignOut}
+        />
+        <div className="content">
+          <SideMenu onSignOut={handleSignOut} />
+          <div className="tasks-container">
+            <div className="tasks-header">
+              <h1>🧠 My Daily Clarity Plan</h1>
+              <p>Here's what your mind asked for today.</p>
+            </div>
 
-      <div className="focus-section">
-        <span className="focus-label">✨ Today's Focus: Gentle Self-Motivation</span>
-      </div>
+            <div className="focus-section">
+              <span className="focus-label">✨ Today's Focus: Gentle Self-Motivation</span>
+            </div>
 
-      <div className="progress-section">
-        <div className="progress-text">
-          You've cleared <span className="progress-count">{completedCount} of {totalTasks}</span> clarity steps
-        </div>
-        <div className="progress-bar">
-          <div 
-            className="progress-fill"
-            style={{ width: `${(completedCount / totalTasks) * 100}%` }}
-          ></div>
-        </div>
-      </div>
+            <div className="progress-section">
+              <div className="progress-text">
+                You've cleared <span className="progress-count">{completedCount} of {totalTasks}</span> clarity steps
+              </div>
+              <div className="progress-bar">
+                <div 
+                  className="progress-fill"
+                  style={{ width: `${(completedCount / totalTasks) * 100}%` }}
+                ></div>
+              </div>
+            </div>
 
-      <div className="tasks-list">
-        {tasks.map(task => (
-          <TaskItem key={task.id} task={task} onToggle={toggleTask} />
-        ))}
-      </div>
+            <div className="tasks-list">
+              {tasks.map(task => (
+                <TaskItem key={task.id} task={task} onToggle={toggleTask} />
+              ))}
+            </div>
 
-      <div className="tasks-footer">
-        <div className="motivation-message">
-          👣 "Small steps lead to big changes."
+            <div className="tasks-footer">
+              <div className="motivation-message">
+                👣 "Small steps lead to big changes."
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -12,6 +12,9 @@ import Tasks from './components/Tasks'
 import RequireOnboarding from './components/RequireOnboarding'
 import Onboarding from './pages/Onboarding'
 import { processThought, saveThought } from './utils/gpt'
+import Header from './components/Header'
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 function PriorityBars({ data }) {
   // Helper function to get motivational message
@@ -409,45 +412,6 @@ function PieChartSection({ data, isVisible }) {
   )
 }
 
-function Header({ theme, toggleTheme, user, onSignOut }) {
-  return (
-    <header>
-      <SideMenu onSignOut={onSignOut} />
-      
-      <div className="logo-container">
-        {theme === 'light' ? (
-          <img 
-            src={darkLogo}
-            alt="Mindmute"
-            className="logo"
-            width="600"
-            height="160"
-            loading="eager"
-          />
-        ) : (
-          <img 
-            src={lightLogo}
-            alt="Mindmute"
-            className="logo"
-            width="600"
-            height="160"
-            loading="eager"
-          />
-        )}
-        <p className="tagline">Finding balance in the journey</p>
-      </div>
-
-      <button 
-        className="mode-switcher" 
-        onClick={toggleTheme}
-        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-      >
-        {theme === 'dark' ? '🌞' : '🌙'}
-      </button>
-    </header>
-  );
-}
-
 function IntentionSelector({ onIntentionChange }) {
   const [intention, setIntention] = useState('clarity')
   
@@ -683,7 +647,10 @@ function ErrorBoundary({ children }) {
 
 function App() {
   const [session, setSession] = useState(null)
-  const [theme, setTheme] = useState('light')
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme || 'dark';
+  })
   const [user, setUser] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
   const [oldThoughts, setOldThoughts] = useState([])
@@ -698,8 +665,8 @@ function App() {
   const [hasSharedThought, setHasSharedThought] = useState(false)
 
   useEffect(() => {
-    // Set theme attribute on document for CSS selector
     document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
   }, [theme]);
 
   useEffect(() => {
@@ -747,7 +714,7 @@ function App() {
   }, [user])
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark')
   }
 
   const handleSignOut = async () => {
@@ -870,6 +837,24 @@ function App() {
 
   if (!isConnected) {
     return <div>Loading...</div>;
+  }
+
+  if (!session) {
+    return (
+      <div className="app">
+        <div className="main-container">
+          <Header theme={theme} toggleTheme={toggleTheme} />
+          <div className="auth-container">
+            <Auth 
+              supabaseClient={supabase} 
+              appearance={{ theme: ThemeSupa }}
+              providers={[]}
+              theme={theme === 'dark' ? 'dark' : 'default'}
+            />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
