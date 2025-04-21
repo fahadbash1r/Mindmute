@@ -945,18 +945,86 @@ function App() {
                         </div>
 
                         {/* Response Cards Section */}
-                        <ResponseSection
-                          summary={summary}
-                          reframe={reframe}
-                          todoList={todoList}
-                          isVisible={summary || reframe || todoList.length > 0}
-                        />
+                        <div className="response-section">
+                          <div className="response-box">
+                            <h3>Summary</h3>
+                            <p>{summary || "Share your thoughts to see a summary..."}</p>
+                          </div>
+                          <div className="response-box">
+                            <h3>Reframe</h3>
+                            <p>{reframe || "Share your thoughts to see a reframe..."}</p>
+                          </div>
+                          <div className="response-box">
+                            <h3>To Do List</h3>
+                            {todoList && todoList.length > 0 ? (
+                              <ol>
+                                {todoList.map((item, index) => (
+                                  <li key={index}>{item}</li>
+                                ))}
+                              </ol>
+                            ) : (
+                              <p>Share your thoughts to see action items...</p>
+                            )}
+                          </div>
+                        </div>
 
                         {/* Priorities Section */}
-                        <PriorityBars data={priorities} />
+                        <div className="priorities-section">
+                          <h3>What to prioritise first...</h3>
+                          {priorities.length > 0 ? (
+                            <div className="priority-bars">
+                              {priorities.map((priority, index) => (
+                                <div key={index}>
+                                  <div className="priority-label">
+                                    <span>{priority.label}</span>
+                                    <span>{priority.percentage}%</span>
+                                  </div>
+                                  <div className="priority-bar">
+                                    <div 
+                                      className="priority-bar-fill"
+                                      style={{
+                                        width: `${priority.percentage}%`,
+                                        backgroundColor: priority.color
+                                      }}
+                                    >
+                                      {priority.label}
+                                    </div>
+                                  </div>
+                                  <p className="priority-motivation">
+                                    {index === 0 ? "Being kind to yourself builds resilience. Keep nurturing your spirit!" :
+                                     index === 1 ? "Connection brings clarity. Your support network is there for you." :
+                                     "Engage in activities that bring you joy and help you express your true self."}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="pie-chart-empty">
+                              Share your thoughts to see priorities
+                            </div>
+                          )}
+                        </div>
 
                         {/* Thought Cabinet */}
-                        <ThoughtCabinet oldThoughts={oldThoughts} />
+                        <div className="thought-cabinet">
+                          <h2>Thought Cabinet</h2>
+                          {oldThoughts && oldThoughts.length > 0 ? (
+                            oldThoughts.map((thought, index) => (
+                              <div key={index} className="old-thought">
+                                <h3>{thought.question}</h3>
+                                <p>{thought.summary}</p>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="empty-state">
+                              No previous thoughts yet. Share your first thought to get started!
+                            </div>
+                          )}
+                          <div className="mindful-quote">
+                            <h3>Mindful Quote of the Day</h3>
+                            <p>"Your thoughts shape your reality, choose them wisely."</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
