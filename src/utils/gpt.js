@@ -2,25 +2,33 @@ import { supabase } from '../supabaseClient';
 
 export async function processThought(thought, emotion, moodLabel, intention) {
   try {
-    const { data: gptData, error: functionError } = await supabase.functions.invoke('process-thought', {
+    // Get user profile for personalization
+    const { data: { user } } = await supabase.auth.getUser();
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    // Call the Supabase Edge Function
+    const { data, error } = await supabase.functions.invoke('process-thought', {
       body: {
         thought,
-        emotion: emotion || 50,
-        moodLabel: moodLabel || 'neutral',
-        intention: intention || '',
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include'
+        emotion,
+        moodLabel,
+        intention,
+        userProfile
+      }
     });
 
-    if (functionError) {
-      console.error('Edge Function Error:', functionError);
-      throw new Error(`Failed to process thought: ${functionError.message}`);
-    }
+    if (error) throw error;
 
-    return gptData;
+    return {
+      summary: data.summary,
+      reframe: data.reframe,
+      nextSteps: data.nextSteps,
+      priorities: data.priorities
+    };
   } catch (error) {
     console.error('Error in processThought:', error);
     throw error;
@@ -51,7 +59,7 @@ export async function generateTasks(thought, emotion, moodLabel) {
 
 export async function saveThought(userId, thought, emotion, moodLabel, intention, gptResponse) {
   try {
-    const { data: thoughtData, error: thoughtError } = await supabase
+    const { data, error } = await supabase
       .from('thoughts')
       .insert({
         user_id: userId,
@@ -68,12 +76,12 @@ export async function saveThought(userId, thought, emotion, moodLabel, intention
       .select()
       .single();
 
-    if (thoughtError) {
-      console.error('Error saving thought:', thoughtError);
-      throw thoughtError;
+    if (error) {
+      console.error('Error saving thought:', error);
+      throw error;
     }
 
-    return thoughtData;
+    return data;
   } catch (error) {
     console.error('Error in saveThought:', error);
     throw error;
