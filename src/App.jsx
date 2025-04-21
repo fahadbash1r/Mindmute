@@ -414,27 +414,27 @@ function Header({ theme, toggleTheme, user, onSignOut }) {
     <header>
       <SideMenu onSignOut={onSignOut} />
       
-      <div className="logo-wrapper">
-        <div className="logo">
-          {theme === 'light' ? (
-            <img 
-              src={darkLogo}
-              alt="Mindmute"
-              width="600"
-              height="160"
-              loading="eager"
-            />
-          ) : (
-            <img 
-              src={lightLogo}
-              alt="Mindmute"
-              width="600"
-              height="160"
-              loading="eager"
-            />
-          )}
-          <p>Finding balance in the journey</p>
-        </div>
+      <div className="logo-container">
+        {theme === 'light' ? (
+          <img 
+            src={darkLogo}
+            alt="Mindmute"
+            className="logo"
+            width="600"
+            height="160"
+            loading="eager"
+          />
+        ) : (
+          <img 
+            src={lightLogo}
+            alt="Mindmute"
+            className="logo"
+            width="600"
+            height="160"
+            loading="eager"
+          />
+        )}
+        <p className="tagline">Finding balance in the journey</p>
       </div>
 
       <button 
