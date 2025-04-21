@@ -663,6 +663,8 @@ function App() {
   const [currentMoodLabel, setCurrentMoodLabel] = useState()
   const [currentIntention, setCurrentIntention] = useState('clarity')
   const [hasSharedThought, setHasSharedThought] = useState(false)
+  const [thought, setThought] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -814,6 +816,36 @@ function App() {
     setCurrentIntention(intention)
   }
 
+  const handleSubmit = async () => {
+    if (!thought.trim()) return;
+    if (currentEmotion === undefined) {
+      alert("Please share how you're feeling using the slider above first.");
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const formattedData = {
+        thought: thought.trim(),
+        emotion: currentEmotion,
+        moodLabel: currentMoodLabel,
+        intention: currentIntention
+      };
+
+      await handleThoughtSubmit(formattedData);
+      setThought('');
+    } catch (error) {
+      console.error('Error submitting thought:', error);
+      alert('Failed to process your thought. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClear = () => {
+    setThought('');
+  };
+
   useEffect(() => {
     // Log environment variables (excluding sensitive data)
     console.log('Supabase URL configured:', !!import.meta.env.VITE_SUPABASE_URL);
@@ -885,19 +917,45 @@ function App() {
                         <PersonalGreeting user={session?.user} />
                         <EmotionSlider onEmotionChange={handleEmotionChange} />
                         <IntentionSelector onIntentionChange={handleIntentionChange} />
-                        <ThoughtInput
-                          onSubmit={handleThoughtSubmit}
-                          emotion={currentEmotion}
-                          moodLabel={currentMoodLabel}
-                          intention={currentIntention}
-                        />
+                        
+                        {/* Thought Input Section */}
+                        <div className="thought-input-section">
+                          <textarea
+                            value={thought}
+                            onChange={(e) => setThought(e.target.value)}
+                            placeholder="Share your thought..."
+                            className="thought-input"
+                            style={{ maxHeight: '200px' }}
+                          />
+                          <div className="button-group">
+                            <button 
+                              onClick={handleSubmit} 
+                              className="share-btn"
+                              disabled={isLoading || !thought.trim()}
+                            >
+                              {isLoading ? "Processing..." : "Share Thoughts"}
+                            </button>
+                            <button 
+                              onClick={handleClear}
+                              className="clear-btn"
+                            >
+                              Clear Mind
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Response Cards Section */}
                         <ResponseSection
                           summary={summary}
                           reframe={reframe}
                           todoList={todoList}
                           isVisible={summary || reframe || todoList.length > 0}
                         />
+
+                        {/* Priorities Section */}
                         <PriorityBars data={priorities} />
+
+                        {/* Thought Cabinet */}
                         <ThoughtCabinet oldThoughts={oldThoughts} />
                       </div>
                     </div>
