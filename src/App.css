@@ -497,25 +497,34 @@ main {
 }
 
 .thought-input-section {
-  margin-top: 2rem;
+  margin: 2rem auto;
   padding: 1.5rem;
   border-radius: 12px;
-  background: var(--input-bg);
+  max-width: 800px;
+  background: transparent;
 }
 
 .thought-input {
   width: 100%;
   min-height: 120px;
-  padding: 1rem;
+  padding: 1.5rem;
   border: 2px solid var(--primary-color);
   border-radius: 12px;
   background: var(--bg-color);
   color: var(--text-primary);
-  font-size: 1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
   resize: vertical;
   margin-bottom: 1rem;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.thought-input::placeholder {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-weight: 400;
 }
 
 .thought-input:focus {
