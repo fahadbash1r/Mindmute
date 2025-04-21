@@ -925,7 +925,6 @@ function App() {
                             onChange={(e) => setThought(e.target.value)}
                             placeholder="Share your thought..."
                             className="thought-input"
-                            style={{ maxHeight: '200px' }}
                           />
                           <div className="button-group">
                             <button 
@@ -974,7 +973,7 @@ function App() {
                           {priorities.length > 0 ? (
                             <div className="priority-bars">
                               {priorities.map((priority, index) => (
-                                <div key={index}>
+                                <div key={index} className="priority-item">
                                   <div className="priority-label">
                                     <span>{priority.label}</span>
                                     <span>{priority.percentage}%</span>
@@ -986,9 +985,7 @@ function App() {
                                         width: `${priority.percentage}%`,
                                         backgroundColor: priority.color
                                       }}
-                                    >
-                                      {priority.label}
-                                    </div>
+                                    />
                                   </div>
                                   <p className="priority-motivation">
                                     {index === 0 ? "Being kind to yourself builds resilience. Keep nurturing your spirit!" :
@@ -1011,8 +1008,8 @@ function App() {
                           {oldThoughts && oldThoughts.length > 0 ? (
                             oldThoughts.map((thought, index) => (
                               <div key={index} className="old-thought">
-                                <h3>{thought.question}</h3>
-                                <p>{thought.summary}</p>
+                                <p className="thought-text">{thought.question}</p>
+                                <p className="thought-reframe">{thought.summary}</p>
                               </div>
                             ))
                           ) : (
