@@ -16,7 +16,7 @@ import Header from './components/Header'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 
-function PriorityBars({ data }) {
+export function PriorityBars({ data }) {
   // Helper function to get motivational message
   const getMotivation = (task, index) => {
     // Create a map of task keywords to motivational messages array

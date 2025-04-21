@@ -4,6 +4,7 @@ import './Tasks.css';
 import { Spinner } from './Spinner';
 import Header from './Header';
 import SideMenu from './SideMenu';
+import { PriorityBars } from '../App';
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -13,6 +14,7 @@ export default function Tasks() {
   const [completedCount, setCompletedCount] = useState(0);
   const [totalTasks, setTotalTasks] = useState(5); // Fixed at 5 tasks
   const [theme, setTheme] = useState('light');
+  const [priorities, setPriorities] = useState([]);
 
   useEffect(() => {
     // Get initial session
@@ -135,6 +137,51 @@ export default function Tasks() {
     }
   };
 
+  const fetchPriorities = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('thoughts')
+        .select('priorities')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) throw error;
+      if (data?.priorities) {
+        setPriorities(data.priorities.map((priority, index) => ({
+          label: priority.title,
+          percentage: index === 0 ? 50 : index === 1 ? 30 : 20,
+          color: getColorForIndex(index)
+        })));
+      }
+    } catch (error) {
+      console.error('Error fetching priorities:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchPriorities();
+    }
+  }, [user]);
+
+  // Helper function to get colors for priorities
+  const getColorForIndex = (index) => {
+    const colors = [
+      '#8b5cf6', // Purple
+      '#06b6d4', // Cyan
+      '#10b981', // Emerald
+      '#f59e0b', // Amber
+      '#ef4444', // Red
+      '#ec4899', // Pink
+      '#6366f1', // Indigo
+      '#84cc16', // Lime
+      '#14b8a6', // Teal
+      '#f97316'  // Orange
+    ];
+    return colors[index % colors.length];
+  };
+
   if (!user) {
     return <div className="loading">Please sign in to manage tasks.</div>;
   }
@@ -180,6 +227,8 @@ export default function Tasks() {
                 <TaskItem key={task.id} task={task} onToggle={toggleTask} />
               ))}
             </div>
+
+            <PriorityBars data={priorities} />
 
             <div className="tasks-footer">
               <div className="motivation-message">
