@@ -71,31 +71,32 @@
   background-color: var(--bg-color);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
 .main-container {
+  flex: 1;
   background-color: var(--bg-color);
-  min-height: 100vh;
-  padding-top: 1rem;
-  border-color: var(--border-color);
-  overflow-y: auto;
-  padding-bottom: 2rem;
+  padding: 2rem 1rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-x: hidden;
 }
 
 header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  background-color: var(--header-bg);
-  border-bottom: 1px solid var(--border-color);
-  z-index: 100;
-  max-width: 1400px;
-  margin: 0 auto;
   width: 100%;
-  box-sizing: border-box;
+  padding: 1rem 2rem;
+  background-color: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Base styles for html and body */
@@ -106,6 +107,7 @@ html, body {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  max-width: 100%;
 }
 
 #root {
@@ -114,6 +116,7 @@ html, body {
   background: inherit;
   overflow-x: hidden;
   overflow-y: auto;
+  max-width: 100%;
 }
 
 .logo-container {
@@ -127,17 +130,22 @@ html, body {
 }
 
 .logo {
-  width: 180px;
-  height: auto;
-  margin-bottom: 0.5rem;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: opacity 0.2s ease;
+}
+
+.logo:hover {
+  opacity: 0.9;
 }
 
 .logo img {
+  height: 100%;
   width: auto;
-  height: 48px;
-  object-fit: contain;
-  display: block;
-  margin: 0 auto;
 }
 
 .logo:hover {
@@ -199,7 +207,7 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  background-color: var(--header-bg);
+  background-color: var(--bg-color);
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
   max-width: 1400px;
@@ -228,25 +236,42 @@ header {
   color: var(--text-primary);
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .mode-switcher {
-  position: relative;
-  right: 0;
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 50%;
-  transition: background-color 0.2s ease;
-  height: 40px;
-  width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.2s ease;
 }
 
 .mode-switcher:hover {
   background-color: rgba(139, 92, 246, 0.1);
+}
+
+.sign-out-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: none;
+  border: 2px solid #8b5cf6;
+  color: #8b5cf6;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sign-out-btn:hover {
+  background: rgba(139, 92, 246, 0.1);
 }
 
 .light-mode {
@@ -768,65 +793,25 @@ main {
 
 /* Mobile styles */
 @media (max-width: 768px) {
-  .app-container {
-    padding: 0;
-    overflow-x: hidden;
-    width: 100%;
-  }
-
-  main {
-    padding: 1rem;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    margin: 0;
-    overflow-x: hidden;
-  }
-
-  .logo-wrapper {
-    margin-left: 0;
-    justify-content: center;
-  }
-
-  .personal-greeting {
-    margin: 2rem auto 1rem;
-  }
-
-  .intention-section,
-  .emotion-section {
+  .main-container {
     padding: 1rem;
   }
 
-  .emotion-slider {
-    width: 100%;
-    margin: 0 auto;
-    padding: 1rem 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+  header {
+    padding: 0.75rem 1rem;
   }
 
-  .slider-track {
-    flex: 1;
-    max-width: calc(100% - 2.5rem);
-    margin: 0;
+  .content {
+    padding: 0 1rem;
   }
 
   .thought-input-section {
-    padding: 0 1rem;
     margin: 1rem auto;
   }
 
   .button-group {
     flex-direction: column;
     gap: 0.75rem;
-  }
-
-  .share-btn, .clear-btn {
-    width: 100%;
-    min-width: unset;
-    margin: 0;
   }
 
   .response-section {
@@ -1298,7 +1283,7 @@ main {
 /* Logo styles */
 .logo img {
   width: auto;
-  height: 48px; /* Increased from 42px */
+  height: 48px;
   max-width: none;
 }
 
@@ -1320,7 +1305,7 @@ main {
   }
 
   .logo img {
-    height: 32px; /* Increased from 28px */
+    height: 32px;
   }
 }
 
@@ -1835,4 +1820,67 @@ main {
   position: relative;
   z-index: 1;
   overflow-y: auto;
+}
+
+/* Remove unwanted scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* Ensure proper header display */
+.logo {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: opacity 0.2s ease;
+}
+
+.logo:hover {
+  opacity: 0.9;
+}
+
+.logo img {
+  height: 100%;
+  width: auto;
+}
+
+/* Fix content width and alignment */
+.personal-greeting {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.emotion-section,
+.intention-section {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Remove any horizontal overflow */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
 }

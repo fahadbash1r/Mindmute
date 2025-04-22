@@ -874,7 +874,12 @@ function App() {
     return (
       <div className="app">
         <div className="main-container">
-          <Header theme={theme} toggleTheme={toggleTheme} />
+          <Header 
+            theme={theme} 
+            toggleTheme={toggleTheme}
+            user={user}
+            onSignOut={handleSignOut}
+          />
           <div className="auth-container">
             <Auth 
               supabaseClient={supabase} 
@@ -892,145 +897,45 @@ function App() {
     <BrowserRouter>
       <div className="app" data-theme={theme}>
         <ErrorBoundary>
+          <Header 
+            theme={theme} 
+            toggleTheme={toggleTheme}
+            user={session?.user}
+            onSignOut={handleSignOut}
+          />
           <Routes>
+            <Route path="/" element={
+              <PrivateRoute>
+                <div className="main-container">
+                  <div className="content">
+                    <PersonalGreeting user={session?.user} />
+                    <EmotionSlider onEmotionChange={handleEmotionChange} />
+                    <IntentionSelector onIntentionChange={handleIntentionChange} />
+                    <ThoughtInput
+                      onSubmit={handleThoughtSubmit}
+                      emotion={currentEmotion}
+                      moodLabel={currentMoodLabel}
+                      intention={currentIntention}
+                    />
+                    <ResponseSection
+                      summary={summary}
+                      reframe={reframe}
+                      todoList={todoList}
+                      isVisible={true}
+                    />
+                    <PieChartSection
+                      data={priorities}
+                      isVisible={true}
+                    />
+                    <ThoughtCabinet oldThoughts={oldThoughts} />
+                  </div>
+                </div>
+              </PrivateRoute>
+            } />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            
-            <Route element={<RequireOnboarding />}>
-              <Route path="/onboarding" element={<Onboarding />} />
-              
-              {/* Protected routes that require onboarding */}
-              <Route
-                path="/"
-                element={
-                  <div className="main-container">
-                    <Header
-                      theme={theme}
-                      toggleTheme={toggleTheme}
-                      user={session?.user}
-                      onSignOut={handleSignOut}
-                    />
-                    <div className="content">
-                      <SideMenu />
-                      <div className="main-content">
-                        <PersonalGreeting user={session?.user} />
-                        <EmotionSlider onEmotionChange={handleEmotionChange} />
-                        <IntentionSelector onIntentionChange={handleIntentionChange} />
-                        
-                        {/* Thought Input Section */}
-                        <div className="thought-input-section">
-                          <textarea
-                            value={thought}
-                            onChange={(e) => setThought(e.target.value)}
-                            placeholder="Share your thought..."
-                            className="thought-input"
-                          />
-                          <div className="button-group">
-                            <button 
-                              onClick={handleSubmit} 
-                              className="share-btn"
-                              disabled={isLoading || !thought.trim()}
-                            >
-                              Share Thoughts
-                            </button>
-                            <button 
-                              onClick={handleClear}
-                              className="clear-btn"
-                            >
-                              Clear Mind
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Response Cards Section */}
-                        <div className="response-section">
-                          <div className="response-box">
-                            <h3>Summary</h3>
-                            <p>{summary || "Share your thoughts to see a summary..."}</p>
-                          </div>
-                          <div className="response-box">
-                            <h3>Reframe</h3>
-                            <p>{reframe || "Share your thoughts to see a reframe..."}</p>
-                          </div>
-                          <div className="response-box">
-                            <h3>To Do List</h3>
-                            {todoList && todoList.length > 0 ? (
-                              <ol>
-                                {todoList.map((item, index) => (
-                                  <li key={index}>{item}</li>
-                                ))}
-                              </ol>
-                            ) : (
-                              <p>Share your thoughts to see action items...</p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Priorities Section */}
-                        <div className="priorities-section">
-                          <h3>What to prioritise first...</h3>
-                          {priorities.length > 0 ? (
-                            <div className="priority-bars">
-                              {priorities.map((priority, index) => (
-                                <div key={index} className="priority-item">
-                                  <div className="priority-label">
-                                    <span>{priority.label}</span>
-                                    <span>{priority.percentage}%</span>
-                                  </div>
-                                  <div className="priority-bar">
-                                    <div 
-                                      className="priority-bar-fill"
-                                      style={{
-                                        width: `${priority.percentage}%`,
-                                        backgroundColor: priority.color
-                                      }}
-                                    />
-                                  </div>
-                                  <p className="priority-motivation">
-                                    {index === 0 ? "Being kind to yourself builds resilience. Keep nurturing your spirit!" :
-                                     index === 1 ? "Connection brings clarity. Your support network is there for you." :
-                                     "Engage in activities that bring you joy and help you express your true self."}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="pie-chart-empty">
-                              Share your thoughts to see priorities
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Thought Cabinet */}
-                        <div className="thought-cabinet">
-                          <h2>Thought Cabinet</h2>
-                          {oldThoughts && oldThoughts.length > 0 ? (
-                            oldThoughts.map((thought, index) => (
-                              <div key={index} className="old-thought">
-                                <p className="thought-text">{thought.question}</p>
-                                <p className="thought-reframe">{thought.summary}</p>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="empty-state">
-                              No previous thoughts yet. Share your first thought to get started!
-                            </div>
-                          )}
-                          <div className="mindful-quote">
-                            <h3>Mindful Quote of the Day</h3>
-                            <p>"Your thoughts shape your reality, choose them wisely."</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                }
-              />
-              <Route path="/tasks" element={<Tasks />} />
-              <Route path="/upgrade" element={<Upgrade />} />
-            </Route>
-
-            {/* Redirect unmatched routes to root */}
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/upgrade" element={<Upgrade />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </ErrorBoundary>
