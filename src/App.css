@@ -527,6 +527,8 @@ main {
   padding: 1.5rem;
   border-radius: 12px;
   background: transparent;
+  position: relative;
+  z-index: 2;
 }
 
 .thought-input {
@@ -541,8 +543,8 @@ main {
   font-size: 1.1rem;
   line-height: 1.6;
   resize: vertical;
-  margin-bottom: 1rem;
   transition: all 0.2s ease;
+  margin-bottom: 1rem;
 }
 
 .thought-input:focus {
@@ -558,8 +560,11 @@ main {
 .button-group {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
   justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 3;
 }
 
 .share-btn {
@@ -574,6 +579,9 @@ main {
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
+  position: relative;
+  z-index: 3;
+  display: block;
 }
 
 .share-btn:hover:not(:disabled) {
@@ -599,6 +607,9 @@ main {
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
+  position: relative;
+  z-index: 3;
+  display: block;
 }
 
 .clear-btn:hover {
@@ -834,6 +845,7 @@ main {
 
   .button-group {
     flex-direction: column;
+    align-items: stretch;
   }
 
   .share-btn,
@@ -1834,4 +1846,15 @@ main {
 
 .priority-item {
   width: 100%;
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
