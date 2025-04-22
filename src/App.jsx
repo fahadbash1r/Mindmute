@@ -518,7 +518,6 @@ function ThoughtInput({ onSubmit, emotion, moodLabel, intention }) {
         onChange={(e) => setThought(e.target.value)}
         placeholder="Share your thought..."
         className="thought-input"
-        style={{ maxHeight: '200px' }}
       />
       <div className="button-group">
         <button 
@@ -526,7 +525,7 @@ function ThoughtInput({ onSubmit, emotion, moodLabel, intention }) {
           className="share-btn"
           disabled={isLoading || !thought.trim()}
         >
-          {isLoading ? "Processing..." : "Share Thoughts"}
+          Share Thoughts
         </button>
         <button 
           onClick={handleClear}
@@ -932,7 +931,7 @@ function App() {
                               className="share-btn"
                               disabled={isLoading || !thought.trim()}
                             >
-                              {isLoading ? "Processing..." : "Share Thoughts"}
+                              Share Thoughts
                             </button>
                             <button 
                               onClick={handleClear}
