@@ -522,10 +522,11 @@ main {
 
 .thought-input-section {
   width: 100%;
-  margin: 2rem 0;
+  max-width: 800px;
+  margin: 2rem auto;
   padding: 1.5rem;
   border-radius: 12px;
-  background: var(--bg-color);
+  background: transparent;
 }
 
 .thought-input {
@@ -558,12 +559,12 @@ main {
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
-  width: 100%;
+  justify-content: center;
 }
 
 .share-btn {
-  flex: 1;
-  padding: 1rem 2rem;
+  padding: 0.75rem 2rem;
+  min-width: 180px;
   border-radius: 8px;
   background: #8b5cf6;
   color: white;
@@ -573,7 +574,6 @@ main {
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
-  min-width: 150px;
 }
 
 .share-btn:hover:not(:disabled) {
@@ -588,8 +588,8 @@ main {
 }
 
 .clear-btn {
-  flex: 1;
-  padding: 1rem 2rem;
+  padding: 0.75rem 2rem;
+  min-width: 180px;
   border-radius: 8px;
   background: transparent;
   color: var(--text-primary);
@@ -599,7 +599,6 @@ main {
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
-  min-width: 150px;
 }
 
 .clear-btn:hover {
@@ -829,16 +828,18 @@ main {
   }
 
   .thought-input-section {
-    width: 100%;
-    max-width: calc(100% - 2rem);
-    margin: 1rem auto;
     padding: 1rem;
-    box-sizing: border-box;
+    margin: 1rem auto;
   }
 
-  .thought-input {
+  .button-group {
+    flex-direction: column;
+  }
+
+  .share-btn,
+  .clear-btn {
     width: 100%;
-    box-sizing: border-box;
+    min-width: unset;
   }
 
   .response-section {
