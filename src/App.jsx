@@ -880,11 +880,11 @@ function App() {
                       summary={summary}
                       reframe={reframe}
                       todoList={todoList}
-                      isVisible={true}
+                      isVisible={hasSharedThought}
                     />
                     <PieChartSection
                       data={priorities}
-                      isVisible={true}
+                      isVisible={hasSharedThought}
                     />
                     <ThoughtCabinet oldThoughts={oldThoughts} />
                   </div>
