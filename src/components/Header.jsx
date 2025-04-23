@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SideMenu from './SideMenu';
+import mindmuteDark from '../assets/mindmute-dark.png';
+import mindmuteLight from '../assets/mindmute-light.png';
 
 export default function Header({ theme, toggleTheme, user, onSignOut }) {
   return (
@@ -9,7 +11,7 @@ export default function Header({ theme, toggleTheme, user, onSignOut }) {
       
       <Link to="/" className="logo">
         <img 
-          src={theme === 'light' ? '/mindmute-light.png' : '/mindmute-dark.png'} 
+          src={theme === 'light' ? mindmuteLight : mindmuteDark} 
           alt="Mindmute Logo" 
         />
       </Link>

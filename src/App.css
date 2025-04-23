@@ -84,6 +84,7 @@
   max-width: 100%;
   margin: 0 auto;
   overflow-x: hidden;
+  min-height: 0;
 }
 
 header {
@@ -103,20 +104,14 @@ header {
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
   height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-width: 100%;
+  width: 100%;
 }
 
 #root {
-  width: 100%;
-  min-height: 100vh;
-  background: inherit;
-  overflow-x: hidden;
-  overflow-y: auto;
-  max-width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .logo-container {
@@ -145,6 +140,7 @@ html, body {
 .logo img {
   height: 100%;
   width: auto;
+  object-fit: contain;
 }
 
 .logo:hover {
@@ -1526,12 +1522,14 @@ main {
 
 /* Adjust spacing between components */
 .content {
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 0 1rem;
-  overflow-y: auto;
-  padding-bottom: 4rem;
+  gap: 2rem;
+  padding-bottom: 2rem;
 }
 
 /* Animations */
