@@ -638,35 +638,58 @@ main {
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
-  background: var(--box-bg);
-  border: 2px solid var(--primary-color);
+  background: transparent;
+  border: none;
   border-radius: 12px;
   box-sizing: border-box;
 }
 
 .thought-input {
   width: 100%;
-  min-height: 100px;
+  min-height: 120px;
   padding: 16px;
   background: var(--input-bg);
-  border: 1px solid var(--box-border);
+  border: 2px solid var(--primary-color);
   border-radius: 12px;
   color: var(--text-primary);
   font-size: 16px;
   resize: vertical;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   box-sizing: border-box;
 }
 
 .button-group {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   justify-content: center;
   width: 100%;
   max-width: 900px;
-  margin: 20px auto;
+  margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
+}
+
+.button-group button {
+  flex: 1;
+  max-width: 300px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button-group button:first-child {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.button-group button:last-child {
+  background: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--primary-color);
 }
 
 .share-btn {
@@ -801,7 +824,7 @@ main {
   
   .button-group {
     flex-direction: column;
-    padding: 0;
+    gap: 12px;
   }
   
   .button-group button {
