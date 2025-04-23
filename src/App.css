@@ -406,7 +406,7 @@ main {
   text-align: center;
   color: var(--text-primary);
   margin: 1.5rem 0 1rem;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 600;
 }
 
@@ -414,7 +414,7 @@ main {
   text-align: center;
   color: var(--text-secondary);
   margin-bottom: 2rem;
-  font-size: 1rem;
+  font-size: 1.25rem;
 }
 
 .mood-slider {
@@ -1392,6 +1392,15 @@ main {
   max-width: 800px;
   padding: 20px;
   margin: 0 auto;
+  text-align: center;
+}
+
+.intention-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .intention-options {
@@ -1412,7 +1421,7 @@ main {
   gap: 8px;
   padding: 20px;
   background: var(--box-bg);
-  border: 1px solid var(--box-border);
+  border: 2px solid var(--primary-color);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1421,6 +1430,7 @@ main {
 .intention-option:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
 }
 
 .intention-option.selected {

@@ -447,7 +447,7 @@ function IntentionSelector({ onIntentionChange }) {
   
   return (
     <div className="intention-section">
-      <div className="intention-label">What do you want to walk away with?</div>
+      <h2 className="intention-title">What do you want to walk away with?</h2>
       <div className="intention-options">
         <label className={`intention-option ${intention === 'clarity' ? 'active' : ''}`}>
           <input
