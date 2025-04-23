@@ -34,7 +34,7 @@ export default function Header({ theme, toggleTheme, user, onSignOut }) {
       <div className="header-center">
         <Link to="/" className="logo">
           <img 
-            src={theme === 'light' ? mindmuteLight : mindmuteDark} 
+            src={theme === 'dark' ? mindmuteLight : mindmuteDark} 
             alt="Mindmute Logo" 
           />
           <span className="tagline">Finding balance in the journey</span>
