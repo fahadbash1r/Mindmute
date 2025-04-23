@@ -7,13 +7,16 @@ import mindmuteLight from '../assets/mindmute-light.png';
 export default function Header({ theme, toggleTheme, user, onSignOut }) {
   return (
     <header>
-      <SideMenu onSignOut={onSignOut} />
+      <div className="menu-button">
+        <SideMenu onSignOut={onSignOut} />
+      </div>
       
       <Link to="/" className="logo">
         <img 
           src={theme === 'light' ? mindmuteLight : mindmuteDark} 
           alt="Mindmute Logo" 
         />
+        <span className="tagline">Finding balance in the journey</span>
       </Link>
 
       <div className="header-right">

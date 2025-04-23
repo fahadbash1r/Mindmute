@@ -32,6 +32,8 @@
   --success-bg: rgba(16, 185, 129, 0.1);
   --primary-color: #8b5cf6;
   --primary-hover: #7c3aed;
+  --header-height: 80px;
+  --header-text: #000000;
 }
 
 [data-theme='dark'] {
@@ -63,6 +65,8 @@
   --success-bg: rgba(52, 211, 153, 0.1);
   --primary-color: #8b5cf6;
   --primary-hover: #7c3aed;
+  --header-bg: #1a1a1a;
+  --header-text: #ffffff;
 }
 
 /* Add these styles to ensure theme is applied */
@@ -106,6 +110,11 @@ html, body {
   padding: 0;
   height: 100%;
   width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
 }
 
 #root {
