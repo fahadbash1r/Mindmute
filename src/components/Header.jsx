@@ -8,28 +8,45 @@ export default function Header({ theme, toggleTheme, user, onSignOut }) {
 
   return (
     <header>
-      <button 
-        className="menu-button"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        aria-label="Toggle menu"
-      >
-        ☰
-      </button>
+      <div className="header-left">
+        <button 
+          className="menu-button"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          ☰
+        </button>
 
-      {isMenuOpen && (
-        <div className="dropdown-menu">
-          <nav>
-            <Link to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
-            <Link to="/thoughts" onClick={() => setIsMenuOpen(false)}>My Thoughts</Link>
-            <Link to="/settings" onClick={() => setIsMenuOpen(false)}>Settings</Link>
-            {user && (
-              <button onClick={() => { onSignOut(); setIsMenuOpen(false); }}>
-                Sign Out
-              </button>
-            )}
-          </nav>
-        </div>
-      )}
+        {isMenuOpen && (
+          <div className="dropdown-menu">
+            <button className="close-menu" onClick={() => setIsMenuOpen(false)}>×</button>
+            <nav>
+              <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                <span className="menu-icon">🧠</span>
+                Today's Session
+              </Link>
+              <Link to="/thoughts" onClick={() => setIsMenuOpen(false)}>
+                <span className="menu-icon">📁</span>
+                My Thoughts
+              </Link>
+              <Link to="/tasks" onClick={() => setIsMenuOpen(false)}>
+                <span className="menu-icon">✓</span>
+                Task Tracker
+              </Link>
+              <Link to="/upgrade" onClick={() => setIsMenuOpen(false)}>
+                <span className="menu-icon">⭐</span>
+                Upgrade
+              </Link>
+              {user && (
+                <button onClick={() => { onSignOut(); setIsMenuOpen(false); }}>
+                  <span className="menu-icon">📱</span>
+                  Sign Out
+                </button>
+              )}
+            </nav>
+          </div>
+        )}
+      </div>
 
       <div className="header-center">
         <Link to="/" className="logo">

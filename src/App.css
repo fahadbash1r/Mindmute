@@ -1901,6 +1901,10 @@ header {
   box-sizing: border-box;
 }
 
+.header-left {
+  position: relative;
+}
+
 .header-center {
   position: absolute;
   left: 50%;
@@ -1910,50 +1914,142 @@ header {
   align-items: center;
 }
 
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  gap: 16px;
+}
+
+.logo img {
+  height: 24px;
+  width: auto;
+}
+
 .tagline {
   font-size: 14px;
   color: var(--text-secondary);
   white-space: nowrap;
+  margin-top: -8px;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  color: var(--text-primary);
+  z-index: 101;
 }
 
 .dropdown-menu {
   position: absolute;
-  top: var(--header-height);
+  top: 0;
   left: 0;
   background: var(--header-bg);
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   min-width: 200px;
-  z-index: 99;
+  z-index: 999;
+  padding: 16px;
+}
+
+.close-menu {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-primary);
+  padding: 4px;
 }
 
 .dropdown-menu nav {
   display: flex;
   flex-direction: column;
-  padding: 8px 0;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .dropdown-menu nav a,
 .dropdown-menu nav button {
-  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
   text-decoration: none;
   color: var(--text-primary);
   background: none;
   border: none;
-  text-align: left;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: opacity 0.2s;
+  width: 100%;
+  text-align: left;
 }
 
 .dropdown-menu nav a:hover,
 .dropdown-menu nav button:hover {
-  background-color: var(--bg-hover);
+  opacity: 0.7;
+}
+
+.menu-icon {
+  font-size: 18px;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-left: auto;
+}
+
+.mode-switcher {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.mode-switcher:hover {
+  background-color: var(--bg-hover);
+}
+
+.sign-out-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--text-primary);
+  background: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.sign-out-btn:hover {
+  background: var(--text-primary);
+  color: var(--header-bg);
+}
+
+/* Ensure the dropdown menu sign out is styled differently from the header sign out */
+.dropdown-menu .sign-out-btn {
+  color: #ff4444;
+  border: none;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.dropdown-menu .sign-out-btn:hover {
+  background: none;
+  opacity: 0.7;
 }
