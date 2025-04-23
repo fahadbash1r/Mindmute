@@ -90,11 +90,12 @@ html, body {
 
 .app {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  width: 100%;
   background-color: var(--bg-color);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-container {
@@ -102,9 +103,10 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
   padding: 20px;
+  box-sizing: border-box;
   overflow-y: auto;
-  min-height: 0;
 }
 
 header {
@@ -388,10 +390,69 @@ main {
 }
 
 .mood-label {
-  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
   color: var(--text-primary);
-  margin: 1.5rem 0 1rem;
-  font-size: 0.95rem;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.mood-tagline {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.mood-slider-container {
+  width: 100%;
+  padding: 0 40px;
+  margin: 20px 0;
+  position: relative;
+}
+
+.mood-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #ff4d4d, #8b5cf6);
+  outline: none;
+}
+
+.mood-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #8b5cf6;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mood-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #8b5cf6;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mood-emojis {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 30px;
+  margin-top: 12px;
+}
+
+.mood-emoji {
+  font-size: 24px;
 }
 
 .emotion-slider {
@@ -552,34 +613,32 @@ main {
 
 .thought-input-section {
   width: 100%;
-  max-width: 800px;
-  margin: 2rem auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  padding: 20px;
+  background: var(--box-bg);
+  border: 1px solid var(--box-border);
+  border-radius: 12px;
+  margin-bottom: 20px;
 }
 
 .thought-input {
   width: 100%;
   min-height: 120px;
-  padding: 1rem;
-  border: 2px solid #8b5cf6;
-  border-radius: 12px;
-  background: var(--bg-color);
+  padding: 16px;
+  background: var(--input-bg);
+  border: 1px solid var(--box-border);
+  border-radius: 8px;
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: 16px;
   resize: vertical;
-  outline: none;
+  margin-bottom: 16px;
 }
 
 .button-group {
   display: flex;
   gap: 12px;
   justify-content: center;
-  margin-top: 16px;
-  z-index: 3;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .share-btn {
@@ -795,7 +854,7 @@ main {
 /* Mobile styles */
 @media (max-width: 768px) {
   .main-container {
-    padding: 10px;
+    padding: 16px;
   }
 
   header {
@@ -803,7 +862,8 @@ main {
   }
 
   .content {
-    padding: 0 10px;
+    padding: 0;
+    gap: 24px;
   }
 
   .thought-input-section {
@@ -1311,14 +1371,12 @@ main {
 }
 
 .intention-section {
-  position: relative;
-  background: transparent;
-  border-radius: 20px;
-  padding: 1rem 2rem;
-  margin: 1rem auto;
   width: 100%;
-  max-width: 800px;
-  box-sizing: border-box;
+  padding: 20px;
+  background: var(--box-bg);
+  border: 1px solid var(--box-border);
+  border-radius: 12px;
+  margin-bottom: 20px;
 }
 
 .intention-label {
@@ -1338,36 +1396,33 @@ main {
 
 .intention-options {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 10px 0;
+  margin: 0 -10px;
+  scroll-snap-type: x mandatory;
 }
 
 .intention-option {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1.25rem 1rem;
+  gap: 8px;
+  padding: 16px;
+  min-width: 100px;
+  background: var(--box-bg);
+  border: 1px solid var(--box-border);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: var(--box-bg);
+  scroll-snap-align: start;
 }
 
-.intention-option:hover {
-  background: rgba(130, 92, 255, 0.1);
-}
-
-.intention-option.active {
-  background: #825cff;
-  transform: translateY(-1px);
-}
-
-.intention-option.active .intention-icon,
-.intention-option.active .intention-text {
+.intention-option.selected {
+  background: var(--primary-color);
   color: white;
+  border-color: var(--primary-color);
 }
 
 .intention-icon {
@@ -1395,11 +1450,12 @@ main {
   }
 
   .intention-options {
-    gap: 0.5rem;
+    gap: 12px;
   }
 
   .intention-option {
-    padding: 0.75rem;
+    min-width: 80px;
+    padding: 12px;
   }
 
   .intention-icon {
@@ -1534,9 +1590,8 @@ main {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  overflow-y: auto;
-  padding-bottom: 40px;
+  gap: 32px;
+  padding-bottom: 60px;
 }
 
 /* Animations */
