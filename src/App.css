@@ -133,7 +133,6 @@ html, body {
   height: 40px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   text-decoration: none;
   color: var(--text-primary);
   transition: opacity 0.2s ease;
@@ -253,6 +252,7 @@ header {
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
+  color: var(--text-primary);
 }
 
 .mode-switcher:hover {
@@ -1846,7 +1846,6 @@ main {
   height: 40px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   text-decoration: none;
   color: var(--text-primary);
   transition: opacity 0.2s ease;

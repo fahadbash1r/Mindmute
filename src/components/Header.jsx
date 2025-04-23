@@ -1,6 +1,5 @@
 import React from 'react';
-import darkLogo from '../assets/mindmute-dark.png';
-import lightLogo from '../assets/mindmute-light.png';
+import { Link } from 'react-router-dom';
 import SideMenu from './SideMenu';
 
 export default function Header({ theme, toggleTheme, user, onSignOut }) {
@@ -8,36 +7,27 @@ export default function Header({ theme, toggleTheme, user, onSignOut }) {
     <header>
       <SideMenu onSignOut={onSignOut} />
       
-      <div className="logo-container">
-        {theme === 'light' ? (
-          <img 
-            src={darkLogo}
-            alt="Mindmute"
-            className="logo"
-            width="600"
-            height="160"
-            loading="eager"
-          />
-        ) : (
-          <img 
-            src={lightLogo}
-            alt="Mindmute"
-            className="logo"
-            width="600"
-            height="160"
-            loading="eager"
-          />
-        )}
-        <p className="tagline">Finding balance in the journey</p>
-      </div>
+      <Link to="/" className="logo">
+        <img 
+          src={theme === 'light' ? '/mindmute-light.png' : '/mindmute-dark.png'} 
+          alt="Mindmute Logo" 
+        />
+      </Link>
 
-      <button 
-        className="mode-switcher" 
-        onClick={toggleTheme}
-        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-      >
-        {theme === 'dark' ? '🌞' : '🌙'}
-      </button>
+      <div className="header-right">
+        <button 
+          onClick={toggleTheme} 
+          className="mode-switcher"
+          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        >
+          {theme === 'light' ? '🌙' : '☀️'}
+        </button>
+        {user && (
+          <button onClick={onSignOut} className="sign-out-btn">
+            Sign Out
+          </button>
+        )}
+      </div>
     </header>
   );
 } 

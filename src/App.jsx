@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import './App.css'
-import darkLogo from './assets/mindmute-dark.png'
-import lightLogo from './assets/mindmute-light.png'
 import { supabase } from './supabaseClient'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
