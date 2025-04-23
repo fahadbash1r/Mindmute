@@ -1903,6 +1903,7 @@ header {
 
 .header-left {
   position: relative;
+  z-index: 1001;
 }
 
 .header-center {
@@ -1923,7 +1924,7 @@ header {
 }
 
 .logo img {
-  height: 32px;
+  height: 40px;
   width: auto;
 }
 
@@ -1941,19 +1942,25 @@ header {
   cursor: pointer;
   padding: 8px;
   color: var(--text-primary);
-  z-index: 101;
 }
 
+/* Dropdown Menu */
 .dropdown-menu {
   position: fixed;
   top: 0;
   left: 0;
-  background: var(--header-bg);
   width: 250px;
   height: 100vh;
-  z-index: 1000;
-  padding: 24px 16px;
+  background: var(--bg-color);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  padding: 24px 16px;
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+}
+
+.dropdown-menu.closed {
+  transform: translateX(-100%);
 }
 
 .close-menu {
@@ -1980,7 +1987,7 @@ header {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px;
+  padding: 12px;
   text-decoration: none;
   color: var(--text-primary);
   background: none;
@@ -1990,11 +1997,17 @@ header {
   transition: opacity 0.2s;
   width: 100%;
   text-align: left;
+  border-radius: 8px;
 }
 
 .dropdown-menu nav a:hover,
 .dropdown-menu nav button:hover {
-  opacity: 0.7;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] .dropdown-menu nav a:hover,
+[data-theme='dark'] .dropdown-menu nav button:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .menu-icon {
@@ -2005,48 +2018,12 @@ header {
   justify-content: center;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.mode-switcher {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-  padding: 8px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.mode-switcher:hover {
-  background-color: var(--bg-hover);
-}
-
-.sign-out-btn {
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 1px solid var(--text-primary);
-  background: none;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 14px;
-}
-
-.sign-out-btn:hover {
-  background: var(--text-primary);
-  color: var(--header-bg);
-}
-
-/* Style the sign out button in dropdown differently */
+/* Sign out button in dropdown */
 .dropdown-menu nav button {
   color: #ff4444;
 }
 
-/* Add overlay when menu is open */
+/* Overlay */
 .menu-overlay {
   position: fixed;
   top: 0;
@@ -2054,10 +2031,13 @@ header {
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  display: none;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
 .menu-overlay.active {
-  display: block;
+  opacity: 1;
+  pointer-events: auto;
 }

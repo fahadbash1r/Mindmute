@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import mindmuteDark from '../assets/mindmute-dark.png';
 import mindmuteLight from '../assets/mindmute-light.png';
 
 export default function Header({ theme, toggleTheme, user, onSignOut }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      setIsMenuVisible(true);
+    } else {
+      const timer = setTimeout(() => setIsMenuVisible(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isMenuOpen]);
 
   return (
     <>
@@ -18,9 +28,9 @@ export default function Header({ theme, toggleTheme, user, onSignOut }) {
             ☰
           </button>
 
-          {isMenuOpen && (
+          {isMenuVisible && (
             <>
-              <div className="dropdown-menu">
+              <div className={`dropdown-menu ${!isMenuOpen ? 'closed' : ''}`}>
                 <button className="close-menu" onClick={() => setIsMenuOpen(false)}>×</button>
                 <nav>
                   <Link to="/" onClick={() => setIsMenuOpen(false)}>
