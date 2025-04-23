@@ -6,7 +6,7 @@
   --text-primary: #1a1a1a;
   --text-secondary: #666666;
   --accent-color: #4f46e5;
-  --header-bg: rgba(255, 255, 255, 0.8);
+  --header-bg: #ffffff;
   --border-color: #e5e5e5;
   
   /* Tag colors */
@@ -42,7 +42,7 @@
   --text-primary: #ffffff;
   --text-secondary: #a3a3a3;
   --accent-color: #6366f1;
-  --header-bg: rgba(26, 26, 26, 0.8);
+  --header-bg: #1a1a1a;
   --border-color: #404040;
   
   /* Dark theme tag colors */
@@ -65,31 +65,46 @@
   --success-bg: rgba(52, 211, 153, 0.1);
   --primary-color: #8b5cf6;
   --primary-hover: #7c3aed;
-  --header-bg: #1a1a1a;
   --header-text: #ffffff;
 }
 
-/* Add these styles to ensure theme is applied */
-.app {
+/* Base styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+#root {
   width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
+.app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg-color);
+  background-color: var(--bg-color);
   color: var(--text-primary);
-  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .main-container {
   flex: 1;
-  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: auto;
-  overflow-x: hidden;
   padding: 20px;
-  box-sizing: border-box;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 header {
@@ -106,23 +121,8 @@ header {
   box-sizing: border-box;
 }
 
-/* Base styles for html and body */
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow-x: hidden;
-}
-
 body {
   font-family: 'Inter', sans-serif;
-}
-
-#root {
-  width: 100vw;
-  height: 100vh;
-  overflow-x: hidden;
 }
 
 .logo-container {
@@ -577,8 +577,10 @@ main {
 
 .button-group {
   display: flex;
-  gap: 1rem;
-  width: 100%;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+  z-index: 3;
 }
 
 .share-btn {
@@ -794,7 +796,7 @@ main {
 /* Mobile styles */
 @media (max-width: 768px) {
   .main-container {
-    padding: 1rem;
+    padding: 10px;
   }
 
   header {
@@ -802,7 +804,7 @@ main {
   }
 
   .content {
-    padding: 0 1rem;
+    padding: 0 10px;
   }
 
   .thought-input-section {
@@ -811,7 +813,7 @@ main {
 
   .button-group {
     flex-direction: column;
-    gap: 0.75rem;
+    align-items: stretch;
   }
 
   .response-section {
@@ -1109,11 +1111,11 @@ main {
 .auth-container {
   width: 100%;
   max-width: 400px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: var(--box-bg);
-  border-radius: 12px;
-  border: 2px solid #8b5cf6;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .auth-form {
@@ -1526,14 +1528,13 @@ main {
 
 /* Adjust spacing between components */
 .content {
+  flex: 1;
   width: 100%;
   max-width: 800px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 0 16px;
-  box-sizing: border-box;
+  padding: 0 20px;
 }
 
 /* Animations */
@@ -1913,6 +1914,7 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 16px;
 }
 
 .logo {
@@ -1920,7 +1922,8 @@ header {
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  gap: 12px;
+  gap: 8px;
+  margin-top: -8px;
 }
 
 .logo img {
@@ -1932,7 +1935,7 @@ header {
   font-size: 14px;
   color: var(--text-secondary);
   white-space: nowrap;
-  margin-top: -4px;
+  padding-bottom: 4px;
 }
 
 .menu-button {

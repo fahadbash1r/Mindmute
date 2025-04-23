@@ -669,13 +669,13 @@ function ErrorBoundary({ children }) {
 }
 
 function App() {
-  const [session, setSession] = useState(null)
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
-    return savedTheme || 'dark';
+    return savedTheme || 'light';
   })
   const [user, setUser] = useState(null)
-  const [isConnected, setIsConnected] = useState(false)
+  const [session, setSession] = useState(null)
+  const [isConnected, setIsConnected] = useState(true)
   const [oldThoughts, setOldThoughts] = useState([])
   const [priorities, setPriorities] = useState([])
   const [showPieChart, setShowPieChart] = useState(false)
@@ -695,17 +695,12 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session:', session)
       setSession(session)
       setUser(session?.user ?? null)
     })
 
-    // Listen for changes on auth state (sign in, sign out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Auth state changed:', _event)
-      console.log('New session:', session)
       setSession(session)
       setUser(session?.user ?? null)
     })
@@ -713,30 +708,18 @@ function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Only test connection if user is authenticated
   useEffect(() => {
-    if (user) {
-      console.log('User authenticated:', user)
-      const testConnection = async () => {
-        try {
-          // Try to select records to verify
-          const { data, error } = await supabase
-            .from('thoughts')
-            .select('*')
-            .limit(1)
-          
-          if (error) {
-            console.error('Supabase connection error:', error.message)
-          } else {
-            console.log('Supabase connected successfully, table structure:', data)
-          }
-        } catch (error) {
-          console.error('Error testing Supabase connection:', error)
-        }
+    const testConnection = async () => {
+      try {
+        const { data, error } = await supabase.from('thoughts').select('count');
+        if (error) throw error;
+        console.log('Supabase connection successful');
+      } catch (error) {
+        console.error('Supabase connection error:', error);
       }
-      testConnection()
     }
-  }, [user])
+    testConnection();
+  }, []);
 
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark')
@@ -869,54 +852,6 @@ function App() {
     setThought('');
   };
 
-  useEffect(() => {
-    // Log environment variables (excluding sensitive data)
-    console.log('Supabase URL configured:', !!import.meta.env.VITE_SUPABASE_URL);
-    console.log('Supabase Key configured:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
-    
-    // Test Supabase connection
-    async function testConnection() {
-      try {
-        const { data, error } = await supabase.from('thoughts').select('count');
-        if (error) throw error;
-        console.log('Supabase connection successful');
-        setIsConnected(true);
-      } catch (error) {
-        console.error('Supabase connection error:', error);
-        setIsConnected(true); // Still set to true to show UI
-      }
-    }
-    
-    testConnection();
-  }, []);
-
-  if (!isConnected) {
-    return <div>Loading...</div>;
-  }
-
-  if (!session) {
-    return (
-      <div className="app">
-        <div className="main-container">
-          <Header 
-            theme={theme} 
-            toggleTheme={toggleTheme}
-            user={user}
-            onSignOut={handleSignOut}
-          />
-          <div className="auth-container">
-            <Auth 
-              supabaseClient={supabase} 
-              appearance={{ theme: ThemeSupa }}
-              providers={[]}
-              theme={theme === 'dark' ? 'dark' : 'default'}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <BrowserRouter>
       <div className="app" data-theme={theme}>
@@ -924,12 +859,12 @@ function App() {
           <Header 
             theme={theme} 
             toggleTheme={toggleTheme}
-            user={session?.user}
+            user={user}
             onSignOut={handleSignOut}
           />
           <Routes>
             <Route path="/" element={
-              <PrivateRoute>
+              session ? (
                 <div className="main-container">
                   <div className="content">
                     <PersonalGreeting user={session?.user} />
@@ -954,7 +889,18 @@ function App() {
                     <ThoughtCabinet oldThoughts={oldThoughts} />
                   </div>
                 </div>
-              </PrivateRoute>
+              ) : (
+                <div className="main-container">
+                  <div className="auth-container">
+                    <Auth 
+                      supabaseClient={supabase} 
+                      appearance={{ theme: ThemeSupa }}
+                      providers={[]}
+                      theme={theme === 'dark' ? 'dark' : 'default'}
+                    />
+                  </div>
+                </div>
+              )
             } />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
