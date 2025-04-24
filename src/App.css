@@ -654,13 +654,13 @@ main {
   color: var(--text-primary);
   font-size: 16px;
   resize: vertical;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   box-sizing: border-box;
 }
 
 .button-group {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   justify-content: center;
   width: 100%;
   max-width: 900px;
